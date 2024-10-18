@@ -1,0 +1,59 @@
+@* --------------------------------------------------------------------*@
+@* Warning! This is an auto generated file. Changes may be overwritten *@
+@* --------------------------------------------------------------------*@
+@using Localization
+@inject LocService SharedLocalizer
+@model IEnumerable<OnlinePayment.Web.ViewModel.PaymentResponseViewModel>
+
+@{
+    ViewData["Title"] = @$"{SharedLocalizer.GetLocalizedHtmlString("List")} {SharedLocalizer.GetLocalizedHtmlString("PaymentResponse")}";
+}
+
+<h1>@SharedLocalizer.GetLocalizedHtmlString("PaymentResponse")</h1>
+
+<a asp-controller="PaymentResponse" asp-action="Create">
+    <button type="button" class="btn btn-info btn-lg"><span class="bi bi-plus-circle"></span>@SharedLocalizer.GetLocalizedHtmlString("Create New")</button>
+</a>
+<hr />
+<table class="table data-table">
+    <thead>
+        <tr>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("Session")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("Location")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("PaymentResponseReceivedDateTime")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("CallbackReceivedDateTime")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Session">
+                @item.Session
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Location">
+                @item.Location
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.PaymentResponseReceivedDateTime">
+                @item.PaymentResponseReceivedDateTime
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.CallbackReceivedDateTime">
+                @item.CallbackReceivedDateTime
+            </td>
+  
+            <td>
+                <a asp-controller="PaymentResponse" asp-action="Edit" asp-route-id="@item.Id">@SharedLocalizer.GetLocalizedHtmlString("Edit")</a> | 
+                <a asp-controller="PaymentResponse" asp-action="Remove" asp-route-id="@item.Id">@SharedLocalizer.GetLocalizedHtmlString("Delete")</a> 
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

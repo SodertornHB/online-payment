@@ -1,0 +1,78 @@
+@* --------------------------------------------------------------------*@
+@* Warning! This is an auto generated file. Changes may be overwritten *@
+@* --------------------------------------------------------------------*@
+@using Localization
+@using Microsoft.Extensions.Options
+@inject LocService SharedLocalizer
+@model OnlinePayment.Web.ViewModel.PaymentCallbackViewModel
+
+@{
+    ViewData["Title"] = @$"{SharedLocalizer.GetLocalizedHtmlString("Create")} {SharedLocalizer.GetLocalizedHtmlString("PaymentCallback")}";
+}
+
+<h1>@($"{SharedLocalizer.GetLocalizedHtmlString("Create")} {@SharedLocalizer.GetLocalizedHtmlString("PaymentCallback")}")</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md">
+        <form method="post"  enctype="multipart/form-data" asp-controller="PaymentCallback" asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Session" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Session")</label>
+                <input name="Session" asp-for="Session" class="form-control" />
+                <span asp-validation-for="Session" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PaymentReference" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("PaymentReference")</label>
+                <input name="PaymentReference" asp-for="PaymentReference" class="form-control" />
+                <span asp-validation-for="PaymentReference" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Status" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Status")</label>
+                <input name="Status" asp-for="Status" class="form-control" />
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Amount")</label>
+                <input name="Amount" asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Currency" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Currency")</label>
+                <input name="Currency" asp-for="Currency" class="form-control" />
+                <span asp-validation-for="Currency" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PayerAlias" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("PayerAlias")</label>
+                <input name="PayerAlias" asp-for="PayerAlias" class="form-control" />
+                <span asp-validation-for="PayerAlias" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PayeeAlias" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("PayeeAlias")</label>
+                <input name="PayeeAlias" asp-for="PayeeAlias" class="form-control" />
+                <span asp-validation-for="PayeeAlias" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DatePaid" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("DatePaid")</label>
+                <input name="DatePaid" asp-for="DatePaid" class="form-control" />
+                <span asp-validation-for="DatePaid" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ErrorCode" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("ErrorCode")</label>
+                <input name="ErrorCode" asp-for="ErrorCode" class="form-control" />
+                <span asp-validation-for="ErrorCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="@SharedLocalizer.GetLocalizedHtmlString("Create")" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="PaymentCallback" asp-action="Index">@SharedLocalizer.GetLocalizedHtmlString("Back to List")</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

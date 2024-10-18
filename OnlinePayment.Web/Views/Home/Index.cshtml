@@ -1,0 +1,17 @@
+@* --------------------------------------------------------------------*@
+@* Warning! This is an auto generated file. Changes may be overwritten *@
+@* --------------------------------------------------------------------*@
+@using Localization
+@using OnlinePayment.Logic.Settings
+@using Microsoft.Extensions.Options
+@inject IOptions<ApplicationSettings> settings
+@inject LocService SharedLocalizer
+<ul>
+    <li><a asp-controller="Log" asp-action="Index">Log</a></li>
+    <li><a asp-controller="Migration" asp-action="Index">Migration</a></li>
+    <li><a asp-controller="Payment" asp-action="Index">Payment</a></li>
+    <li><a asp-controller="PaymentCallback" asp-action="Index">PaymentCallback</a></li>
+    <li><a asp-controller="PaymentRequest" asp-action="Index">PaymentRequest</a></li>
+    <li><a asp-controller="PaymentResponse" asp-action="Index">PaymentResponse</a></li>
+  
+</ul>

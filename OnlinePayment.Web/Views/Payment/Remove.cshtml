@@ -1,0 +1,85 @@
+@* --------------------------------------------------------------------*@
+@* Warning! This is an auto generated file. Changes may be overwritten *@
+@* --------------------------------------------------------------------*@
+@using Localization
+@using Microsoft.Extensions.Options
+@inject LocService SharedLocalizer
+@model OnlinePayment.Web.ViewModel.PaymentViewModel
+
+@{
+    ViewData["Title"] = $"{SharedLocalizer.GetLocalizedHtmlString("Delete")} {SharedLocalizer.GetLocalizedHtmlString("Payment")}";
+}
+
+<h1>@($"{SharedLocalizer.GetLocalizedHtmlString("Delete")} {@SharedLocalizer.GetLocalizedHtmlString("Payment")}")</h1>
+
+<h3>@SharedLocalizer.GetLocalizedHtmlString("Are you sure you want to delete this?")</h3>
+<div>
+    <hr />
+    <dl class="row">
+
+        <dt class = "col-sm-2">
+            <label asp-for="Session" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Session")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.Session
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="BorrowerNumber" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("BorrowerNumber")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.BorrowerNumber
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="PatronName" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("PatronName")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.PatronName
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="PatronEmail" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("PatronEmail")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.PatronEmail
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="PatronPhoneNumber" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("PatronPhoneNumber")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.PatronPhoneNumber
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="Amount" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Amount")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.Amount
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="InitiationDateTime" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("InitiationDateTime")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.InitiationDateTime
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="Status" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Status")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.Status
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="Description" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Description")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.Description
+        </dd>
+    </dl>
+    <form method="post"  enctype="multipart/form-data" asp-controller="Payment" asp-action="Remove">    
+        @Html.HiddenFor(x => x.Id)
+        <input type="submit" value="@SharedLocalizer.GetLocalizedHtmlString("Delete")" class="btn btn-danger" /> |
+        <a asp-controller="Payment" asp-action="Index">@SharedLocalizer.GetLocalizedHtmlString("Back to List")</a>
+    </form>
+    </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

@@ -1,0 +1,89 @@
+@* --------------------------------------------------------------------*@
+@* Warning! This is an auto generated file. Changes may be overwritten *@
+@* --------------------------------------------------------------------*@
+@using Localization
+@inject LocService SharedLocalizer
+@model IEnumerable<OnlinePayment.Web.ViewModel.PaymentViewModel>
+
+@{
+    ViewData["Title"] = @$"{SharedLocalizer.GetLocalizedHtmlString("List")} {SharedLocalizer.GetLocalizedHtmlString("Payment")}";
+}
+
+<h1>@SharedLocalizer.GetLocalizedHtmlString("Payment")</h1>
+
+<a asp-controller="Payment" asp-action="Create">
+    <button type="button" class="btn btn-info btn-lg"><span class="bi bi-plus-circle"></span>@SharedLocalizer.GetLocalizedHtmlString("Create New")</button>
+</a>
+<hr />
+<table class="table data-table">
+    <thead>
+        <tr>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("Session")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("BorrowerNumber")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("PatronName")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("PatronEmail")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("PatronPhoneNumber")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("Amount")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("InitiationDateTime")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("Status")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("Description")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Session">
+                @item.Session
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.BorrowerNumber">
+                @item.BorrowerNumber
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.PatronName">
+                @item.PatronName
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.PatronEmail">
+                @item.PatronEmail
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.PatronPhoneNumber">
+                @item.PatronPhoneNumber
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Amount">
+                @item.Amount
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.InitiationDateTime">
+                @item.InitiationDateTime
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Status">
+                @item.Status
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Description">
+                @item.Description
+            </td>
+  
+            <td>
+                <a asp-controller="Payment" asp-action="Edit" asp-route-id="@item.Id">@SharedLocalizer.GetLocalizedHtmlString("Edit")</a> | 
+                <a asp-controller="Payment" asp-action="Remove" asp-route-id="@item.Id">@SharedLocalizer.GetLocalizedHtmlString("Delete")</a> 
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
