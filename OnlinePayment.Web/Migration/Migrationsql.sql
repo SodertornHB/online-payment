@@ -1,3 +1,41 @@
+/*
+IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Migration')
+BEGIN
+    TRUNCATE TABLE [dbo].[Migration]
+    DROP TABLE [dbo].[Migration]
+END
+
+IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Log')
+BEGIN
+    TRUNCATE TABLE [dbo].[Log]
+    DROP TABLE [dbo].[Log]
+END
+
+IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Payment')
+BEGIN
+    TRUNCATE TABLE [dbo].[Payment]
+    DROP TABLE [dbo].[Payment]
+END
+
+IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'PaymentRequest')
+BEGIN
+    TRUNCATE TABLE [dbo].[PaymentRequest]
+    DROP TABLE [dbo].[PaymentRequest]
+END
+
+IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'PaymentResponse')
+BEGIN
+    TRUNCATE TABLE [dbo].[PaymentResponse]
+    DROP TABLE [dbo].[PaymentResponse]
+END
+
+IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'PaymentCallback')
+BEGIN
+    TRUNCATE TABLE [dbo].[PaymentCallback]
+    DROP TABLE [dbo].[PaymentCallback]
+END
+*/
+
 IF NOT EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Migration')
 BEGIN
 	CREATE TABLE [dbo].[Migration](
@@ -44,7 +82,7 @@ BEGIN
 		PatronName NVARCHAR(255) NOT NULL,
 		PatronEmail NVARCHAR(255),
 		PatronPhoneNumber NVARCHAR(50),
-		Amount DECIMAL(18, 2) NOT NULL,
+		Amount int NOT NULL,
 		InitiationDateTime DATETIME2 NOT NULL,
 		Status NVARCHAR(50) NOT NULL,
 		Description NVARCHAR(500)
@@ -64,7 +102,7 @@ BEGIN
         CallbackUrl NVARCHAR(500),
         PayerAlias NVARCHAR(50),
         PayeeAlias NVARCHAR(50),
-        Amount DECIMAL(18, 2) NOT NULL,
+        Amount int NOT NULL,
         Currency NVARCHAR(10) NOT NULL,
         Message NVARCHAR(255),
 		PaymentRequestDateTime DATETIME2 NOT NULL,
@@ -98,7 +136,7 @@ BEGIN
         Session NVARCHAR(255) NOT NULL,
         PaymentReference NVARCHAR(50),
         Status NVARCHAR(50),
-        Amount DECIMAL(18, 2) NOT NULL,
+        Amount int NOT NULL,
         Currency NVARCHAR(10) NOT NULL,
         PayerAlias NVARCHAR(50),
         PayeeAlias NVARCHAR(50),
@@ -110,6 +148,7 @@ BEGIN
         )
     ) ON [PRIMARY]
 END
+
 
 
 --IF NOT EXISTS (SELECT 1 FROM Migration WHERE ClientVersion = '1.1.0' AND DatabaseVersion = '1.1.0')
