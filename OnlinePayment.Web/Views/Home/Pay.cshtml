@@ -1,0 +1,16 @@
+@using Localization
+@using OnlinePayment.Logic.Settings
+@using Microsoft.Extensions.Options
+@using OnlinePayment.Web.ViewModel
+@inject IOptions<ApplicationSettings> settings
+@model PayViewModel
+
+
+<h2>Payment Information</h2>
+<ul>
+    <li><strong>Borrower Number:</strong> @Model.BorrowerNumber</li>
+    <li><strong>Patron Name:</strong> @Model.PatronName</li>
+    <li><strong>Patron Email:</strong> @Model.PatronEmail</li>
+    <li><strong>Patron Phone Number:</strong> @Model.PatronPhoneNumber</li>
+    <li><strong>Amount:</strong> @Model.Amount</li>
+</ul>
