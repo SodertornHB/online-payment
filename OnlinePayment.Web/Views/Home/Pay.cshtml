@@ -14,3 +14,9 @@
     <li><strong>Patron Phone Number:</strong> @Model.PatronPhoneNumber</li>
     <li><strong>Amount:</strong> @Model.Amount</li>
 </ul>
+
+<hr class="divider" />
+@if (!string.IsNullOrEmpty( Model.QrCodeBase64 ))
+{
+    <img src="@Model.QrCodeBase64" alt="QR code" class="qr-image" />
+}

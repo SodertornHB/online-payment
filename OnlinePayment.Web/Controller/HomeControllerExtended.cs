@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlinePayment.Web.ViewModel;
 using Sh.Library.Authentication;
+using System.IO;
+using System;
 using System.Threading.Tasks;
 
 namespace Web.Controllers
@@ -22,7 +24,7 @@ namespace Web.Controllers
                 Amount = amount
             };
 
-            await paymentServiceExtended.Initiate(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount);
+            var payment = await paymentServiceExtended.Initiate(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount);
 
             return View(viewModel);
         }

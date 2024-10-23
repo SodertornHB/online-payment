@@ -15,6 +15,8 @@ if "%2"=="" (
 set "APP_NAME=%1"
 set "RESOURCE_GROUP=%2"
 
+az webapp deploy --resource-group %RESOURCE_GROUP% --name %APP_NAME% --src-path .\bin\Release\net8.0\publish\publish.zip --type zip --clean
+
 :: Build the project
 dotnet build . -c Release
 
@@ -30,4 +32,7 @@ if exist .\bin\Release\net8.0\publish\publish.zip (
 powershell -Command "Compress-Archive -Path ./publish/* -DestinationPath .\bin\Release\net8.0\publish\publish.zip"
 
 :: Deploy using Azure CLI
-az webapp deploy --resource-group %RESOURCE_GROUP% --name %APP_NAME% --src-path .\bin\Release\net8.0\publish\publish.zip
+az webapp deploy --resource-group %RESOURCE_GROUP% --name %APP_NAME% --src-path .\bin\Release\net8.0\publish\publish.zip --type zip
+
+az webapp restart --resource-group %RESOURCE_GROUP% --name %APP_NAME%
+

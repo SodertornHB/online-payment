@@ -13,6 +13,7 @@ namespace OnlinePayment.Logic.Model
 {
     public class Entity
     {
+        [JsonIgnore]
         public virtual int Id { get; set; }
 
         public override bool Equals(object obj)

@@ -77,6 +77,7 @@ IF NOT EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Paymen
 BEGIN
 	CREATE TABLE Payment (
 		Id INT IDENTITY(1,1) not null,
+	 	ExternalId NVARCHAR(255) NOT NULL,
 		Session NVARCHAR(255) NOT NULL,
 		BorrowerNumber INT NOT NULL,
 		PatronName NVARCHAR(255) NOT NULL,
@@ -120,8 +121,9 @@ BEGIN
         Id INT IDENTITY(1,1) NOT NULL,
         Session NVARCHAR(255) NOT NULL,
         Location NVARCHAR(MAX),
-		PaymentResponseReceivedDateTime DATETIME2 NOT NULL,
-		CallbackReceivedDateTime DATETIME2 NULL,
+        PaymentReference NVARCHAR(255) NULL,
+        [Status] NVARCHAR(255) NULL,
+		PaymentResponseReceivedDateTime DATETIME2 NOT NULL
         CONSTRAINT [PK_PaymentResponse] PRIMARY KEY CLUSTERED 
         (
             [Id] DESC
@@ -151,11 +153,16 @@ END
 
 GO
 
-CREATE VIEW PaymentOverview AS
-SELECT Session, PaymentRequestDateTime AS Timestamp, 'PaymentRequest' AS Type FROM PaymentRequest
-UNION
-SELECT Session, PaymentResponseReceivedDateTime AS Timestamp, 'PaymentResponse' AS Type FROM PaymentResponse
+--  select * from PaymentOverview order by Timestamp desc 
 
+IF EXISTS (SELECT * FROM sys.views WHERE name = 'PaymentOverview')
+DROP VIEW PaymentOverview;
+GO
+
+CREATE VIEW PaymentOverview AS
+SELECT Session, PaymentRequestDateTime AS Timestamp, CONCAT(PayeePaymentReference, ' ', Amount, ' ',Currency) as Info, 'PaymentRequest' AS Type FROM PaymentRequest
+UNION
+SELECT Session, PaymentResponseReceivedDateTime AS Timestamp, location as Info, 'PaymentResponse' AS Type FROM PaymentResponse;
 
 --IF NOT EXISTS (SELECT 1 FROM Migration WHERE ClientVersion = '1.1.0' AND DatabaseVersion = '1.1.0')
 --BEGIN

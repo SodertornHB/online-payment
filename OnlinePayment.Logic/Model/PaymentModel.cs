@@ -10,6 +10,7 @@ namespace OnlinePayment.Logic.Model
 {
     public partial class Payment : Entity
     {
+        public virtual string ExternalId { get; set; }
         public virtual string Session {get;set;}
         public virtual int BorrowerNumber {get;set;}
         public virtual string PatronName {get;set;}

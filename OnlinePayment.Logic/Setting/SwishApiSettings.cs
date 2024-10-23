@@ -6,7 +6,6 @@ namespace OnlinePayment.Logic.Settings
         public string CallbackUrl { get; set; }
         public string PayeeAlias { get; set; }
         public string Currency { get; set; }
-        public string Message { get; set; }
         public string Certificate { get; set; }
     }
 }
