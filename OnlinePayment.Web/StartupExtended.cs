@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Globalization;
+using Microsoft.AspNetCore.DataProtection;
+using System.IO;
 using AutoMapper;
 using System;
 using Microsoft.AspNetCore.Localization;
@@ -12,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Logic.Settings;
+using OnlinePayment.Logic.Http;
 
 namespace OnlinePayment.Web
 {

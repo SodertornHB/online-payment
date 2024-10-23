@@ -10,7 +10,8 @@ namespace Web.Controllers
 
         // test url: https://localhost:53271/home/pay?borrowerNumber=123&patronName=John%20Doe&patronEmail=johndoe%40example.com&patronPhoneNumber=1234567890&amount=50.75
         [HttpGet("pay")]
-        public IActionResult Pay(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, decimal amount)
+        public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, 
+            int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount)
         {
             var viewModel = new PayViewModel
             {
