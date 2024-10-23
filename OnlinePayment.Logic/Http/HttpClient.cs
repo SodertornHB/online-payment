@@ -76,11 +76,11 @@ namespace OnlinePayment.Logic.Http
             var response = await Send(request);
             string responseContent = await GetContent(response);
             logger.LogDebug($"Response code {response.StatusCode}. Content: {responseContent}");
-            return new HttpResponse(response.StatusCode, response.IsSuccessStatusCode, responseContent);
+            return new HttpResponse(response.StatusCode, response.IsSuccessStatusCode, responseContent, response.Headers);
         }
 
 
-        private async Task<HttpResponseMessage> Send(HttpRequestMessage request)
+        protected virtual async Task<HttpResponseMessage> Send(HttpRequestMessage request)
         {
             var client = clientFactory.CreateClient();
             client.SetBearerTokenIfExists(settings.BearerToken);
@@ -118,19 +118,22 @@ namespace OnlinePayment.Logic.Http
 
     public class HttpResponse
     {
-        public HttpResponse(HttpStatusCode statusCode, bool isSuccess) : this(statusCode,  isSuccess, string.Empty)
+        public HttpResponse(HttpStatusCode statusCode, bool isSuccess) : this(statusCode,  isSuccess, string.Empty, null)
         { }
 
-        public HttpResponse(HttpStatusCode statusCode, bool isSuccess, string content)
+        public HttpResponse(HttpStatusCode statusCode, bool isSuccess, string content, HttpResponseHeaders headers)
         {
             StatusCode = statusCode;
             IsSuccess = isSuccess;
             Content = content;
+            Headers = headers;
         }
 
         public string Content { get; private set; }
         public HttpStatusCode StatusCode { get; private set; }
         public bool IsSuccess { get; set; }
+
+        public HttpResponseHeaders Headers { get; private set; }
 
         /// <throws>HttpRequestException</throws>
         public void CheckStatus()

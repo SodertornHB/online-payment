@@ -16,7 +16,7 @@ namespace OnlinePayment.Web.ViewModel
         public virtual string CallbackUrl {get;set;}  = ""; 
         public virtual string PayerAlias {get;set;}  = ""; 
         public virtual string PayeeAlias {get;set;}  = ""; 
-        public virtual decimal Amount {get;set;} 
+        public virtual int Amount {get;set;} 
         public virtual string Currency {get;set;}  = ""; 
         public virtual string Message {get;set;}  = ""; 
         [DataType(DataType.Text)]

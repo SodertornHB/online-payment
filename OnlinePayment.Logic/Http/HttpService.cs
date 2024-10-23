@@ -123,7 +123,7 @@ namespace OnlinePayment.Logic.Http
 
         #region
 
-        private static Uri CombineUrls(string url, string id)
+        protected static Uri CombineUrls(string url, string id)
         {
             if (!url.EndsWith("/")) url += "/";
             return new Uri(url + id);

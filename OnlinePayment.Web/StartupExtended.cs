@@ -36,6 +36,13 @@ namespace OnlinePayment.Web
 
         protected override void CustomServiceConfiguration(IServiceCollection services)
         {
+            services.AddTransient<IPaymentServiceExtended, PaymentServiceExtended>();
+            services.AddTransient<IPaymentRequestService, PaymentRequestServiceExtended>();
+            services.AddTransient<ISwishHttpClient, SwishHttpClient>();
+            services.AddTransient<ISwishHttpService, SwishHttpService>();
+            //services.Configure<KohaApiSettings>(Configuration.GetSection("KohaApiSettings"));
+            services.Configure<SwishApiSettings>(Configuration.GetSection("SwishApi"));
+            services.Configure<CertificationAuthenticationSettings>(Configuration.GetSection("CertificationAuthentication"));
 
             //services.Configure<KohaApiSettings>(Configuration.GetSection("KohaApiSettings"));
 

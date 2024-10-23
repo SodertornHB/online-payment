@@ -14,7 +14,7 @@ namespace OnlinePayment.Web.ViewModel
         public virtual string Session {get;set;}  = ""; 
         public virtual string PaymentReference {get;set;}  = ""; 
         public virtual string Status {get;set;}  = ""; 
-        public virtual decimal Amount {get;set;} 
+        public virtual int Amount {get;set;} 
         public virtual string Currency {get;set;}  = ""; 
         public virtual string PayerAlias {get;set;}  = ""; 
         public virtual string PayeeAlias {get;set;}  = ""; 

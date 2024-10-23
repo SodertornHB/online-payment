@@ -15,7 +15,7 @@ namespace OnlinePayment.Logic.Model
         public virtual string PatronName {get;set;}
         public virtual string PatronEmail {get;set;}
         public virtual string PatronPhoneNumber {get;set;}
-        public virtual decimal Amount {get;set;}
+        public virtual int Amount {get;set;}
         public virtual DateTime? InitiationDateTime {get;set;}
         public virtual string Status {get;set;}
         public virtual string Description {get;set;}

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlinePayment.Web.ViewModel;
+using Sh.Library.Authentication;
+using System.Threading.Tasks;
 
 namespace Web.Controllers
 {
@@ -18,6 +20,8 @@ namespace Web.Controllers
                 PatronPhoneNumber = patronPhoneNumber ?? "",
                 Amount = amount
             };
+
+            await paymentServiceExtended.Initiate(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount);
 
             return View(viewModel);
         }

@@ -6,6 +6,6 @@ namespace OnlinePayment.Web.ViewModel
         public virtual string PatronName {get;set;}  = ""; 
         public virtual string PatronEmail {get;set;}  = ""; 
         public virtual string PatronPhoneNumber {get;set;}  = ""; 
-        public virtual decimal Amount {get;set;} 
+        public virtual int Amount {get;set;} 
     }
 } 

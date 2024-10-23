@@ -149,6 +149,12 @@ BEGIN
     ) ON [PRIMARY]
 END
 
+GO
+
+CREATE VIEW PaymentOverview AS
+SELECT Session, PaymentRequestDateTime AS Timestamp, 'PaymentRequest' AS Type FROM PaymentRequest
+UNION
+SELECT Session, PaymentResponseReceivedDateTime AS Timestamp, 'PaymentResponse' AS Type FROM PaymentResponse
 
 
 --IF NOT EXISTS (SELECT 1 FROM Migration WHERE ClientVersion = '1.1.0' AND DatabaseVersion = '1.1.0')
