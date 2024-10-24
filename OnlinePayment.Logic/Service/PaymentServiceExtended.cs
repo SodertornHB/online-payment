@@ -53,21 +53,16 @@ namespace OnlinePayment.Logic.Services
             {
                 var session = GuidGenerator.GenerateGuidWithoutDashesUppercase();
                 var instructionUUID = GuidGenerator.GenerateGuidWithoutDashesUppercase();
-                await auditService.Insert(new Audit("Initiating", session, typeof(Payment)));
-                var paymentRequest = paymentRequestService.CreatePaymentRequest(borrowerNumber, patronPhoneNumber, amount, session);
-                await paymentRequestService.Insert(paymentRequest);
-                var paymentResponse = await swishHttpService.Put(instructionUUID, paymentRequest);
-                await auditService.Insert(new Audit("Payment request send", session, typeof(PaymentRequest)));
-                var paymentFromSwish = await swishHttpService.Get(paymentResponse.Location, string.Empty);
-                paymentResponse.PaymentReference = paymentFromSwish.PaymentReference;
-                paymentResponse.Status = paymentFromSwish.Status;
-                await auditService.Insert(new Audit($"Payment response with status {paymentResponse.Status}", session, typeof(PaymentResponse)));
-                await paymentResponseService.Insert(paymentResponse);
-                var payment = await CreatePayment(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount, session, paymentRequest, paymentResponse);
-                await auditService.Insert(new Audit("Payment saved", session, typeof(Payment)));
-                await Insert(payment);
 
-                return payment;
+                await auditService.Insert(new Audit("Initiating", session, typeof(Payment)));
+
+                var paymentRequest = await paymentRequestService.CreatePaymentRequest(borrowerNumber, patronPhoneNumber, amount, session);
+
+                var paymentResponse = await swishHttpService.Put(instructionUUID, paymentRequest);
+
+                await UpdatePaymentResponseAndInsert(paymentResponse, session);
+
+                return await CreatePayment(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount, session, paymentRequest.PaymentRequestDateTime.Value, paymentResponse.Location, paymentResponse.Status);
             }
             catch (Exception e)
             {
@@ -75,6 +70,23 @@ namespace OnlinePayment.Logic.Services
 
                 throw;
             }
+        }
+
+        private async Task<Payment> CreatePayment(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount, string session, DateTime initDateTime, string location, string status)
+        {
+            var payment = await CreatePaymentEntityWithQrCode(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount, session, initDateTime, location, status);
+            await auditService.Insert(new Audit("Payment saved", session, typeof(Payment)));
+            await Insert(payment);
+            return payment;
+        }
+
+        private async Task UpdatePaymentResponseAndInsert(PaymentResponse paymentResponse, string session)
+        {
+            var paymentFromSwish = await swishHttpService.Get(paymentResponse.Location, string.Empty);
+            paymentResponse.PaymentReference = paymentFromSwish.PaymentReference;
+            paymentResponse.Status = paymentFromSwish.Status;
+            await auditService.Insert(new Audit($"Payment response with status {paymentResponse.Status}", session, typeof(PaymentResponse)));
+            await paymentResponseService.Insert(paymentResponse);
         }
 
         public override async Task<IEnumerable<Payment>> GetAll()
@@ -115,9 +127,10 @@ namespace OnlinePayment.Logic.Services
             await auditService.Insert(new Audit($"Status has been changed from {oldStatus} to {status}", unpaidPayment.Session, typeof(Payment)));
         }
 
-        private async Task<Payment> CreatePayment(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount, string session, PaymentRequest paymentRequest, PaymentResponse paymentResponse)
+        private async Task<Payment> CreatePaymentEntityWithQrCode(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount, string session, 
+            DateTime initDateTime, string location, string status)
         {
-            var externalId = paymentResponse.Location.Split('/').Last();
+            var externalId = location.Split('/').Last();
             var qr = await swishQrCodeHttpService.Get(externalId);
             return new Payment
             {
@@ -128,8 +141,8 @@ namespace OnlinePayment.Logic.Services
                 PatronEmail = patronEmail,
                 PatronPhoneNumber = patronPhoneNumber,
                 Amount = amount,
-                InitiationDateTime = paymentRequest.PaymentRequestDateTime,
-                Status = paymentResponse.Status,
+                InitiationDateTime = initDateTime,
+                Status = status,
                 Description = string.Empty,
                 QrCode = qr
             };

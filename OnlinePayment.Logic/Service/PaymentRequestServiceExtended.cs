@@ -10,7 +10,7 @@ namespace OnlinePayment.Logic.Services
 {
     public interface IPaymentRequestServiceExtended : IPaymentRequestService
     {
-        PaymentRequest CreatePaymentRequest(int borrowerNumber, string patronPhoneNumber, int amount, string session);
+        Task<PaymentRequest> CreatePaymentRequest(int borrowerNumber, string patronPhoneNumber, int amount, string session);
     }
 
     public partial class PaymentRequestServiceExtended : PaymentRequestService, IPaymentRequestServiceExtended
@@ -44,7 +44,7 @@ namespace OnlinePayment.Logic.Services
         }
 
 
-        public PaymentRequest CreatePaymentRequest(int borrowerNumber, string patronPhoneNumber, int amount, string session)
+        public async Task<PaymentRequest> CreatePaymentRequest(int borrowerNumber, string patronPhoneNumber, int amount, string session)
         {
             var paymentRequest = new PaymentRequest
             {
@@ -58,6 +58,7 @@ namespace OnlinePayment.Logic.Services
                 Message = "Avgift",
                 PaymentRequestDateTime = DateTime.Now,
             };
+            await Insert(paymentRequest);
             return paymentRequest;
         }
 
