@@ -10,10 +10,10 @@ namespace OnlinePayment.Logic.Model
 {
     public partial class PaymentResponse : Entity
     {
-        public virtual string Session {get;set; }
-        public virtual string Location { get; set; }
-        public virtual string PaymentReference { get; set; }
-        public virtual string Status { get; set; }
+        public virtual string Session {get;set;}
+        public virtual string Location {get;set;}
+        public virtual string PaymentReference {get;set;}
+        public virtual string Status {get;set;}
         public virtual DateTime? PaymentResponseReceivedDateTime {get;set;}
       
     }

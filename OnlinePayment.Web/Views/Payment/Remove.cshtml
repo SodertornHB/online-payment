@@ -18,6 +18,12 @@
     <dl class="row">
 
         <dt class = "col-sm-2">
+            <label asp-for="ExternalId" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("ExternalId")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.ExternalId
+        </dd>
+        <dt class = "col-sm-2">
             <label asp-for="Session" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Session")</label>
         </dt>
         <dd class = "col-sm-10">
@@ -70,6 +76,12 @@
         </dt>
         <dd class = "col-sm-10">
             @Model.Description
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="QrCode" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("QrCode")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.QrCode
         </dd>
     </dl>
     <form method="post"  enctype="multipart/form-data" asp-controller="Payment" asp-action="Remove">    

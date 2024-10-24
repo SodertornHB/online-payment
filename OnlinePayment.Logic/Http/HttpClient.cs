@@ -66,6 +66,13 @@ namespace OnlinePayment.Logic.Http
             settings.BearerToken = token;
         }
 
+        protected virtual async Task<HttpResponseMessage> Send(HttpRequestMessage request)
+        {
+            var client = clientFactory.CreateClient();
+            client.SetBearerTokenIfExists(settings.BearerToken);
+            return await client.SendAsync(request);        
+        }
+
         #region private
 
         private async Task<HttpResponse> SendRequest(HttpMethod method, Uri url, string requestContent = "")
@@ -77,14 +84,6 @@ namespace OnlinePayment.Logic.Http
             string responseContent = await GetContent(response);
             logger.LogDebug($"Response code {response.StatusCode}. Content: {responseContent}");
             return new HttpResponse(response.StatusCode, response.IsSuccessStatusCode, responseContent, response.Headers);
-        }
-
-
-        protected virtual async Task<HttpResponseMessage> Send(HttpRequestMessage request)
-        {
-            var client = clientFactory.CreateClient();
-            client.SetBearerTokenIfExists(settings.BearerToken);
-            return await client.SendAsync(request);        
         }
 
         private static async Task<string> GetContent(HttpResponseMessage response)

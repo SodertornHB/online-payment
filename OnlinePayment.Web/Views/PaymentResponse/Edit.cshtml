@@ -30,14 +30,19 @@
                 <span asp-validation-for="Location" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="PaymentReference" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("PaymentReference")</label>
+                <input asp-for="PaymentReference" value="@Model.PaymentReference" />
+                <span asp-validation-for="PaymentReference" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Status" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Status")</label>
+                <input asp-for="Status" value="@Model.Status" />
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="PaymentResponseReceivedDateTime" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("PaymentResponseReceivedDateTime")</label>
                 <input asp-for="PaymentResponseReceivedDateTime" value="@Model.PaymentResponseReceivedDateTime" />
                 <span asp-validation-for="PaymentResponseReceivedDateTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CallbackReceivedDateTime" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("CallbackReceivedDateTime")</label>
-                <input asp-for="CallbackReceivedDateTime" value="@Model.CallbackReceivedDateTime" />
-                <span asp-validation-for="CallbackReceivedDateTime" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="Id" value="@Model.Id" />
             <div class="form-group">

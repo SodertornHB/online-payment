@@ -1,0 +1,56 @@
+@* --------------------------------------------------------------------*@
+@* Warning! This is an auto generated file. Changes may be overwritten *@
+@* --------------------------------------------------------------------*@
+@using Localization
+@using Microsoft.Extensions.Options
+@using OnlinePayment.Logic.Settings
+@inject LocService SharedLocalizer
+@inject IOptions<ApplicationSettings> applicationSettingsOptions
+@model OnlinePayment.Web.ViewModel.AuditViewModel
+
+@{
+    ViewData["Title"] = @$"{SharedLocalizer.GetLocalizedHtmlString("Edit")} {SharedLocalizer.GetLocalizedHtmlString("Audit")}";
+}
+
+<h1>@($"{SharedLocalizer.GetLocalizedHtmlString("Edit")} {@SharedLocalizer.GetLocalizedHtmlString("Audit")}")</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md">
+        <form method="post"  enctype="multipart/form-data" asp-controller="Audit" asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Session" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Session")</label>
+                <input asp-for="Session" value="@Model.Session" />
+                <span asp-validation-for="Session" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Message" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Message")</label>
+                <input asp-for="Message" value="@Model.Message" />
+                <span asp-validation-for="Message" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateTime" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("DateTime")</label>
+                <input asp-for="DateTime" value="@Model.DateTime" />
+                <span asp-validation-for="DateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Entity" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Entity")</label>
+                <input asp-for="Entity" value="@Model.Entity" />
+                <span asp-validation-for="Entity" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="Id" value="@Model.Id" />
+            <div class="form-group">
+                <input type="submit" value="@SharedLocalizer.GetLocalizedHtmlString("Edit")" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+        <a asp-controller="Audit" asp-action="Index">@SharedLocalizer.GetLocalizedHtmlString("Back to List")</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

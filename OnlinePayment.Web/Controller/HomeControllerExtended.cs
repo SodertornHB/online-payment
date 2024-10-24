@@ -26,7 +26,7 @@ namespace Web.Controllers
                 Amount = amount
             };
 
-            var payment = await paymentServiceExtended.Initiate(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount);
+            var payment = await paymentServiceExtended.InitiatePayment(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount);
             viewModel.QrCode = payment.QrCode;
             return View(viewModel);
         }
@@ -38,6 +38,18 @@ namespace Web.Controllers
             [FromServices] IMapper mapper)
         {
             var payments = await paymentServiceExtended.GetAll();
+            var viewModel = mapper.Map<IEnumerable<PaymentViewModel>>(payments);
+            return View(viewModel);
+        }
+
+#if DEBUG
+        [NoLibraryAuth]
+#endif
+        [HttpGet("session")]
+        public async Task<IActionResult> Session([FromServices] IPaymentServiceExtended paymentServiceExtended,
+            [FromServices] IMapper mapper, [FromQuery] string session)
+        {
+            var payments = await paymentServiceExtended.GetAll(); //.GetSession(session);
             var viewModel = mapper.Map<IEnumerable<PaymentViewModel>>(payments);
             return View(viewModel);
         }

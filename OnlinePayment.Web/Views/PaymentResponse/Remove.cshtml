@@ -30,16 +30,22 @@
             @Model.Location
         </dd>
         <dt class = "col-sm-2">
+            <label asp-for="PaymentReference" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("PaymentReference")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.PaymentReference
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="Status" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Status")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.Status
+        </dd>
+        <dt class = "col-sm-2">
             <label asp-for="PaymentResponseReceivedDateTime" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("PaymentResponseReceivedDateTime")</label>
         </dt>
         <dd class = "col-sm-10">
             @Model.PaymentResponseReceivedDateTime
-        </dd>
-        <dt class = "col-sm-2">
-            <label asp-for="CallbackReceivedDateTime" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("CallbackReceivedDateTime")</label>
-        </dt>
-        <dd class = "col-sm-10">
-            @Model.CallbackReceivedDateTime
         </dd>
     </dl>
     <form method="post"  enctype="multipart/form-data" asp-controller="PaymentResponse" asp-action="Remove">    

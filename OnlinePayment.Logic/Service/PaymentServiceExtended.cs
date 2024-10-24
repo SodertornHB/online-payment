@@ -9,6 +9,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using OnlinePayment.Logic.Settings;
+using System.Reflection;
 
 namespace OnlinePayment.Logic.Services
 {
@@ -23,6 +24,7 @@ namespace OnlinePayment.Logic.Services
         private readonly IPaymentResponseService paymentResponseService;
         private readonly ISwishHttpService swishHttpService;
         private readonly ISwishQrCodeHttpService swishQrCodeHttpService;
+        private readonly IAuditService auditService;
         private readonly SwishApiSettings swishApiSettings;
         private new readonly IPaymentDataAccessExtended dataAccess;
 
@@ -32,13 +34,15 @@ namespace OnlinePayment.Logic.Services
            IPaymentResponseService paymentResponseService,
            ISwishHttpService swishHttpService,
            ISwishQrCodeHttpService swishQrCodeHttpService,
-           IOptions<SwishApiSettings> options)
+           IOptions<SwishApiSettings> options, 
+           IAuditService auditService)
            : base(logger, dataAccess)
         {
             this.paymentRequestService = paymentRequestService;
             this.paymentResponseService = paymentResponseService;
             this.swishHttpService = swishHttpService;
             this.swishQrCodeHttpService = swishQrCodeHttpService;
+            this.auditService = auditService;
             this.swishApiSettings = options.Value;
             this.dataAccess = dataAccess;
         }
@@ -49,16 +53,18 @@ namespace OnlinePayment.Logic.Services
             {
                 var session = GuidGenerator.GenerateGuidWithoutDashesUppercase();
                 var instructionUUID = GuidGenerator.GenerateGuidWithoutDashesUppercase();
+                await auditService.Insert(new Audit("Initiating", session, typeof(Payment)));
                 var paymentRequest = paymentRequestService.CreatePaymentRequest(borrowerNumber, patronPhoneNumber, amount, session);
                 await paymentRequestService.Insert(paymentRequest);
-
                 var paymentResponse = await swishHttpService.Put(instructionUUID, paymentRequest);
+                await auditService.Insert(new Audit("Payment request send", session, typeof(PaymentRequest)));
                 var paymentFromSwish = await swishHttpService.Get(paymentResponse.Location, string.Empty);
                 paymentResponse.PaymentReference = paymentFromSwish.PaymentReference;
                 paymentResponse.Status = paymentFromSwish.Status;
+                await auditService.Insert(new Audit($"Payment response with status {paymentResponse.Status}", session, typeof(PaymentResponse)));
                 await paymentResponseService.Insert(paymentResponse);
                 var payment = await CreatePayment(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount, session, paymentRequest, paymentResponse);
-
+                await auditService.Insert(new Audit("Payment created", session, typeof(Payment)));
                 await Insert(payment);
 
                 return payment;

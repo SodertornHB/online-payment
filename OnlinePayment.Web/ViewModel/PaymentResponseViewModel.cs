@@ -13,10 +13,10 @@ namespace OnlinePayment.Web.ViewModel
     {
         public virtual string Session {get;set;}  = ""; 
         public virtual string Location {get;set;}  = ""; 
+        public virtual string PaymentReference {get;set;}  = ""; 
+        public virtual string Status {get;set;}  = ""; 
         [DataType(DataType.Text)]
         public virtual DateTime? PaymentResponseReceivedDateTime {get;set;} 
-        [DataType(DataType.Text)]
-        public virtual DateTime? CallbackReceivedDateTime {get;set;} 
         public virtual string GetBackToListLink(string applicationName) => $"/{applicationName}/{GetType().Name.Replace("ViewModel","")}";
     }
 } 

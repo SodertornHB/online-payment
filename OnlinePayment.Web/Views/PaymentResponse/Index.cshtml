@@ -25,10 +25,13 @@
                 @SharedLocalizer.GetLocalizedHtmlString("Location")
             </th>
             <th>
-                @SharedLocalizer.GetLocalizedHtmlString("PaymentResponseReceivedDateTime")
+                @SharedLocalizer.GetLocalizedHtmlString("PaymentReference")
             </th>
             <th>
-                @SharedLocalizer.GetLocalizedHtmlString("CallbackReceivedDateTime")
+                @SharedLocalizer.GetLocalizedHtmlString("Status")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("PaymentResponseReceivedDateTime")
             </th>
             <th></th>
         </tr>
@@ -42,11 +45,14 @@
             <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Location">
                 @item.Location
             </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.PaymentReference">
+                @item.PaymentReference
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Status">
+                @item.Status
+            </td>
             <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.PaymentResponseReceivedDateTime">
                 @item.PaymentResponseReceivedDateTime
-            </td>
-            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.CallbackReceivedDateTime">
-                @item.CallbackReceivedDateTime
             </td>
   
             <td>

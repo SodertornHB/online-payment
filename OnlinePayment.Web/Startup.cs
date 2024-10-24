@@ -51,6 +51,12 @@ namespace OnlinePayment.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            #region register Audit
+            services.AddTransient<IAuditService, AuditService>();
+            services.AddTransient<IAuditDataAccess, AuditDataAccess>();
+            services.AddSingleton<SqlStringBuilder<Audit>>();
+            #endregion
+
             #region register Log
             services.AddTransient<ILogService, LogService>();
             services.AddTransient<ILogDataAccess, LogDataAccess>();
@@ -204,6 +210,10 @@ namespace OnlinePayment.Web
     {
         public MappingConfiguration()
         {
+        
+                CreateMap<Audit, AuditViewModel>();
+
+                CreateMap<AuditViewModel, Audit>();
         
                 CreateMap<Log, LogViewModel>();
 

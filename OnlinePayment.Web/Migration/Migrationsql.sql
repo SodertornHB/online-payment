@@ -11,6 +11,13 @@ BEGIN
     DROP TABLE [dbo].[Log]
 END
 
+
+IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Audit')
+BEGIN
+    TRUNCATE TABLE [dbo].[Audit]
+    DROP TABLE [dbo].[Audit]
+END
+
 IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Payment')
 BEGIN
     TRUNCATE TABLE [dbo].[Payment]
@@ -152,6 +159,21 @@ BEGIN
     ) ON [PRIMARY]
 END
 
+IF NOT EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Audit')
+BEGIN
+CREATE TABLE [dbo].[Audit](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	Session NVARCHAR(255) NOT NULL,
+	[Message] [nvarchar](2000) NULL,
+	[DateTime] [datetime] NOT NULL,
+	[Entity] [nvarchar](50) NULL,
+ CONSTRAINT [PK_Audit] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)
+) ON [PRIMARY]
+
+END
 GO
 
 --  select * from PaymentOverview order by Timestamp desc 

@@ -1,0 +1,59 @@
+@* --------------------------------------------------------------------*@
+@* Warning! This is an auto generated file. Changes may be overwritten *@
+@* --------------------------------------------------------------------*@
+@using Localization
+@inject LocService SharedLocalizer
+@model IEnumerable<OnlinePayment.Web.ViewModel.AuditViewModel>
+
+@{
+    ViewData["Title"] = @$"{SharedLocalizer.GetLocalizedHtmlString("List")} {SharedLocalizer.GetLocalizedHtmlString("Audit")}";
+}
+
+<h1>@SharedLocalizer.GetLocalizedHtmlString("Audit")</h1>
+
+<a asp-controller="Audit" asp-action="Create">
+    <button type="button" class="btn btn-info btn-lg"><span class="bi bi-plus-circle"></span>@SharedLocalizer.GetLocalizedHtmlString("Create New")</button>
+</a>
+<hr />
+<table class="table data-table">
+    <thead>
+        <tr>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("Session")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("Message")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("DateTime")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("Entity")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Session">
+                @item.Session
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Message">
+                @item.Message
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.DateTime">
+                @item.DateTime
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Entity">
+                @item.Entity
+            </td>
+  
+            <td>
+                <a asp-controller="Audit" asp-action="Edit" asp-route-id="@item.Id">@SharedLocalizer.GetLocalizedHtmlString("Edit")</a> | 
+                <a asp-controller="Audit" asp-action="Remove" asp-route-id="@item.Id">@SharedLocalizer.GetLocalizedHtmlString("Delete")</a> 
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -4,8 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Globalization;
-using Microsoft.AspNetCore.DataProtection;
-using System.IO;
 using AutoMapper;
 using System;
 using Microsoft.AspNetCore.Localization;
@@ -15,6 +13,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Logic.Settings;
+using Sh.Library.Authentication;
+using Sh.Library.MailSender;
 using OnlinePayment.Logic.Http;
 using OnlinePayment.Logic.DataAccess;
 
@@ -43,6 +43,7 @@ namespace OnlinePayment.Web
         {
             services.AddTransient<IPaymentServiceExtended, PaymentServiceExtended>();
             services.AddTransient<IPaymentRequestServiceExtended, PaymentRequestServiceExtended>();
+            services.AddTransient<IPaymentResponseService, PaymentResponseServiceExtended>();
             services.AddTransient<ISwishHttpClient, SwishHttpClient>();
             services.AddTransient<ISwishHttpService, SwishHttpService>();
             services.AddTransient<ISwishQrCodeHttpService, SwishQrCodeHttpService>();
@@ -52,12 +53,26 @@ namespace OnlinePayment.Web
             services.Configure<SwishQrCodeApiSettings>(Configuration.GetSection("SwishQrCodeApi"));
             services.Configure<CertificationAuthenticationSettings>(Configuration.GetSection("CertificationAuthentication"));
 
-            //services.Configure<KohaApiSettings>(Configuration.GetSection("KohaApiSettings"));
 
+            //services.AddLibraryStatistics(statisticsHost: Configuration["Statistics:Host"], bearerToken: Configuration["Statistics:BearerToken"]);
+            services.AddLibraryAuthentication(authenticationHost: Configuration["Authentication:Host"]);
+            //string sharedKeysFolder = Configuration["Application:KeysFolder"];
+            //services.AddDataProtection()
+            //    .PersistKeysToFileSystem(new DirectoryInfo(sharedKeysFolder))
+            //    .SetApplicationName(Configuration["Application:Name"]);
+            services.AddLibraryMailSender(mailSenderHost: Configuration["MailSender:Host"], bearerToken: Configuration["MailSender:BearerToken"]);
+
+            services.Configure<RouteOptions>(options =>
+            {
+                options.LowercaseUrls = true;
+            });
         }
 
         protected override void CustomConfiguration(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseLibraryApiAuthentication();
+            app.UseLibraryAuthentication();
+            //app.UseLibraryStatistics();
         }
 
         public override IMapper GetMapper()

@@ -16,15 +16,18 @@ namespace OnlinePayment.Logic.Services
     public partial class PaymentRequestServiceExtended : PaymentRequestService, IPaymentRequestServiceExtended
     {
         private readonly SwishApiSettings swishApiSettings;
+        private readonly IAuditService auditService;
 
         public PaymentRequestServiceExtended(ILogger<PaymentRequestService> logger,
            IPaymentRequestDataAccess dataAccess,
-           IOptions<SwishApiSettings> options)
+           IOptions<SwishApiSettings> options,
+           IAuditService auditService)
            : base(logger, dataAccess)
         {
             swishApiSettings = options.Value;
+            this.auditService = auditService;
         }
-        public override Task<PaymentRequest> Insert(PaymentRequest model)
+        public override async Task<PaymentRequest> Insert(PaymentRequest model)
         {
             if (!model.IsValid())
             {
@@ -33,7 +36,11 @@ namespace OnlinePayment.Logic.Services
 
             model.ConvertAmountToInt();
 
-            return base.Insert(model);
+            var paymentRequest = await base.Insert(model);
+
+            await auditService.Insert(new Audit("Payment request stored", model.Session, typeof(PaymentRequest)));
+                        
+            return paymentRequest;
         }
 
 
