@@ -5,7 +5,6 @@
 @inject IOptions<ApplicationSettings> settings
 @model PayViewModel
 
-
 <h2>Payment Information</h2>
 <ul>
     <li><strong>Borrower Number:</strong> @Model.BorrowerNumber</li>
@@ -16,7 +15,9 @@
 </ul>
 
 <hr class="divider" />
-@if (!string.IsNullOrEmpty( Model.QrCodeBase64 ))
+@if (!string.IsNullOrEmpty( Model.QrCode ))
 {
-    <img src="@Model.QrCodeBase64" alt="QR code" class="qr-image" />
+    <div class="qr-image">
+        @Html.Raw(Model.QrCode)
+    </div>
 }

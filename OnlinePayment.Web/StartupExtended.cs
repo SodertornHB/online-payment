@@ -9,6 +9,7 @@ using System.IO;
 using AutoMapper;
 using System;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,11 +41,13 @@ namespace OnlinePayment.Web
         protected override void CustomServiceConfiguration(IServiceCollection services)
         {
             services.AddTransient<IPaymentServiceExtended, PaymentServiceExtended>();
-            services.AddTransient<IPaymentRequestService, PaymentRequestServiceExtended>();
+            services.AddTransient<IPaymentRequestServiceExtended, PaymentRequestServiceExtended>();
             services.AddTransient<ISwishHttpClient, SwishHttpClient>();
             services.AddTransient<ISwishHttpService, SwishHttpService>();
+            services.AddTransient<ISwishQrCodeHttpService, SwishQrCodeHttpService>();
             //services.Configure<KohaApiSettings>(Configuration.GetSection("KohaApiSettings"));
             services.Configure<SwishApiSettings>(Configuration.GetSection("SwishApi"));
+            services.Configure<SwishQrCodeApiSettings>(Configuration.GetSection("SwishQrCodeApi"));
             services.Configure<CertificationAuthenticationSettings>(Configuration.GetSection("CertificationAuthentication"));
 
             //services.Configure<KohaApiSettings>(Configuration.GetSection("KohaApiSettings"));

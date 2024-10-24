@@ -23,12 +23,12 @@ namespace OnlinePayment.Logic.Http
         {
             swishApiSettings = options.Value;
         }
-        public virtual async Task<PaymentResponse> Put(string id, PaymentRequest model)
+        public virtual async Task<PaymentResponse> Put(string instructionUUID, PaymentRequest model)
         {
             try
             {
                 var content = JsonConvert.SerializeObject(model, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-                var uri = CombineUrls($"{swishApiSettings.Endpoint}/api/v2/paymentrequests", id);
+                var uri = CombineUrls($"{swishApiSettings.Endpoint}/api/v2/paymentrequests", instructionUUID);
                 var response = await client.Put(uri, content);
                 response.CheckStatus();
                 logger.LogDebug($"Put data from {uri}: {response.Content}");

@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using OnlinePayment.Logic.Model;
 using Logic.Service;
 using System;
-using Microsoft.Extensions.Options;
-using OnlinePayment.Logic.Settings;
 using OnlinePayment.Logic.Http;
 using System.Linq;
 
@@ -18,23 +16,23 @@ namespace OnlinePayment.Logic.Services
 
     public partial class PaymentServiceExtended : PaymentService, IPaymentServiceExtended
     {
-        private readonly SwishApiSettings swishApiSettings;
-        private readonly IPaymentRequestService paymentRequestService;
+        private readonly IPaymentRequestServiceExtended paymentRequestService;
         private readonly IPaymentResponseService paymentResponseService;
         private readonly ISwishHttpService swishHttpService;
+        private readonly ISwishQrCodeHttpService swishQrCodeHttpService;
 
         public PaymentServiceExtended(ILogger<PaymentService> logger,
            IPaymentDataAccess dataAccess,
-           IPaymentRequestService paymentRequestService,
+           IPaymentRequestServiceExtended paymentRequestService,
            IPaymentResponseService paymentResponseService,
            ISwishHttpService swishHttpService,
-           IOptions<SwishApiSettings> options)
+           ISwishQrCodeHttpService swishQrCodeHttpService)
            : base(logger, dataAccess)
         {
-            swishApiSettings = options.Value;
             this.paymentRequestService = paymentRequestService;
             this.paymentResponseService = paymentResponseService;
             this.swishHttpService = swishHttpService;
+            this.swishQrCodeHttpService = swishQrCodeHttpService;
         }
 
         public async Task<Payment> Initiate(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount)
@@ -42,40 +40,16 @@ namespace OnlinePayment.Logic.Services
             try
             {
                 var session = GuidGenerator.GenerateGuidWithoutDashesUppercase();
-                var guid = GuidGenerator.GenerateGuidWithoutDashesUppercase();
-                var paymentRequest = new PaymentRequest
-                {
-                    Session = session,
-                    PayeePaymentReference = borrowerNumber.ToString(), //internal ref 
-                    CallbackUrl = swishApiSettings.CallbackUrl,
-                    PayerAlias = patronPhoneNumber,
-                    PayeeAlias = swishApiSettings.PayeeAlias,
-                    Amount = $"{amount}.00",
-                    Currency = swishApiSettings.Currency,
-                    Message = "Avgift",
-                    PaymentRequestDateTime = DateTime.Now,
-                };
+                var instructionUUID = GuidGenerator.GenerateGuidWithoutDashesUppercase();
+                var paymentRequest = paymentRequestService.CreatePaymentRequest(borrowerNumber, patronPhoneNumber, amount, session);
                 await paymentRequestService.Insert(paymentRequest);
 
-                var paymentResponse = await swishHttpService.Put(guid, paymentRequest);
+                var paymentResponse = await swishHttpService.Put(instructionUUID, paymentRequest);
                 var paymentFromSwish = await swishHttpService.Get(paymentResponse.Location, string.Empty);
                 paymentResponse.PaymentReference = paymentFromSwish.PaymentReference;
                 paymentResponse.Status = paymentFromSwish.Status;
                 await paymentResponseService.Insert(paymentResponse);
-
-                var payment = new Payment
-                {
-                    ExternalId = paymentResponse.Location.Split('/').Last(),
-                    Session = session,
-                    BorrowerNumber = borrowerNumber,
-                    PatronName = patronName,
-                    PatronEmail = patronEmail,
-                    PatronPhoneNumber = patronPhoneNumber,
-                    Amount = amount,
-                    InitiationDateTime = paymentRequest.PaymentRequestDateTime,
-                    Status = paymentResponse.Status,
-                    Description = string.Empty
-                };
+                var payment = await CreatePayment(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount, session, paymentRequest, paymentResponse);
 
                 await Insert(payment);
 
@@ -87,6 +61,26 @@ namespace OnlinePayment.Logic.Services
 
                 throw;
             }
+        }
+
+        private async Task<Payment> CreatePayment(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount, string session, PaymentRequest paymentRequest, PaymentResponse paymentResponse)
+        {
+            var externalId = paymentResponse.Location.Split('/').Last();
+            var qr = await swishQrCodeHttpService.Get(externalId);
+            return new Payment
+            {
+                ExternalId = externalId,
+                Session = session,
+                BorrowerNumber = borrowerNumber,
+                PatronName = patronName,
+                PatronEmail = patronEmail,
+                PatronPhoneNumber = patronPhoneNumber,
+                Amount = amount,
+                InitiationDateTime = paymentRequest.PaymentRequestDateTime,
+                Status = paymentResponse.Status,
+                Description = string.Empty,
+                QrCode = qr
+            };
         }
     }
 }

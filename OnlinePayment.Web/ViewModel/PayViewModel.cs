@@ -7,6 +7,6 @@ namespace OnlinePayment.Web.ViewModel
         public virtual string PatronEmail {get;set;}  = ""; 
         public virtual string PatronPhoneNumber {get;set;}  = ""; 
         public virtual int Amount {get;set;}
-        public string QrCodeBase64 { get; set; }
+        public string QrCode { get; set; }
     }
 } 

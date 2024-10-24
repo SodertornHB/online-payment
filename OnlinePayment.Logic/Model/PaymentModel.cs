@@ -19,7 +19,8 @@ namespace OnlinePayment.Logic.Model
         public virtual int Amount {get;set;}
         public virtual DateTime? InitiationDateTime {get;set;}
         public virtual string Status {get;set;}
-        public virtual string Description {get;set;}
-      
+        public virtual string Description {get;set; }
+        public virtual string QrCode { get; set; }
+
     }
 } 

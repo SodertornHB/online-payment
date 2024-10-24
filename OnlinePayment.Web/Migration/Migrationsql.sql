@@ -86,7 +86,8 @@ BEGIN
 		Amount int NOT NULL,
 		InitiationDateTime DATETIME2 NOT NULL,
 		Status NVARCHAR(50) NOT NULL,
-		Description NVARCHAR(500)
+		Description NVARCHAR(500),
+        QrCode TEXT,
 		CONSTRAINT [PK_Payment] PRIMARY KEY CLUSTERED 
 		(
 			[Id] DESC
