@@ -17,6 +17,8 @@ using Sh.Library.Authentication;
 using Sh.Library.MailSender;
 using OnlinePayment.Logic.Http;
 using OnlinePayment.Logic.DataAccess;
+using OnlinePayment.Logic.Model;
+using OnlinePayment.Web.ViewModel;
 
 namespace OnlinePayment.Web
 {
@@ -90,7 +92,7 @@ namespace OnlinePayment.Web
 
         public static MappingConfiguration AddAdditionalMappingConfig(MappingConfiguration profile)
         {
-            //profile.CreateMap<TFrom, TTo>();
+            profile.CreateMap<Payment, PayViewModel>();
 
             return profile;
         }

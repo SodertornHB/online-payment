@@ -15,6 +15,7 @@ namespace OnlinePayment.Logic.Services
 {
     public partial interface IPaymentServiceExtended : IPaymentService
     {
+        Task<Payment> GetBySessionId(string session);
         Task<Payment> InitiatePayment(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount);
     }
 
@@ -120,6 +121,11 @@ namespace OnlinePayment.Logic.Services
                 Description = string.Empty,
                 QrCode = qr
             };
+        }
+
+        public async Task<Payment> GetBySessionId(string session)
+        {
+            return await dataAccess.GetBySessionId(session);
         }
 
         #endregion

@@ -49,9 +49,9 @@ namespace Web.Controllers
         public async Task<IActionResult> Session([FromServices] IPaymentServiceExtended paymentServiceExtended,
             [FromServices] IMapper mapper, [FromQuery] string session)
         {
-            var payments = await paymentServiceExtended.GetAll(); //.GetSession(session);
-            var viewModel = mapper.Map<IEnumerable<PaymentViewModel>>(payments);
-            return View(viewModel);
+            var payments = await paymentServiceExtended.GetBySessionId(session);
+            var viewModel = mapper.Map<PayViewModel>(payments);
+            return View("Pay",viewModel);
         }
     }
 }
