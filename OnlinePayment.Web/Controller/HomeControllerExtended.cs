@@ -1,9 +1,11 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using OnlinePayment.Logic.Model;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Web.ViewModel;
 using Sh.Library.Authentication;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Web.Controllers
@@ -28,6 +30,8 @@ namespace Web.Controllers
 
             var payment = await paymentServiceExtended.InitiatePayment(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount);
             viewModel.QrCode = payment.QrCode;
+            viewModel.Status = payment.Status;
+            viewModel.Session = payment.Session;
             return View(viewModel);
         }
 #if DEBUG
@@ -45,13 +49,22 @@ namespace Web.Controllers
 #if DEBUG
         [NoLibraryAuth]
 #endif
-        [HttpGet("session")]
+        [HttpGet("session/{session}")]
+        [HttpGet("home/session/{session}")]
         public async Task<IActionResult> Session([FromServices] IPaymentServiceExtended paymentServiceExtended,
-            [FromServices] IMapper mapper, [FromQuery] string session)
+            [FromServices] IMapper mapper, [FromServices] IAuditService auditService, string session)
         {
-            var payments = await paymentServiceExtended.GetBySessionId(session);
-            var viewModel = mapper.Map<PayViewModel>(payments);
-            return View("Pay",viewModel);
+            var payment = await paymentServiceExtended.GetBySessionId(session);
+            var viewModel = mapper.Map<PayViewModel>(payment);
+            var audits = await GetAudistsBySession(auditService, session);
+            viewModel.Audits = mapper.Map<IEnumerable<AuditViewModel>>(audits);
+            return View("Pay", viewModel);
+        }
+
+        private static async Task<IEnumerable<Audit>> GetAudistsBySession(IAuditService auditService, string session)
+        {
+            var audits = await auditService.GetAll();
+            return audits.Where(x => x.BelongsToSameSession(session));
         }
     }
 }

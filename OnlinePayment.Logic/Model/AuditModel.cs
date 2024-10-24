@@ -25,5 +25,7 @@ namespace OnlinePayment.Logic.Model
         public virtual DateTime? DateTime { get; set; }
         public virtual string Entity { get; set; }
 
+        public bool BelongsToSameSession(string session) => string.Compare(Session, session, true) == 0;
+
     }
 }

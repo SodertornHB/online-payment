@@ -38,7 +38,7 @@ namespace OnlinePayment.Logic.Services
 
             var paymentRequest = await base.Insert(model);
 
-            await auditService.Insert(new Audit("Payment request stored", model.Session, typeof(PaymentRequest)));
+            await auditService.Insert(new Audit("Payment request saved", model.Session, typeof(PaymentRequest)));
                         
             return paymentRequest;
         }

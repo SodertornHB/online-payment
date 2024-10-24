@@ -9,7 +9,6 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using OnlinePayment.Logic.Settings;
-using System.Reflection;
 
 namespace OnlinePayment.Logic.Services
 {
@@ -65,7 +64,7 @@ namespace OnlinePayment.Logic.Services
                 await auditService.Insert(new Audit($"Payment response with status {paymentResponse.Status}", session, typeof(PaymentResponse)));
                 await paymentResponseService.Insert(paymentResponse);
                 var payment = await CreatePayment(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount, session, paymentRequest, paymentResponse);
-                await auditService.Insert(new Audit("Payment created", session, typeof(Payment)));
+                await auditService.Insert(new Audit("Payment saved", session, typeof(Payment)));
                 await Insert(payment);
 
                 return payment;
@@ -84,23 +83,36 @@ namespace OnlinePayment.Logic.Services
             return await base.GetAll();
         }
 
+        public async Task<Payment> GetBySessionId(string session)
+        {
+            var payment = await dataAccess.GetBySessionId(session);
+            await UpdateStatusIfChanged(payment);
+            return payment;
+        }
+
         #region private
+
+        private async Task UpdateStatusIfChanged(Payment payment)
+        {
+            var paymentFromSwish = await swishHttpService.Get($"{swishApiSettings.Endpoint}/api/v1/paymentrequests/", payment.ExternalId);
+            if (payment.Status != paymentFromSwish.Status) await UpdateStatus(payment, paymentFromSwish.Status);
+        }
 
         private async Task UpdateStatusOnAll()
         {
             var unpaidPayments = await dataAccess.GetUnpaid();
             foreach (var unpaidPayment in unpaidPayments)
             {
-                var paymentFromSwish = await swishHttpService.Get($"{swishApiSettings.Endpoint}/api/v1/paymentrequests/", unpaidPayment.ExternalId);
-                if (unpaidPayment.Status != paymentFromSwish.Status) await UpdateStatus(unpaidPayment, paymentFromSwish.Status);
+                await UpdateStatusIfChanged(unpaidPayment);
             }
-
         }
 
         private async Task UpdateStatus(Payment unpaidPayment, string status)
         {
+            var oldStatus = unpaidPayment.Status;
             unpaidPayment.Status = status;
             await Update(unpaidPayment);
+            await auditService.Insert(new Audit($"Status has been changed from {oldStatus} to {status}", unpaidPayment.Session, typeof(Payment)));
         }
 
         private async Task<Payment> CreatePayment(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount, string session, PaymentRequest paymentRequest, PaymentResponse paymentResponse)
@@ -121,11 +133,6 @@ namespace OnlinePayment.Logic.Services
                 Description = string.Empty,
                 QrCode = qr
             };
-        }
-
-        public async Task<Payment> GetBySessionId(string session)
-        {
-            return await dataAccess.GetBySessionId(session);
         }
 
         #endregion
