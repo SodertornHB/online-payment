@@ -1,0 +1,80 @@
+@* --------------------------------------------------------------------*@
+@* Warning! This is an auto generated file. Changes may be overwritten *@
+@* --------------------------------------------------------------------*@
+@using Localization
+@inject LocService SharedLocalizer
+@model IEnumerable<OnlinePayment.Web.ViewModel.PaymentViewModel>
+
+@{
+    ViewData["Title"] = @$"{SharedLocalizer.GetLocalizedHtmlString("List")} {SharedLocalizer.GetLocalizedHtmlString("Payment")}";
+}
+
+<h1>@SharedLocalizer.GetLocalizedHtmlString("Payment")</h1>
+
+<table class="table data-table">
+    <thead>
+        <tr>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("Session")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("BorrowerNumber")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("PatronName")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("PatronEmail")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("PatronPhoneNumber")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("Amount")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("InitiationDateTime")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("Status")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("Description")
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Session">
+                    @item.Session
+                </td>
+                <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.BorrowerNumber">
+                    @item.BorrowerNumber
+                </td>
+                <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.PatronName">
+                    @item.PatronName
+                </td>
+                <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.PatronEmail">
+                    @item.PatronEmail
+                </td>
+                <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.PatronPhoneNumber">
+                    @item.PatronPhoneNumber
+                </td>
+                <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Amount">
+                    @item.Amount
+                </td>
+                <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.InitiationDateTime">
+                    @item.InitiationDateTime
+                </td>
+                <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Status">
+                    @item.Status
+                </td>
+                <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Description">
+                    @item.Description
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
