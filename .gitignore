@@ -360,3 +360,5 @@ MigrationBackup/
 /Booking.Web/appsettings.Development.json
 /Canvas.Web/appsettings.Development.test.json
 /Canvas.Web/appsettings.Development.Production.json
+/OnlinePayment.Web/swish_certificate.p12
+/OnlinePayment.Web/appsettings.production.json
