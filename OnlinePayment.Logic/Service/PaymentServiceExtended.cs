@@ -6,12 +6,15 @@ using Logic.Service;
 using System;
 using OnlinePayment.Logic.Http;
 using System.Linq;
+using System.Collections.Generic;
+using Microsoft.Extensions.Options;
+using OnlinePayment.Logic.Settings;
 
 namespace OnlinePayment.Logic.Services
 {
     public partial interface IPaymentServiceExtended : IPaymentService
     {
-        Task<Payment> Initiate(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount);
+        Task<Payment> InitiatePayment(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount);
     }
 
     public partial class PaymentServiceExtended : PaymentService, IPaymentServiceExtended
@@ -20,22 +23,27 @@ namespace OnlinePayment.Logic.Services
         private readonly IPaymentResponseService paymentResponseService;
         private readonly ISwishHttpService swishHttpService;
         private readonly ISwishQrCodeHttpService swishQrCodeHttpService;
+        private readonly SwishApiSettings swishApiSettings;
+        private new readonly IPaymentDataAccessExtended dataAccess;
 
         public PaymentServiceExtended(ILogger<PaymentService> logger,
-           IPaymentDataAccess dataAccess,
+           IPaymentDataAccessExtended dataAccess,
            IPaymentRequestServiceExtended paymentRequestService,
            IPaymentResponseService paymentResponseService,
            ISwishHttpService swishHttpService,
-           ISwishQrCodeHttpService swishQrCodeHttpService)
+           ISwishQrCodeHttpService swishQrCodeHttpService,
+           IOptions<SwishApiSettings> options)
            : base(logger, dataAccess)
         {
             this.paymentRequestService = paymentRequestService;
             this.paymentResponseService = paymentResponseService;
             this.swishHttpService = swishHttpService;
             this.swishQrCodeHttpService = swishQrCodeHttpService;
+            this.swishApiSettings = options.Value;
+            this.dataAccess = dataAccess;
         }
 
-        public async Task<Payment> Initiate(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount)
+        public async Task<Payment> InitiatePayment(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount)
         {
             try
             {
@@ -63,6 +71,31 @@ namespace OnlinePayment.Logic.Services
             }
         }
 
+        public override async Task<IEnumerable<Payment>> GetAll()
+        {
+            await UpdateStatusOnAll();
+            return await base.GetAll();
+        }
+
+        #region private
+
+        private async Task UpdateStatusOnAll()
+        {
+            var unpaidPayments = await dataAccess.GetUnpaid();
+            foreach (var unpaidPayment in unpaidPayments)
+            {
+                var paymentFromSwish = await swishHttpService.Get($"{swishApiSettings.Endpoint}/api/v1/paymentrequests/", unpaidPayment.ExternalId);
+                if (unpaidPayment.Status != paymentFromSwish.Status) await UpdateStatus(unpaidPayment, paymentFromSwish.Status);
+            }
+
+        }
+
+        private async Task UpdateStatus(Payment unpaidPayment, string status)
+        {
+            unpaidPayment.Status = status;
+            await Update(unpaidPayment);
+        }
+
         private async Task<Payment> CreatePayment(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount, string session, PaymentRequest paymentRequest, PaymentResponse paymentResponse)
         {
             var externalId = paymentResponse.Location.Split('/').Last();
@@ -82,5 +115,7 @@ namespace OnlinePayment.Logic.Services
                 QrCode = qr
             };
         }
+
+        #endregion
     }
 }
