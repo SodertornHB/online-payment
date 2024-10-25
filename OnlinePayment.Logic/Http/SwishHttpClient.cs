@@ -20,7 +20,7 @@ namespace OnlinePayment.Logic.Http
         public SwishHttpClient(IHttpClientFactory clientFactory,
             ILogger<HttpClient> logger,
             IOptions<CertificationAuthenticationSettings> settings)
-            :base(clientFactory, logger, settings)
+            : base(clientFactory, logger, settings)
         {
             this.settings = settings.Value;
         }
@@ -29,29 +29,21 @@ namespace OnlinePayment.Logic.Http
         {
             HttpClientHandler handler = GetHttpClientHandlerWithCertificate();
 
-            try
+            using (var httpClient = new System.Net.Http.HttpClient(handler))
             {
-                using (var httpClient = new System.Net.Http.HttpClient(handler))
+                if (request.RequestUri != null)
                 {
-                    if (request.RequestUri != null)
-                    {
-                        httpClient.BaseAddress = new Uri(request.RequestUri.GetLeftPart(UriPartial.Authority));
-                    }
-
-                    var response = await httpClient.SendAsync(request);
-                    if (response.IsSuccessStatusCode) return response;
-                    else
-                    {
-                        string responseContent = await response.Content.ReadAsStringAsync();
-                        string message = $"Error sending request: StatusCode: {response.StatusCode}, Content: {responseContent}";
-                        throw new HttpRequestException(message,null, response.StatusCode);
-                    }
+                    httpClient.BaseAddress = new Uri(request.RequestUri.GetLeftPart(UriPartial.Authority));
                 }
-            }
-            catch (Exception e)
-            {
-                logger.LogError(e, $"Error sending request: {e.Message}");
-                throw;
+
+                var response = await httpClient.SendAsync(request);
+                if (response.IsSuccessStatusCode) return response;
+                else
+                {
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    string message = $"Error sending request: StatusCode: {response.StatusCode}, Content: {responseContent}";
+                    throw new HttpRequestException(message, null, response.StatusCode);
+                }
             }
         }
 
@@ -73,9 +65,9 @@ namespace OnlinePayment.Logic.Http
                 {
                     try
                     {
-                        if (cert.HasPrivateKey)handler.ClientCertificates.Add(cert);
+                        if (cert.HasPrivateKey) handler.ClientCertificates.Add(cert);
                         else store.Add(cert);
-                        
+
                     }
                     catch (Exception e)
                     {

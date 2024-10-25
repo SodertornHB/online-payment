@@ -67,7 +67,6 @@ namespace OnlinePayment.Logic.Services
             catch (Exception e)
             {
                 logger.LogError(e, "Error message: " + e.Message);
-
                 throw;
             }
         }

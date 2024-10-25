@@ -48,7 +48,7 @@ namespace OnlinePayment.Logic.Http
             }
             catch (Exception e)
             {
-                logger.LogError(e, e.Message);
+                await auditService.Insert(new Audit(e.Message, model.Session,typeof(PaymentRequest)));
                 throw;
             }
         }
