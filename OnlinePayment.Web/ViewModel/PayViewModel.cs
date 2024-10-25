@@ -8,7 +8,6 @@ namespace OnlinePayment.Web.ViewModel
         public virtual string PatronPhoneNumber {get;set;}  = "";
         public virtual int Amount { get; set; }
         public virtual string Status { get; set; } = "";
-        public string QrCode { get; set; } = "";
         public string Session { get; set; } = "";
     }
 } 

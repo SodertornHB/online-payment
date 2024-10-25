@@ -48,11 +48,9 @@ namespace OnlinePayment.Web
             services.AddTransient<IPaymentResponseService, PaymentResponseServiceExtended>();
             services.AddTransient<ISwishHttpClient, SwishHttpClient>();
             services.AddTransient<ISwishHttpService, SwishHttpService>();
-            services.AddTransient<ISwishQrCodeHttpService, SwishQrCodeHttpService>();
             services.AddTransient<IPaymentDataAccessExtended, PaymentDataAccessExtended>();
             //services.Configure<KohaApiSettings>(Configuration.GetSection("KohaApiSettings"));
             services.Configure<SwishApiSettings>(Configuration.GetSection("SwishApi"));
-            services.Configure<SwishQrCodeApiSettings>(Configuration.GetSection("SwishQrCodeApi"));
             services.Configure<CertificationAuthenticationSettings>(Configuration.GetSection("CertificationAuthentication"));
 
 

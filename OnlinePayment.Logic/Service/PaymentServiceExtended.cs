@@ -23,7 +23,6 @@ namespace OnlinePayment.Logic.Services
         private readonly IPaymentRequestServiceExtended paymentRequestService;
         private readonly IPaymentResponseService paymentResponseService;
         private readonly ISwishHttpService swishHttpService;
-        private readonly ISwishQrCodeHttpService swishQrCodeHttpService;
         private readonly IAuditService auditService;
         private readonly SwishApiSettings swishApiSettings;
         private new readonly IPaymentDataAccessExtended dataAccess;
@@ -33,7 +32,6 @@ namespace OnlinePayment.Logic.Services
            IPaymentRequestServiceExtended paymentRequestService,
            IPaymentResponseService paymentResponseService,
            ISwishHttpService swishHttpService,
-           ISwishQrCodeHttpService swishQrCodeHttpService,
            IOptions<SwishApiSettings> options, 
            IAuditService auditService)
            : base(logger, dataAccess)
@@ -41,7 +39,6 @@ namespace OnlinePayment.Logic.Services
             this.paymentRequestService = paymentRequestService;
             this.paymentResponseService = paymentResponseService;
             this.swishHttpService = swishHttpService;
-            this.swishQrCodeHttpService = swishQrCodeHttpService;
             this.auditService = auditService;
             this.swishApiSettings = options.Value;
             this.dataAccess = dataAccess;
@@ -130,7 +127,6 @@ namespace OnlinePayment.Logic.Services
             DateTime initDateTime, string location, string status)
         {
             var externalId = location.Split('/').Last();
-            var qr = await swishQrCodeHttpService.Get(externalId);
             return new Payment
             {
                 ExternalId = externalId,
@@ -142,8 +138,7 @@ namespace OnlinePayment.Logic.Services
                 Amount = amount,
                 InitiationDateTime = initDateTime,
                 Status = status,
-                Description = string.Empty,
-                QrCode = qr
+                Description = string.Empty
             };
         }
 

@@ -29,7 +29,6 @@ namespace Web.Controllers
             };
 
             var payment = await paymentServiceExtended.InitiatePayment(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount);
-            viewModel.QrCode = payment.QrCode;
             viewModel.Status = payment.Status;
             viewModel.Session = payment.Session;
             return View(viewModel);

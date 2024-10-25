@@ -17,13 +17,6 @@
 </ul>
 
 <hr class="divider" />
-@if (!string.IsNullOrEmpty(Model.QrCode))
-{
-    <div class="qr-image">
-        @Html.Raw(Model.QrCode)
-    </div>
-}
-<hr class="divider" />
 @if (Model.Audits.Any())
 {
     <h3>Audit</h3>

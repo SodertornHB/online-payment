@@ -22,7 +22,6 @@ namespace OnlinePayment.Web.ViewModel
         public virtual DateTime? InitiationDateTime {get;set;} 
         public virtual string Status {get;set;}  = ""; 
         public virtual string Description {get;set;}  = ""; 
-        public virtual string QrCode {get;set;}  = ""; 
         public virtual string GetBackToListLink(string applicationName) => $"/{applicationName}/{GetType().Name.Replace("ViewModel","")}";
     }
 } 
