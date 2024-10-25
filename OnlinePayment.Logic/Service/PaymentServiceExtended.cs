@@ -45,15 +45,15 @@ namespace OnlinePayment.Logic.Services
             this.kohaService = kohaService;
             this.swishApiSettings = options.Value;
             this.dataAccess = dataAccess;
-        }
-        //         
+        }   
 
         public async Task<Payment> InitiatePayment(int borrowerNumber)
         {
             var session = GuidGenerator.GenerateGuidWithoutDashesUppercase();
+            await auditService.Insert(new Audit("Initiating", session, typeof(Payment)));
             var patron = await kohaService.GetPatron(borrowerNumber, session);
-            int amount = 1; //fetch from koha
-            return await InitiatePayment(session, borrowerNumber, $"{patron.firstname} {patron.surname}", patron.email, patron.GetPhone(), amount);
+            var account = await kohaService.GetAccount(borrowerNumber, session);
+            return await InitiatePayment(session, borrowerNumber, $"{patron.firstname} {patron.surname}", patron.email, patron.GetPhone(), account.GetBalance());
         }
 
         public override async Task<IEnumerable<Payment>> GetAll()
@@ -76,8 +76,6 @@ namespace OnlinePayment.Logic.Services
             try
             {
                 var instructionUUID = GuidGenerator.GenerateGuidWithoutDashesUppercase();
-
-                await auditService.Insert(new Audit("Initiating", session, typeof(Payment)));
 
                 var paymentRequest = await paymentRequestService.CreatePaymentRequest(borrowerNumber, patronPhoneNumber, amount, session);
 

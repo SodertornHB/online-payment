@@ -51,7 +51,8 @@ namespace OnlinePayment.Web
             services.AddTransient<IPaymentDataAccessExtended, PaymentDataAccessExtended>();
             services.AddTransient<IKohaService, KohaService>();
             services.AddTransient<IKohaHttpClient, KohaHttpClient>();
-            services.AddTransient<IKohaHttpService, KohaHttpService>();
+            services.AddTransient<IPatronHttpService, PatronHttpService>();
+            services.AddTransient<IPatronAccountHttpService, PatronAccountHttpService>();
             services.Configure<KohaApiSettings>(Configuration.GetSection("KohaApi"));
             services.Configure<SwishApiSettings>(Configuration.GetSection("SwishApi"));
             services.Configure<CertificationAuthenticationSettings>(Configuration.GetSection("CertificationAuthentication"));

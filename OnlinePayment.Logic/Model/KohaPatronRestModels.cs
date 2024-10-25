@@ -1,4 +1,6 @@
+using OnlinePayment.Logic.Services;
 using System;
+using System.Security.Principal;
 using System.Text.RegularExpressions;
 
 namespace OnlinePayment.Logic.Model
@@ -32,6 +34,14 @@ namespace OnlinePayment.Logic.Model
     public class PatronAccount
     {
         public decimal balance { get; set; }
+
+        public int GetBalance()
+        {
+            var b = Utils.ConvertToInt(balance);
+            if (b == 0) throw new ArgumentException("Balance is zero");
+            if (b < 0) throw new ArgumentException("Balance is less than zero");
+            return b;
+        }
     }
     public class PatronCredit
     {
