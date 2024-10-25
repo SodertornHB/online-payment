@@ -15,7 +15,7 @@ namespace OnlinePayment.Logic.Services
     public partial interface IPaymentServiceExtended : IPaymentService
     {
         Task<Payment> GetBySessionId(string session);
-        Task<Payment> InitiatePayment(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount);
+        Task<Payment> InitiatePayment(int borrowerNumber);
     }
 
     public partial class PaymentServiceExtended : PaymentService, IPaymentServiceExtended
@@ -24,6 +24,7 @@ namespace OnlinePayment.Logic.Services
         private readonly IPaymentResponseService paymentResponseService;
         private readonly ISwishHttpService swishHttpService;
         private readonly IAuditService auditService;
+        private readonly IKohaService kohaService;
         private readonly SwishApiSettings swishApiSettings;
         private new readonly IPaymentDataAccessExtended dataAccess;
 
@@ -33,22 +34,47 @@ namespace OnlinePayment.Logic.Services
            IPaymentResponseService paymentResponseService,
            ISwishHttpService swishHttpService,
            IOptions<SwishApiSettings> options, 
-           IAuditService auditService)
+           IAuditService auditService,
+           IKohaService kohaService)
            : base(logger, dataAccess)
         {
             this.paymentRequestService = paymentRequestService;
             this.paymentResponseService = paymentResponseService;
             this.swishHttpService = swishHttpService;
             this.auditService = auditService;
+            this.kohaService = kohaService;
             this.swishApiSettings = options.Value;
             this.dataAccess = dataAccess;
         }
+        //         
 
-        public async Task<Payment> InitiatePayment(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount)
+        public async Task<Payment> InitiatePayment(int borrowerNumber)
+        {
+            var session = GuidGenerator.GenerateGuidWithoutDashesUppercase();
+            var patron = await kohaService.GetPatron(borrowerNumber, session);
+            int amount = 1; //fetch from koha
+            return await InitiatePayment(session, borrowerNumber, $"{patron.firstname} {patron.surname}", patron.email, patron.GetPhone(), amount);
+        }
+
+        public override async Task<IEnumerable<Payment>> GetAll()
+        {
+            await UpdateStatusOnAll();
+            return await base.GetAll();
+        }
+
+        public async Task<Payment> GetBySessionId(string session)
+        {
+            var payment = await dataAccess.GetBySessionId(session);
+            await UpdateStatusIfChanged(payment);
+            return payment;
+        }
+
+        #region private
+
+        private async Task<Payment> InitiatePayment(string session, int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount)
         {
             try
             {
-                var session = GuidGenerator.GenerateGuidWithoutDashesUppercase();
                 var instructionUUID = GuidGenerator.GenerateGuidWithoutDashesUppercase();
 
                 await auditService.Insert(new Audit("Initiating", session, typeof(Payment)));
@@ -84,21 +110,6 @@ namespace OnlinePayment.Logic.Services
             await auditService.Insert(new Audit($"Payment response with status {paymentResponse.Status}", session, typeof(PaymentResponse)));
             await paymentResponseService.Insert(paymentResponse);
         }
-
-        public override async Task<IEnumerable<Payment>> GetAll()
-        {
-            await UpdateStatusOnAll();
-            return await base.GetAll();
-        }
-
-        public async Task<Payment> GetBySessionId(string session)
-        {
-            var payment = await dataAccess.GetBySessionId(session);
-            await UpdateStatusIfChanged(payment);
-            return payment;
-        }
-
-        #region private
 
         private async Task UpdateStatusIfChanged(Payment payment)
         {
@@ -141,6 +152,7 @@ namespace OnlinePayment.Logic.Services
                 Description = string.Empty
             };
         }
+
 
         #endregion
     }

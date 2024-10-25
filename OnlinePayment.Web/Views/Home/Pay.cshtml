@@ -5,26 +5,5 @@
 @inject IOptions<ApplicationSettings> settings
 @model PayViewModel
 
-<h2>Payment Information</h2>
-<ul>
-    <li><strong>Borrower Number:</strong> @Model.BorrowerNumber</li>
-    <li><strong>Patron Name:</strong> @Model.PatronName</li>
-    <li><strong>Patron Email:</strong> @Model.PatronEmail</li>
-    <li><strong>Patron Phone Number:</strong> @Model.PatronPhoneNumber</li>
-    <li><strong>Amount:</strong> @Model.Amount</li>
-    <li><strong>Status:</strong> @Model.Status</li>
-    <li><strong>Session:</strong> @Model.Session</li>
-</ul>
+<h2>Wait</h2>
 
-<hr class="divider" />
-@if (Model.Audits.Any())
-{
-    <h3>Audit</h3>
-    <div class="">
-        @foreach (var audit in Model.Audits.OrderBy(x => x.Id))
-        {
-            @Html.Raw(audit.ToHtml())
-            <br />
-        }
-    </div>
-}

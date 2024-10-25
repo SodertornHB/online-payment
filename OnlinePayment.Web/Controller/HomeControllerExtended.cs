@@ -16,22 +16,10 @@ namespace Web.Controllers
         // test url: https://localhost:53271/pay?borrowerNumber=123&patronName=John%20Doe&patronEmail=johndoe%40example.com&patronPhoneNumber=1234567890&amount=50,75
         [NoLibraryAuth]
         [HttpGet("pay")]
-        public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended,
-            int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount)
+        public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, int borrowerNumber)
         {
-            var viewModel = new PayViewModel
-            {
-                BorrowerNumber = borrowerNumber,
-                PatronName = patronName ?? "",
-                PatronEmail = patronEmail ?? "",
-                PatronPhoneNumber = patronPhoneNumber ?? "",
-                Amount = amount
-            };
-
-            var payment = await paymentServiceExtended.InitiatePayment(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount);
-            viewModel.Status = payment.Status;
-            viewModel.Session = payment.Session;
-            return View(viewModel);
+            var payment = await paymentServiceExtended.InitiatePayment(borrowerNumber);
+            return View();
         }
 #if DEBUG
         [NoLibraryAuth]
@@ -54,10 +42,10 @@ namespace Web.Controllers
             [FromServices] IMapper mapper, [FromServices] IAuditService auditService, string session)
         {
             var payment = await paymentServiceExtended.GetBySessionId(session);
-            var viewModel = mapper.Map<PayViewModel>(payment);
+            var viewModel = mapper.Map<SessionViewModel>(payment);
             var audits = await GetAudistsBySession(auditService, session);
             viewModel.Audits = mapper.Map<IEnumerable<AuditViewModel>>(audits);
-            return View("Pay", viewModel);
+            return View(viewModel);
         }
 
         private static async Task<IEnumerable<Audit>> GetAudistsBySession(IAuditService auditService, string session)

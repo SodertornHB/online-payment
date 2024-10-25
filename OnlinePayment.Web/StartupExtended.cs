@@ -49,7 +49,10 @@ namespace OnlinePayment.Web
             services.AddTransient<ISwishHttpClient, SwishHttpClient>();
             services.AddTransient<ISwishHttpService, SwishHttpService>();
             services.AddTransient<IPaymentDataAccessExtended, PaymentDataAccessExtended>();
-            //services.Configure<KohaApiSettings>(Configuration.GetSection("KohaApiSettings"));
+            services.AddTransient<IKohaService, KohaService>();
+            services.AddTransient<IKohaHttpClient, KohaHttpClient>();
+            services.AddTransient<IKohaHttpService, KohaHttpService>();
+            services.Configure<KohaApiSettings>(Configuration.GetSection("KohaApi"));
             services.Configure<SwishApiSettings>(Configuration.GetSection("SwishApi"));
             services.Configure<CertificationAuthenticationSettings>(Configuration.GetSection("CertificationAuthentication"));
 
@@ -90,7 +93,7 @@ namespace OnlinePayment.Web
 
         public static MappingConfiguration AddAdditionalMappingConfig(MappingConfiguration profile)
         {
-            profile.CreateMap<Payment, PayViewModel>();
+            profile.CreateMap<Payment, SessionViewModel>();
 
             return profile;
         }
