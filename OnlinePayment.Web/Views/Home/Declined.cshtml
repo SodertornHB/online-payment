@@ -1,0 +1,14 @@
+@using Localization
+@inject LocService SharedLocalizer
+
+@{
+    ViewData["Title"] = @$"{SharedLocalizer.GetLocalizedHtmlString("DeclinedHeader")}";
+}
+
+<h1>@SharedLocalizer.GetLocalizedHtmlString("DeclinedHeader")</h1>
+<p>@SharedLocalizer.GetLocalizedHtmlString("DeclinedDescription")</p>
+<p>@SharedLocalizer.GetLocalizedHtmlString("MoreInfo")</p>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

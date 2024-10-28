@@ -117,4 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CancelledDescription" xml:space="preserve">
+    <value>Betalningen kunde inte genomföras eftersom den avbröts innan den var klar. </value>
+  </data>
+  <data name="CancelledHeader" xml:space="preserve">
+    <value>Betalningen avbröts</value>
+  </data>
+  <data name="DeclinedDescription" xml:space="preserve">
+    <value>Din betalning nekades av Swish.</value>
+  </data>
+  <data name="DeclinedHeader" xml:space="preserve">
+    <value>Betalning nekad</value>
+  </data>
+  <data name="ErrorDescription" xml:space="preserve">
+    <value>Ett fel inträffade när din betalning skulle behandlas.</value>
+  </data>
+  <data name="ErrorHeader" xml:space="preserve">
+    <value>Ett fel inträffade</value>
+  </data>
+  <data name="MoreInfo" xml:space="preserve">
+    <value>Om du har frågor rörande din betalning eller dina avgifter kan du besöka bibliotekets informationsdisk eller mejla till biblioteket@sh.se.</value>
+  </data>
+  <data name="PaidDescription" xml:space="preserve">
+    <value>Klicka &lt;a href='{0}'&gt;här&lt;/a&gt; för att komma tillbaka till Min lån. </value>
+  </data>
+  <data name="PaidHeader" xml:space="preserve">
+    <value>Betalningen är genomförd</value>
+  </data>
 </root>

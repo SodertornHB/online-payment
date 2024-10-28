@@ -13,7 +13,7 @@ namespace Web.Controllers
     public partial class HomeController
     {
 
-        // test url: https://localhost:53271/pay?borrowerNumber=123&patronName=John%20Doe&patronEmail=johndoe%40example.com&patronPhoneNumber=1234567890&amount=50,75
+        // test url: https://localhost:53271/pay?borrowerNumber=123
         [NoLibraryAuth]
         [HttpGet("pay")]
         public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, int borrowerNumber)
@@ -47,6 +47,25 @@ namespace Web.Controllers
             viewModel.Audits = mapper.Map<IEnumerable<AuditViewModel>>(audits);
             return View(viewModel);
         }
+
+
+        [HttpGet("paid")]
+        [NoLibraryAuth]
+        public IActionResult Paid() => View();
+
+        [HttpGet("error")]
+        [NoLibraryAuth]
+        public IActionResult Error() => View();
+
+        [HttpGet("declined")]
+        [NoLibraryAuth]
+        public IActionResult Declined() => View();
+        
+        [HttpGet("cancelled")]
+        [NoLibraryAuth]
+        public IActionResult Cancelled() => View();
+
+
 
         private static async Task<IEnumerable<Audit>> GetAudistsBySession(IAuditService auditService, string session)
         {
