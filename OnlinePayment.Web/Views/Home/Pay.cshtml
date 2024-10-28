@@ -5,5 +5,8 @@
 @inject IOptions<ApplicationSettings> settings
 @model PayViewModel
 
-<h2>Wait</h2>
+<h2>Payment</h2>
 
+<span id="paymentId">@Model.Status</span>
+<span id="session">@Model.Session</span>
+<input id="applicationName" type="hidden" value="@settings.Value.Name" />

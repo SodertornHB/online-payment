@@ -70,6 +70,16 @@ namespace OnlinePayment.Web
             {
                 options.LowercaseUrls = true;
             });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .WithMethods("GET")
+                               .AllowAnyHeader();
+                    });
+            });
         }
 
         protected override void CustomConfiguration(IApplicationBuilder app, IWebHostEnvironment env)

@@ -55,7 +55,7 @@ namespace OnlinePayment.Logic.Services
                 PayeeAlias = swishApiSettings.PayeeAlias,
                 Amount = $"{amount}.00",
                 Currency = swishApiSettings.Currency,
-                Message = "Avgift",
+                Message = swishApiSettings.Message,
                 PaymentRequestDateTime = DateTime.Now,
             };
             await Insert(paymentRequest);

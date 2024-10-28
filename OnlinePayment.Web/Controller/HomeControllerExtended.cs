@@ -19,7 +19,7 @@ namespace Web.Controllers
         public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, int borrowerNumber)
         {
             var payment = await paymentServiceExtended.InitiatePayment(borrowerNumber);
-            return View();
+            return View(new PayViewModel {Session = payment.Session, Status = payment.Status });
         }
 #if DEBUG
         [NoLibraryAuth]
