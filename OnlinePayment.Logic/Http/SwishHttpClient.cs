@@ -27,32 +27,23 @@ namespace OnlinePayment.Logic.Http
 
         protected override async Task<HttpResponseMessage> Send(HttpRequestMessage request)
         {
-            try
-            {
-                HttpClientHandler handler = GetHttpClientHandlerWithCertificate();
+            HttpClientHandler handler = GetHttpClientHandlerWithCertificate();
 
-                using (var httpClient = new System.Net.Http.HttpClient(handler))
+            using (var httpClient = new System.Net.Http.HttpClient(handler))
+            {
+                if (request.RequestUri != null)
                 {
-                    if (request.RequestUri != null)
-                    {
-                        httpClient.BaseAddress = new Uri(request.RequestUri.GetLeftPart(UriPartial.Authority));
-                    }
-
-                    var response = await httpClient.SendAsync(request);
-                    if (response.IsSuccessStatusCode) return response;
-                    else
-                    {
-                        string responseContent = await response.Content.ReadAsStringAsync();
-                        string message = $"Error sending request: StatusCode: {response.StatusCode}, Content: {responseContent}";
-                        logger.LogInformation(message);
-                        throw new HttpRequestException(message, null, response.StatusCode);
-                    }
+                    httpClient.BaseAddress = new Uri(request.RequestUri.GetLeftPart(UriPartial.Authority));
                 }
-            }
-            catch (Exception e)
-            {
-                logger.LogError(e, "Error sending request in swish http client");
-                throw;
+
+                var response = await httpClient.SendAsync(request);
+                if (response.IsSuccessStatusCode) return response;
+                else
+                {
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    string message = $"Error sending request: StatusCode: {response.StatusCode}, Content: {responseContent}";
+                    throw new HttpRequestException(message, null, response.StatusCode);
+                }
             }
         }
 
@@ -63,19 +54,25 @@ namespace OnlinePayment.Logic.Http
                 SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13
             };
 
-            var certs = new X509Certificate2Collection();
-            certs.Import(settings.Certification, settings.Passphrase, X509KeyStorageFlags.DefaultKeySet);
-
-            foreach (var cert in certs)
+            using (var store = new X509Store(StoreName.CertificateAuthority, StoreLocation.CurrentUser))
             {
-                try
-                {
-                    if (cert.HasPrivateKey) handler.ClientCertificates.Add(cert);
+                store.Open(OpenFlags.ReadWrite);
 
-                }
-                catch (Exception e)
+                var certs = new X509Certificate2Collection();
+                certs.Import(settings.Certification, settings.Passphrase, X509KeyStorageFlags.DefaultKeySet);
+
+                foreach (var cert in certs)
                 {
-                    logger.LogError(e, $"Error with certificate: {cert.Subject}. Error: {e.Message}");
+                    try
+                    {
+                        if (cert.HasPrivateKey) handler.ClientCertificates.Add(cert);
+                        else store.Add(cert);
+
+                    }
+                    catch (Exception e)
+                    {
+                        logger.LogError(e, $"Error with certificate: {cert.Subject}. Error: {e.Message}");
+                    }
                 }
             }
             return handler;
