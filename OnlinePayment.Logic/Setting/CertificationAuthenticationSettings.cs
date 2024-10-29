@@ -4,5 +4,6 @@ namespace OnlinePayment.Logic.Settings
     {
         public string Certification { get; set; }
         public string Passphrase { get; set; }
+        public string Thumbprint { get; set; }
     }
 }

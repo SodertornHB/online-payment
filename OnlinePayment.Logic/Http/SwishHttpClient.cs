@@ -54,26 +54,12 @@ namespace OnlinePayment.Logic.Http
                 SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13
             };
 
-            using (var store = new X509Store(StoreName.CertificateAuthority, StoreLocation.CurrentUser))
+            using (var store = new X509Store(StoreName.My, StoreLocation.LocalMachine))
             {
-                store.Open(OpenFlags.ReadWrite);
+                store.Open(OpenFlags.ReadOnly);
 
-                var certs = new X509Certificate2Collection();
-                certs.Import(settings.Certification, settings.Passphrase, X509KeyStorageFlags.DefaultKeySet);
-
-                foreach (var cert in certs)
-                {
-                    try
-                    {
-                        if (cert.HasPrivateKey) handler.ClientCertificates.Add(cert);
-                        else store.Add(cert);
-
-                    }
-                    catch (Exception e)
-                    {
-                        logger.LogError(e, $"Error with certificate: {cert.Subject}. Error: {e.Message}");
-                    }
-                }
+                var certs = store.Certificates.Find(X509FindType.FindByThumbprint, settings.Thumbprint, false);
+                handler.ClientCertificates.AddRange(certs);
             }
             return handler;
         }

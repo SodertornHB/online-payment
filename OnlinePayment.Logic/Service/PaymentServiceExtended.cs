@@ -79,7 +79,11 @@ namespace OnlinePayment.Logic.Services
 
                 var paymentRequest = await paymentRequestService.CreatePaymentRequest(borrowerNumber, patronPhoneNumber, amount, session);
 
+                logger.LogInformation("Preparing to create payment in Swish");
+
                 var paymentResponse = await swishHttpService.Put(instructionUUID, paymentRequest);
+                
+                logger.LogInformation("Payment created in Swish");
 
                 await UpdatePaymentResponseAndInsert(paymentResponse, session);
 
@@ -88,6 +92,7 @@ namespace OnlinePayment.Logic.Services
             catch (Exception e)
             {
                 logger.LogError(e, "Error message: " + e.Message);
+                if (e.InnerException != null) logger.LogError(e.InnerException, "InnerException: " + e.InnerException.Message);
                 throw;
             }
         }

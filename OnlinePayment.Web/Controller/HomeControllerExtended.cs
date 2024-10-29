@@ -1,5 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using OnlinePayment.Logic.Model;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Web.ViewModel;
@@ -19,8 +21,17 @@ namespace Web.Controllers
         public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, int borrowerNumber)
         {
             var payment = await paymentServiceExtended.InitiatePayment(borrowerNumber);
-            return View(new PayViewModel {Session = payment.Session, Status = payment.Status });
+            return View(new PayViewModel { Session = payment.Session, Status = payment.Status });
         }
+
+        [NoLibraryAuth]
+        [HttpPost("callback")]
+        public async Task<IActionResult> Callback([FromServices] IPaymentServiceExtended paymentServiceExtended, int borrowerNumber)
+        {
+            var payment = await paymentServiceExtended.InitiatePayment(borrowerNumber);
+            return View(new PayViewModel { Session = payment.Session, Status = payment.Status });
+        }
+
 #if DEBUG
         [NoLibraryAuth]
 #endif
@@ -31,6 +42,29 @@ namespace Web.Controllers
             var payments = await paymentServiceExtended.GetAll();
             var viewModel = mapper.Map<IEnumerable<PaymentViewModel>>(payments);
             return View(viewModel);
+        }
+
+
+
+#if DEBUG
+        [NoLibraryAuth]
+#endif
+        [HttpPost("callback")]
+        public async Task<IActionResult> Callback([FromServices] IPaymentServiceExtended paymentServiceExtended,
+            [FromServices] ILogger<HomeController> logger,
+            [FromBody] PaymentCallbackViewModel viewModel)
+        {
+            try
+            {
+                if (viewModel == null) logger.LogInformation($"Callback hit but viewmodel was null");
+                else logger.LogInformation($"Callback: {JsonConvert.SerializeObject(viewModel)}");
+                return Ok();
+            }
+            catch (System.Exception  e)
+            {
+                logger.LogError(e, e.Message);
+                return BadRequest(e.Message);
+            }
         }
 
 #if DEBUG
@@ -53,14 +87,10 @@ namespace Web.Controllers
         [NoLibraryAuth]
         public IActionResult Paid() => View();
 
-        [HttpGet("error")]
-        [NoLibraryAuth]
-        public IActionResult Error() => View();
-
         [HttpGet("declined")]
         [NoLibraryAuth]
         public IActionResult Declined() => View();
-        
+
         [HttpGet("cancelled")]
         [NoLibraryAuth]
         public IActionResult Cancelled() => View();
