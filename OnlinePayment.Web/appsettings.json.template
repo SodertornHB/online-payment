@@ -1,0 +1,38 @@
+{
+  "ConnectionStrings": {
+    "Default": "Data Source=SERVER_NAME;Initial Catalog=DATABASE_NAME;Trusted_Connection=True;TrustServerCertificate=True;"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Information",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "Application": {
+    "Name": "YOUR_APPLICATION_NAME",
+    "KeepLogsInDays": 30,
+    "KeysFolder": "PATH_TO_KEYS_FOLDER"
+  },
+  "IPBlockOptions": {
+    "BlockedIPs": []
+  },
+  "KohaApi": {
+    "Endpoint": "https://your-koha-api-endpoint/api/v1",
+    "UserName": "YOUR_KOHA_API_USERNAME",
+    "Password": "YOUR_KOHA_API_PASSWORD",
+    "LibraryId": "YOUR_LIBRARY_ID"
+  },
+  "SwishApi": {
+    "Endpoint": "https://your-swish-api-endpoint",
+    "PayeeAlias": "YOUR_PAYEE_ALIAS",
+    "CallbackUrl": "https://your-callback-url",
+    "Currency": "YOUR_CURRENCY",
+    "Message": "YOUR_MESSAGE"
+  },
+  "CertificationAuthentication": {
+    "Certification": "YOUR_CERTIFICATE_FILE_NAME",
+    "Passphrase": "YOUR_CERTIFICATE_PASSPHRASE",
+    "Thumbprint": "YOUR_CERTIFICATE_THUMBPRINT"
+  }
+}

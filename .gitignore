@@ -3,6 +3,7 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+**/appsettings.json
 **/appsettings.local.json
 **/appsettings.Development.json
 **/nlog.local.config
@@ -362,3 +363,4 @@ MigrationBackup/
 /Canvas.Web/appsettings.Development.Production.json
 /OnlinePayment.Web/swish_certificate.p12
 /OnlinePayment.Web/appsettings.production.json
+/OnlinePayment.Web/appsettings.json
