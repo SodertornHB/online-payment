@@ -9,5 +9,6 @@ namespace OnlinePayment.Web.ViewModel
         public virtual int Amount { get; set; }
         public virtual string Status { get; set; } = "";
         public string Session { get; set; } = "";
+        public string ExternalId { get; set; } = "";
     }
 } 

@@ -61,11 +61,8 @@ namespace Web.Controllers
                 }
                 logger.LogInformation($"Callback received model: {serializedModel}");
 
-
-                var strModel = requestModel.ToString();
-                var callbackModel = JsonConvert.DeserializeObject<CallbackRequestModel>(strModel);
-                await callbackService.Insert(mapper.Map<PaymentCallback>(callbackModel), callbackModel.Id);
-              
+                var callbackModel = JsonConvert.DeserializeObject<CallbackRequestModel>(requestModel.ToString());
+                await callbackService.Insert(mapper.Map<PaymentCallback>(callbackModel), callbackModel.Id);              
 
                 return Ok(serializedModel);
             }

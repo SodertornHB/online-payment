@@ -52,7 +52,7 @@ namespace OnlinePayment.Logic.Services
         public async Task UpdateSum(int biblionumber, int amount, string session)
         {
             var putModel = new PatronCredit { amount = amount, library_id = kohaApiSettings.LibraryId };
-            await patronCreditHttpService.Put($"{kohaApiSettings.Endpoint}/patrons", "/{biblionumber}/account/credits", putModel);
+            await patronCreditHttpService.Post($"{kohaApiSettings.Endpoint}/patrons/{biblionumber}/account/credits", putModel);
             await auditService.Insert(new Audit($"Subtracted account with {amount} SEK", session, typeof(Patron)));
         }
     }
