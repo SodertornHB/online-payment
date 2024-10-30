@@ -10,6 +10,10 @@
 Canvas.Web/wwwroot/external-js/app.canvas.bundle.js.LICENSE.txt
 Canvas.Web/wwwroot/external-js/index.html
 
+/OnlinePayment.Web/swish_certificate.p12
+/OnlinePayment.Web/appsettings.production.json
+/OnlinePayment.Web/appsettings.json
+
 # User-specific files
 *.rsuser
 *.suo
@@ -357,10 +361,3 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-/Booking.Web/appsettings.Development.json
-/Booking.Web/appsettings.Development.json
-/Canvas.Web/appsettings.Development.test.json
-/Canvas.Web/appsettings.Development.Production.json
-/OnlinePayment.Web/swish_certificate.p12
-/OnlinePayment.Web/appsettings.production.json
-/OnlinePayment.Web/appsettings.json

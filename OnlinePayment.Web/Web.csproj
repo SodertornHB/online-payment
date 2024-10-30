@@ -1,4 +1,4 @@
-<!-- Warning! This is an auto generated file. Changes may be overwritten -->
+﻿<!-- Warning! This is an auto generated file. Changes may be overwritten -->
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
@@ -7,7 +7,7 @@
     <Description>Auto generated project</Description>
   </PropertyGroup>
 
-  <ItemGroup>  
+  <ItemGroup>
     
     <PackageReference Include="DotNet.NLog.NetCore" Version="7.0.0" />
     <PackageReference Include="AutoMapper" Version="12.0.1" />
@@ -18,7 +18,7 @@
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.8" />
     <PackageReference Include="Sh.Library.Authentication" Version="1.2.8" />
     <PackageReference Include="Sh.Library.MailSender" Version="1.0.1" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.6.1.6" />
+    <PackageReference Include="System.Data." Version="4.8.6" />
 
     
   </ItemGroup>  

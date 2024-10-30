@@ -18,6 +18,6 @@
     <PackageReference Include="Sh.Library.Authentication" Version="1.2.8" />
     <PackageReference Include="Sh.Library.MailSender" Version="1.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Localization" Version="2.2.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.6.1.6" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
   </ItemGroup>
 </Project>
