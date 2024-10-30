@@ -148,7 +148,7 @@ BEGIN
     CallbackUrl NVARCHAR(255),
     CallbackIdentifier NVARCHAR(50),
     Status NVARCHAR(50),
-    Amount DECIMAL(18, 2) NOT NULL, 
+    Amount NVARCHAR(50) NULL, 
     Currency NVARCHAR(10) NOT NULL,
     PayerAlias NVARCHAR(50),
     PayeeAlias NVARCHAR(50),

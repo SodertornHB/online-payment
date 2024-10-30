@@ -53,6 +53,7 @@ namespace OnlinePayment.Web
             services.AddTransient<IKohaHttpClient, KohaHttpClient>();
             services.AddTransient<IPatronHttpService, PatronHttpService>();
             services.AddTransient<IPatronAccountHttpService, PatronAccountHttpService>();
+            services.AddTransient<IPaymentCallbackServiceExtended, PaymentCallbackServiceExtended>();
             services.Configure<KohaApiSettings>(Configuration.GetSection("KohaApi"));
             services.Configure<SwishApiSettings>(Configuration.GetSection("SwishApi"));
             services.Configure<CertificationAuthenticationSettings>(Configuration.GetSection("CertificationAuthentication"));
@@ -105,6 +106,8 @@ namespace OnlinePayment.Web
         public static MappingConfiguration AddAdditionalMappingConfig(MappingConfiguration profile)
         {
             profile.CreateMap<Payment, SessionViewModel>();
+            profile.CreateMap<CallbackRequestModel, PaymentCallback>()
+                .ForMember(x => x.Id, opt => opt.Ignore());
 
             return profile;
         }

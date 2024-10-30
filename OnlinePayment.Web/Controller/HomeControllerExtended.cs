@@ -16,6 +16,7 @@ namespace Web.Controllers
 {
     public partial class HomeController
     {
+        private const string CALLBACK_NULL_MSG = "Callback hit but model was null";
 
         // test url: https://localhost:53271/pay?borrowerNumber=123
         [NoLibraryAuth]
@@ -41,23 +42,31 @@ namespace Web.Controllers
 
         [NoLibraryAuth]
         [HttpPost("callback")]
-        public async Task<IActionResult> Callback([FromServices] IPaymentServiceExtended paymentServiceExtended,
+        public async Task<IActionResult> Callback([FromServices] IPaymentCallbackServiceExtended callbackService,
          [FromServices] ILogger<HomeController> logger,
-         [FromBody] PaymentCallback model)
+         [FromServices] IMapper mapper,
+         [FromBody] dynamic requestModel)
         {
             try
             {
                 string serializedModel = string.Empty;
-                if (model == null)
+
+                if (requestModel is JsonElement jsonElement)
                 {
-                    logger.LogInformation("Callback hit but model was null");
+                    serializedModel = jsonElement.ToString();
                 }
                 else
                 {
-                    serializedModel = JsonConvert.SerializeObject(model, Formatting.Indented);
-
-                    logger.LogInformation($"Callback received model: {serializedModel}");
+                    serializedModel = JsonConvert.SerializeObject(requestModel, Formatting.Indented);
                 }
+                logger.LogInformation($"Callback received model: {serializedModel}");
+
+
+                var strModel = requestModel.ToString();
+                var callbackModel = JsonConvert.DeserializeObject<CallbackRequestModel>(strModel);
+                await callbackService.Insert(mapper.Map<PaymentCallback>(callbackModel), callbackModel.Id);
+              
+
                 return Ok(serializedModel);
             }
             catch (Exception e)

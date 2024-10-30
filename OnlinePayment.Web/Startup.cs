@@ -227,9 +227,9 @@ namespace OnlinePayment.Web
 
                 CreateMap<PaymentViewModel, Payment>();
         
-                CreateMap<PaymentCallback, PaymentCallbackViewModel>();
+                CreateMap<PaymentCallback, CallbackRequestModel>();
 
-                CreateMap<PaymentCallbackViewModel, PaymentCallback>();
+                CreateMap<CallbackRequestModel, PaymentCallback>();
         
                 CreateMap<PaymentRequest, PaymentRequestViewModel>();
 

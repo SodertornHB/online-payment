@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 
 namespace OnlinePayment.Logic.DataAccess
 {
-    public interface IPaymentDataAccessExtended : IPaymentDataAccess 
+    public interface IPaymentDataAccessExtended : IPaymentDataAccess
     {
-        Task<IEnumerable<Payment>> GetUnpaid();
+        Task<Payment> GetByExternalId(string externalId);
         Task<Payment> GetBySessionId(string sessionId);
+        Task<IEnumerable<Payment>> GetUnpaid();
     }
 
     public class PaymentDataAccessExtended : PaymentDataAccess, IPaymentDataAccessExtended
@@ -21,6 +22,11 @@ namespace OnlinePayment.Logic.DataAccess
         {
             string sql = $"SELECT * FROM [{Table}] where status <> 'PAID'";
             return await ExecuteSelectMany(sql);
+        }
+        public virtual async Task<Payment> GetByExternalId(string externalId)
+        {
+            string sql = $"SELECT * FROM [{Table}] where ExternalId like '{externalId}'";
+            return await ExecuteSelectSingle(sql);
         }
         public virtual async Task<Payment> GetBySessionId(string sessionId)
         {

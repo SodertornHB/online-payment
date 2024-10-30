@@ -6,7 +6,6 @@ using Logic.Service;
 using System;
 using OnlinePayment.Logic.Http;
 using System.Linq;
-using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using OnlinePayment.Logic.Settings;
 
@@ -14,6 +13,7 @@ namespace OnlinePayment.Logic.Services
 {
     public partial interface IPaymentServiceExtended : IPaymentService
     {
+        Task<Payment> GetByExternalId(string externalId);
         Task<Payment> GetBySessionId(string session);
         Task<Payment> InitiatePayment(int borrowerNumber);
     }
@@ -56,10 +56,11 @@ namespace OnlinePayment.Logic.Services
             return await InitiatePayment(session, borrowerNumber, $"{patron.firstname} {patron.surname}", patron.email, patron.GetPhone(), account.GetBalance());
         }
 
-        public override async Task<IEnumerable<Payment>> GetAll()
+        public async Task<Payment> GetByExternalId(string externalId)
         {
-            await UpdateStatusOnAll();
-            return await base.GetAll();
+            var payment = await dataAccess.GetByExternalId(externalId);
+            await UpdateStatusIfChanged(payment);
+            return payment;
         }
 
         public async Task<Payment> GetBySessionId(string session)
@@ -118,15 +119,6 @@ namespace OnlinePayment.Logic.Services
         {
             var paymentFromSwish = await swishHttpService.Get($"{swishApiSettings.Endpoint}/api/v1/paymentrequests/", payment.ExternalId);
             if (payment.Status != paymentFromSwish.Status) await UpdateStatus(payment, paymentFromSwish.Status);
-        }
-
-        private async Task UpdateStatusOnAll()
-        {
-            var unpaidPayments = await dataAccess.GetUnpaid();
-            foreach (var unpaidPayment in unpaidPayments)
-            {
-                await UpdateStatusIfChanged(unpaidPayment);
-            }
         }
 
         private async Task UpdateStatus(Payment unpaidPayment, string status)
