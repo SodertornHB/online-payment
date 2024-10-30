@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\organizational-specific\Web.OrgSpecific.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\OnlinePayment.Logic\Logic.csproj" />
   </ItemGroup>
 
@@ -36,22 +32,30 @@
     <Content Update="nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="nlog.Development.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
     <None Update="Migration\Migrationsql.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="swish_certificate.p12">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Swish_Merchant_TestCertificate_1234679304.p12">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
+
+  <Target Name="CopyOrgSpecificFiles" AfterTargets="Build">
+    <ItemGroup>
+      <OrgSpecificFiles Include="..\organizational-specific\**\*.css" />
+      <OrgSpecificFiles Include="..\organizational-specific\**\*.js" />
+      <OrgSpecificFiles Include="..\organizational-specific\**\*.cs" />
+    </ItemGroup>
+
+     Debug output to verify the new paths 
+    <Message Text="Copying @(OrgSpecificFiles) to $(ProjectDir)%(OrgSpecificFiles.RecursiveDir)%(Filename)%(Extension)" Importance="high" />
+
+    <Copy SourceFiles="@(OrgSpecificFiles)"
+          DestinationFiles="@(OrgSpecificFiles->'$(ProjectDir)%(RecursiveDir)%(Filename)%(Extension)')"
+          OverwriteReadOnlyFiles="true" />
+  </Target>
+
+
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="echo  -------------------------------------------------------------------------------------------- &#xD;&#xA;echo  *** Start custom post build events *** &#xD;&#xA;echo  --------------------------------------------------------------------------------------------&#xD;&#xA;echo.&#xD;&#xA;echo  If you are making changes to files that are updated by the code generator application&#xD;&#xA;echo  it's a good idea to wite protect them here. E.g. attrib +r &quot;/{path}/Web.csproj&quot; &#xD;&#xA;echo.&#xD;&#xA;echo  -------------------------------------------------------------------------------------------- &#xD;&#xA;echo  *** End custom post build events *** &#xD;&#xA;echo  --------------------------------------------------------------------------------------------" />

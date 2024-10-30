@@ -270,12 +270,6 @@
     <data name="PaymentRequest" xml:space="preserve">
     <value>PaymentRequest</value>
   </data>
-    <data name="PayeePaymentReference" xml:space="preserve">
-    <value>PayeePaymentReference</value>
-  </data>
-    <data name="CallbackUrl" xml:space="preserve">
-    <value>CallbackUrl</value>
-  </data>
     <data name="PaymentRequestDateTime" xml:space="preserve">
     <value>PaymentRequestDateTime</value>
   </data>

@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using OnlinePayment.Logic.Model;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Web.ViewModel;
-using Sh.Library.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +17,6 @@ namespace Web.Controllers
     {
         private const string CALLBACK_NULL_MSG = "Callback hit but model was null";
 
-        // test url: https://localhost:53271/pay?borrowerNumber=123
-        [NoLibraryAuth]
         [HttpGet("pay")]
         public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, int borrowerNumber)
         {
@@ -27,9 +24,6 @@ namespace Web.Controllers
             return View(new PayViewModel { Session = payment.Session, Status = payment.Status });
         }
 
-#if DEBUG
-        [NoLibraryAuth]
-#endif
         [HttpGet("list")]
         public async Task<IActionResult> List([FromServices] IPaymentServiceExtended paymentServiceExtended,
             [FromServices] IMapper mapper)
@@ -40,7 +34,6 @@ namespace Web.Controllers
         }
 
 
-        [NoLibraryAuth]
         [HttpPost("callback")]
         public async Task<IActionResult> Callback([FromServices] IPaymentCallbackServiceExtended callbackService,
          [FromServices] ILogger<HomeController> logger,
@@ -73,10 +66,6 @@ namespace Web.Controllers
             }
         }
 
-
-#if DEBUG
-        [NoLibraryAuth]
-#endif
         [HttpGet("session/{session}")]
         [HttpGet("home/session/{session}")]
         public async Task<IActionResult> Session([FromServices] IPaymentServiceExtended paymentServiceExtended,
@@ -91,15 +80,12 @@ namespace Web.Controllers
 
 
         [HttpGet("paid")]
-        [NoLibraryAuth]
         public IActionResult Paid() => View();
 
         [HttpGet("declined")]
-        [NoLibraryAuth]
         public IActionResult Declined() => View();
 
         [HttpGet("cancelled")]
-        [NoLibraryAuth]
         public IActionResult Cancelled() => View();
 
 
