@@ -7,12 +7,13 @@
 **/appsettings.local.json
 **/appsettings.Development.json
 **/nlog.local.config
-Canvas.Web/wwwroot/external-js/app.canvas.bundle.js.LICENSE.txt
-Canvas.Web/wwwroot/external-js/index.html
-
 /OnlinePayment.Web/swish_certificate.p12
 /OnlinePayment.Web/appsettings.production.json
 /OnlinePayment.Web/appsettings.json
+/OnlinePayment.Web/wwwroot/css/custom-site.css
+/OnlinePayment.Web/wwwroot/js/custom-site.js
+
+/.gitmodules
 
 # User-specific files
 *.rsuser
