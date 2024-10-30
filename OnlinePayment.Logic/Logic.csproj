@@ -15,9 +15,12 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="7.0.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-    <PackageReference Include="Sh.Library.Authentication" Version="1.2.8" />
-    <PackageReference Include="Sh.Library.MailSender" Version="1.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Localization" Version="2.2.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\organizational-specific\Logic.OrgSpecific.csproj" />
+  </ItemGroup>
+  
 </Project>
