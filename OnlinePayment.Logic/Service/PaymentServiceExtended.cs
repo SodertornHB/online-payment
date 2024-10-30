@@ -99,7 +99,7 @@ namespace OnlinePayment.Logic.Services
 
         private async Task<Payment> CreatePayment(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount, string session, DateTime initDateTime, string location, string status)
         {
-            var payment = await CreatePaymentEntityWithQrCode(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount, session, initDateTime, location, status);
+            var payment = CreatePaymentEntityWithQrCode(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount, session, initDateTime, location, status);
             await auditService.Insert(new Audit("Payment saved", session, typeof(Payment)));
             await Insert(payment);
             return payment;
@@ -137,7 +137,7 @@ namespace OnlinePayment.Logic.Services
             await auditService.Insert(new Audit($"Status has been changed from {oldStatus} to {status}", unpaidPayment.Session, typeof(Payment)));
         }
 
-        private async Task<Payment> CreatePaymentEntityWithQrCode(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount, string session, 
+        private Payment CreatePaymentEntityWithQrCode(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount, string session, 
             DateTime initDateTime, string location, string status)
         {
             var externalId = location.Split('/').Last();

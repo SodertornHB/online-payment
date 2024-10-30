@@ -30,6 +30,24 @@
             @Model.PaymentReference
         </dd>
         <dt class = "col-sm-2">
+            <label asp-for="PayeePaymentReference" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("PayeePaymentReference")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.PayeePaymentReference
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="CallbackUrl" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("CallbackUrl")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.CallbackUrl
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="CallbackIdentifier" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("CallbackIdentifier")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.CallbackIdentifier
+        </dd>
+        <dt class = "col-sm-2">
             <label asp-for="Status" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Status")</label>
         </dt>
         <dd class = "col-sm-10">
@@ -58,6 +76,24 @@
         </dt>
         <dd class = "col-sm-10">
             @Model.PayeeAlias
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="Message" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("Message")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.Message
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="ErrorMessage" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("ErrorMessage")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.ErrorMessage
+        </dd>
+        <dt class = "col-sm-2">
+            <label asp-for="DateCreated" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("DateCreated")</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.DateCreated
         </dd>
         <dt class = "col-sm-2">
             <label asp-for="DatePaid" class="control-label">@SharedLocalizer.GetLocalizedHtmlString("DatePaid")</label>

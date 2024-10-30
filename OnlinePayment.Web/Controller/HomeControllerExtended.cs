@@ -6,8 +6,10 @@ using OnlinePayment.Logic.Model;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Web.ViewModel;
 using Sh.Library.Authentication;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Web.Controllers
@@ -19,14 +21,6 @@ namespace Web.Controllers
         [NoLibraryAuth]
         [HttpGet("pay")]
         public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, int borrowerNumber)
-        {
-            var payment = await paymentServiceExtended.InitiatePayment(borrowerNumber);
-            return View(new PayViewModel { Session = payment.Session, Status = payment.Status });
-        }
-
-        [NoLibraryAuth]
-        [HttpPost("callback")]
-        public async Task<IActionResult> Callback([FromServices] IPaymentServiceExtended paymentServiceExtended, int borrowerNumber)
         {
             var payment = await paymentServiceExtended.InitiatePayment(borrowerNumber);
             return View(new PayViewModel { Session = payment.Session, Status = payment.Status });
@@ -45,27 +39,34 @@ namespace Web.Controllers
         }
 
 
-
-#if DEBUG
         [NoLibraryAuth]
-#endif
         [HttpPost("callback")]
         public async Task<IActionResult> Callback([FromServices] IPaymentServiceExtended paymentServiceExtended,
-            [FromServices] ILogger<HomeController> logger,
-            [FromBody] PaymentCallbackViewModel viewModel)
+         [FromServices] ILogger<HomeController> logger,
+         [FromBody] PaymentCallback model)
         {
             try
             {
-                if (viewModel == null) logger.LogInformation($"Callback hit but viewmodel was null");
-                else logger.LogInformation($"Callback: {JsonConvert.SerializeObject(viewModel)}");
-                return Ok();
+                string serializedModel = string.Empty;
+                if (model == null)
+                {
+                    logger.LogInformation("Callback hit but model was null");
+                }
+                else
+                {
+                    serializedModel = JsonConvert.SerializeObject(model, Formatting.Indented);
+
+                    logger.LogInformation($"Callback received model: {serializedModel}");
+                }
+                return Ok(serializedModel);
             }
-            catch (System.Exception  e)
+            catch (Exception e)
             {
-                logger.LogError(e, e.Message);
+                logger.LogError(e, $"Error in Callback: {e.Message}");
                 return BadRequest(e.Message);
             }
         }
+
 
 #if DEBUG
         [NoLibraryAuth]

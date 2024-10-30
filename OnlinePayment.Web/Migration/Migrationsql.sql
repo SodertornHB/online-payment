@@ -140,22 +140,28 @@ END
 
 IF NOT EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'PaymentCallback')
 BEGIN
-    CREATE TABLE PaymentCallback (
-        Id INT IDENTITY(1,1) NOT NULL,
-        Session NVARCHAR(255) NOT NULL,
-        PaymentReference NVARCHAR(50),
-        Status NVARCHAR(50),
-        Amount int NOT NULL,
-        Currency NVARCHAR(10) NOT NULL,
-        PayerAlias NVARCHAR(50),
-        PayeeAlias NVARCHAR(50),
-        DatePaid DATETIME2 NOT NULL,
-        ErrorCode NVARCHAR(50),
-        CONSTRAINT [PK_PaymentCallback] PRIMARY KEY CLUSTERED 
-        (
-            [Id] DESC
-        )
-    ) ON [PRIMARY]
+   CREATE TABLE PaymentCallback (
+    Id INT IDENTITY(1,1) NOT NULL,
+    Session NVARCHAR(255) NOT NULL,
+    PaymentReference NVARCHAR(50),
+    PayeePaymentReference NVARCHAR(50),
+    CallbackUrl NVARCHAR(255),
+    CallbackIdentifier NVARCHAR(50),
+    Status NVARCHAR(50),
+    Amount DECIMAL(18, 2) NOT NULL, 
+    Currency NVARCHAR(10) NOT NULL,
+    PayerAlias NVARCHAR(50),
+    PayeeAlias NVARCHAR(50),
+    Message NVARCHAR(255),
+    ErrorMessage NVARCHAR(255),
+    DateCreated DATETIME2 NOT NULL,
+    DatePaid DATETIME2 NOT NULL,
+    ErrorCode NVARCHAR(50),
+    CONSTRAINT [PK_PaymentCallback] PRIMARY KEY CLUSTERED 
+    (
+        [Id] DESC
+    )
+) ON [PRIMARY];
 END
 
 IF NOT EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Audit')

@@ -25,6 +25,15 @@
                 @SharedLocalizer.GetLocalizedHtmlString("PaymentReference")
             </th>
             <th>
+                @SharedLocalizer.GetLocalizedHtmlString("PayeePaymentReference")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("CallbackUrl")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("CallbackIdentifier")
+            </th>
+            <th>
                 @SharedLocalizer.GetLocalizedHtmlString("Status")
             </th>
             <th>
@@ -38,6 +47,15 @@
             </th>
             <th>
                 @SharedLocalizer.GetLocalizedHtmlString("PayeeAlias")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("Message")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("ErrorMessage")
+            </th>
+            <th>
+                @SharedLocalizer.GetLocalizedHtmlString("DateCreated")
             </th>
             <th>
                 @SharedLocalizer.GetLocalizedHtmlString("DatePaid")
@@ -57,6 +75,15 @@
             <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.PaymentReference">
                 @item.PaymentReference
             </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.PayeePaymentReference">
+                @item.PayeePaymentReference
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.CallbackUrl">
+                @item.CallbackUrl
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.CallbackIdentifier">
+                @item.CallbackIdentifier
+            </td>
             <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Status">
                 @item.Status
             </td>
@@ -71,6 +98,15 @@
             </td>
             <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.PayeeAlias">
                 @item.PayeeAlias
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.Message">
+                @item.Message
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.ErrorMessage">
+                @item.ErrorMessage
+            </td>
+            <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.DateCreated">
+                @item.DateCreated
             </td>
             <td class="tooltip-r" data-toggle="tooltip" data-placement="left" title="@item.DatePaid">
                 @item.DatePaid

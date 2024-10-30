@@ -17,10 +17,5 @@ namespace OnlinePayment.Web.ViewModel
         public virtual DateTime? DateTime {get;set;} 
         public virtual string Entity {get;set;}  = ""; 
         public virtual string GetBackToListLink(string applicationName) => $"/{applicationName}/{GetType().Name.Replace("ViewModel","")}";
-
-        public string ToHtml()
-        {
-            return $"<span>{DateTime.Value.ToString()} : {Message}</span>";
-        }
     }
 } 
