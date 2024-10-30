@@ -15,8 +15,6 @@
     <PackageReference Include="NLog" Version="5.2.8" />
     <PackageReference Include="NLog.Database" Version="5.2.8" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.8" />
-    <PackageReference Include="Sh.Library.Authentication" Version="1.2.8" />
-    <PackageReference Include="Sh.Library.MailSender" Version="1.0.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
   </ItemGroup>
 
@@ -40,22 +38,18 @@
     </None>
   </ItemGroup>
 
-  <Target Name="CopyOrgSpecificFiles" AfterTargets="Build">
+  <Target Name="CopyOrgSpecificFiles" BeforeTargets="Build">
     <ItemGroup>
       <OrgSpecificFiles Include="..\organizational-specific\**\*.css" />
       <OrgSpecificFiles Include="..\organizational-specific\**\*.js" />
       <OrgSpecificFiles Include="..\organizational-specific\**\*.cs" />
+      <OrgSpecificFiles Include="..\organizational-specific\**\*.csproj" />
     </ItemGroup>
 
-     Debug output to verify the new paths 
     <Message Text="Copying @(OrgSpecificFiles) to $(ProjectDir)%(OrgSpecificFiles.RecursiveDir)%(Filename)%(Extension)" Importance="high" />
 
-    <Copy SourceFiles="@(OrgSpecificFiles)"
-          DestinationFiles="@(OrgSpecificFiles->'$(ProjectDir)%(RecursiveDir)%(Filename)%(Extension)')"
-          OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="@(OrgSpecificFiles)" DestinationFiles="@(OrgSpecificFiles->'$(ProjectDir)%(RecursiveDir)%(Filename)%(Extension)')" OverwriteReadOnlyFiles="true" />
   </Target>
-
-
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="echo  -------------------------------------------------------------------------------------------- &#xD;&#xA;echo  *** Start custom post build events *** &#xD;&#xA;echo  --------------------------------------------------------------------------------------------&#xD;&#xA;echo.&#xD;&#xA;echo  If you are making changes to files that are updated by the code generator application&#xD;&#xA;echo  it's a good idea to wite protect them here. E.g. attrib +r &quot;/{path}/Web.csproj&quot; &#xD;&#xA;echo.&#xD;&#xA;echo  -------------------------------------------------------------------------------------------- &#xD;&#xA;echo  *** End custom post build events *** &#xD;&#xA;echo  --------------------------------------------------------------------------------------------" />
