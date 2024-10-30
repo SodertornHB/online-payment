@@ -43,7 +43,8 @@
       <OrgSpecificFiles Include="..\organizational-specific\**\*.css" />
       <OrgSpecificFiles Include="..\organizational-specific\**\*.js" />
       <OrgSpecificFiles Include="..\organizational-specific\**\*.cs" />
-      <OrgSpecificFiles Include="..\organizational-specific\**\*.csproj" />
+      <OrgSpecificFiles Include="..\organizational-specific\*.json" />
+      <OrgSpecificFiles Include="..\organizational-specific\*.csproj" />
     </ItemGroup>
 
     <Message Text="Copying @(OrgSpecificFiles) to $(ProjectDir)%(OrgSpecificFiles.RecursiveDir)%(Filename)%(Extension)" Importance="high" />
