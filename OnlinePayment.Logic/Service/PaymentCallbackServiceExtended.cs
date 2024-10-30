@@ -15,15 +15,18 @@ namespace OnlinePayment.Logic.Services
     {
         private readonly IPaymentServiceExtended paymentService;
         private readonly IAuditService auditService;
+        private readonly IKohaService kohaService;
 
         public PaymentCallbackServiceExtended(ILogger<PaymentCallbackService> logger,
            IPaymentCallbackDataAccess dataAccess,
            IPaymentServiceExtended paymentService,
-           IAuditService auditService)
+           IAuditService auditService,
+           IKohaService kohaService)
            : base(logger, dataAccess)
         {
             this.paymentService = paymentService;
             this.auditService = auditService;
+            this.kohaService = kohaService;
         }
 
         public async Task<PaymentCallback> Insert(PaymentCallback model, string externalId)
@@ -33,6 +36,7 @@ namespace OnlinePayment.Logic.Services
             model.Session = payment.Session;
             var newModel = await base.Insert(model);
             await auditService.Insert(new Audit("Payment callback saved", model.Session, typeof(PaymentCallback)));
+            await kohaService.UpdateSum(payment.BorrowerNumber, Utils.ConvertToInt(model.Amount), payment.Session);
             return newModel;
         }
     }
