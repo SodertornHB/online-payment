@@ -64,18 +64,18 @@ namespace OnlinePayment.Web
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllOrigins",
-                    builder =>
-                    {
+               builder =>
+               {
                         builder.AllowAnyOrigin()
                                .WithMethods("GET")
                                .AllowAnyHeader();
-                    });
+               });
             });
         }
 
         protected override void CustomConfiguration(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
+            app.UseCors("AllowAllOrigins");
         }
 
         public override IMapper GetMapper()

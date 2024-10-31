@@ -1,9 +1,11 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using OnlinePayment.Logic.Model;
 using OnlinePayment.Logic.Services;
+using OnlinePayment.Logic.Settings;
 using OnlinePayment.Web.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -94,6 +96,42 @@ namespace Web.Controllers
             return View(viewModel);
         }
 
+        /// <remarks>
+        /// To get the javascript in Koha, add the following in OPACUserJS system preference:
+        /// var paymentScript = document.createElement("script");
+        /// paymentScript.type = "text/javascript";
+        /// paymentScript.src = "https://YOUR_HOST/js?borrowernumber=" + $('.loggedinusername').attr('data-borrowernumber');
+        /// $("head").append(paymentScript);
+        /// </remarks>
+        [HttpGet("js")]
+        public async Task<IActionResult> js([FromServices] IOptions<ApplicationSettings> applicationSettinsOptions,
+            [FromServices] IKohaService kohaService,
+            int borrowerNumber)
+        {
+            if (borrowerNumber == default) return Ok();
+
+            var account = await kohaService.GetAccount(borrowerNumber);
+            if (account.balance < 1) return Ok();
+
+            var applicationHost = applicationSettinsOptions.Value.Host;
+            var applicationName = applicationSettinsOptions.Value.Name;
+            var fullHost = $"{applicationHost}{applicationName}";
+
+            var initUrl = $"{fullHost}/init?borrowerNumber={borrowerNumber}";
+            var imgUrl = $"{fullHost}/img/swish_small.png";
+
+            string js = @$"
+                        $(document).ready(function() {{
+                            $('#useraccount').after(`
+                                <a href='{initUrl}'>
+                                    <img src='{imgUrl}' style='margin: 20px 0' alt='Pay with Swish' />
+                                </a>
+                            `);
+                        }});";
+
+            return Ok(js);
+
+        }
 
         [HttpGet("paid")]
         public IActionResult Paid() => View();

@@ -11,7 +11,7 @@ namespace OnlinePayment.Web.ApiController
         public virtual async Task<IActionResult> Get([FromServices] IPaymentServiceExtended paymentServiceExtended, 
            string sessionId)
         {
-
+            if (string.IsNullOrEmpty(sessionId)) return NotFound();
             var payment = await paymentServiceExtended.GetBySessionId(sessionId);
             if (payment == null) return NotFound();
             return Ok(payment);

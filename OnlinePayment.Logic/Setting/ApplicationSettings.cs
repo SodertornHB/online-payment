@@ -8,6 +8,7 @@ namespace OnlinePayment.Logic.Settings
 {
     public class ApplicationSettings
     {
+        public string Host { get; set; }
         public string Name { get; set; }
         public int KeepLogsInDays { get; set; }
     }
