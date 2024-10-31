@@ -144,8 +144,11 @@
   <data name="MoreInfo" xml:space="preserve">
     <value>Om du har frågor rörande din betalning eller dina avgifter kan du besöka bibliotekets informationsdisk eller mejla till biblioteket@sh.se.</value>
   </data>
+  <data name="Open the Swish app on your phone and confirm the payment." xml:space="preserve">
+    <value>Öppna Swish-appen på din telefon och bekräfta betalningen</value>
+  </data>
   <data name="PaidDescription" xml:space="preserve">
-    <value>Klicka &lt;a href='{0}'&gt;här&lt;/a&gt; för att komma tillbaka till Min lån. </value>
+    <value>Klicka &lt;a href='{0}'&gt;här&lt;/a&gt; för att komma tillbaka till Mina lån. </value>
   </data>
   <data name="PaidHeader" xml:space="preserve">
     <value>Betalningen är genomförd</value>
@@ -158,6 +161,9 @@
   </data>
   <data name="Toggle language" xml:space="preserve">
     <value>In english</value>
+  </data>
+  <data name="You will be redirected from this page once the payment has been processed." xml:space="preserve">
+    <value>Du kommer att omdirigeras från den här sidan när betalningen har behandlats.</value>
   </data>
   <data name="Your e-mail" xml:space="preserve">
     <value>Din e-post</value>

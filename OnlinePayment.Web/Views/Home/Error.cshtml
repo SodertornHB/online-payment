@@ -11,10 +11,6 @@
 <h1>@SharedLocalizer.GetLocalizedHtmlString("ErrorHeader")</h1>
 <p>@SharedLocalizer.GetLocalizedHtmlString("ErrorDescription")</p>
 
-<div>
-    <a asp-action="Index">@SharedLocalizer.GetLocalizedHtmlString("Back to List")</a>
-</div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

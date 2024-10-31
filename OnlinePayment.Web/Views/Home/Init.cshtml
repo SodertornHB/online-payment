@@ -27,8 +27,9 @@ else
             <label for="amount">@SharedLocalizer.GetLocalizedHtmlString("Fee")</label>
             <span id="amount" class="amount">@Model.GetAmountWithCurrency()</span>
         </div>
-        <input id="applicationName" type="hidden" value="@settings.Value.Name" />
-        <input id="borrowerNumber" type="hidden" value="@Model.BorrowerNumber" />
+        <input id="applicationName" name="ApplicationName" type="hidden" value="@settings.Value.Name" />
+        <input id="borrowerNumber" name="BorrowerNumber" type="hidden" value="@Model.BorrowerNumber" />
+
 
         <div class="form-group">
             <input type="submit" value="@SharedLocalizer.GetLocalizedHtmlString("Pay")" class="btn btn-primary" />

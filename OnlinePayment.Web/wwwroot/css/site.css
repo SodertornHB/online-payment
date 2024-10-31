@@ -76,6 +76,37 @@ label {
         background-color: #0056b3;
     }
 
+#loadingSpinner {
+    display: none;
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#loadingSpinner.success {
+    border-color: #28a745;
+    border-top-color: #28a745;
+}
+
+#loadingSpinner.error {
+    border-color: orangered;
+    border-top-color: orangered;
+}
+
+
 @media (max-width: 600px) {
     .container {
         padding: 15px;

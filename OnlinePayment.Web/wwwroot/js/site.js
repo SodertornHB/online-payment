@@ -19,7 +19,7 @@ function getPathName(url) {
 };
 
 $(document).ready(function () {
-    $('.tooltip-r').tooltip();   
+    $('.tooltip-r').tooltip();
 
     $('#iconLanguageId').on('click', function () {
         $('#changeLanguageFormId').submit();
@@ -35,9 +35,9 @@ $(document).ready(function () {
             "order": [],
             dom: 'Bfrtip',
             buttons: [
-                { extend: 'copy',  className: 'btn btn-secondary btn-sm table-button' },
+                { extend: 'copy', className: 'btn btn-secondary btn-sm table-button' },
                 { extend: 'excel', className: 'btn btn-secondary btn-sm table-button' },
-                { extend: 'csv',   className: 'btn btn-secondary btn-sm table-button' },
+                { extend: 'csv', className: 'btn btn-secondary btn-sm table-button' },
                 { extend: 'print', className: 'btn btn-secondary btn-sm table-button' }
             ],
             initComplete: function () {
@@ -49,34 +49,47 @@ $(document).ready(function () {
     let applicationName = $('#applicationName').val();
     let applicationUrlPart = getApplicationUrlPart(applicationName);
     let intervalId = setInterval(fetchPaymentStatus, 3000);
+    document.getElementById('loadingSpinner').style.display = 'block';
+
     function fetchPaymentStatus() {
-        let status = $('#paymentId').text();
+        let status = $('#status').val();
         if (status === 'PAID' ||
             status === 'ERROR' ||
             status === 'CANCELLED' ||
             status === 'DECLINED') {
+
             clearInterval(intervalId);
             window.location.href = `${window.location.origin}/${applicationUrlPart}${status.toLowerCase()}`;
-        }
-        else {
+
+        } else {
             let baseUrl = window.location.origin;
-            let session = $('#session').text()
+            let session = $('#session').val();
             let endpoint = `${baseUrl}/${applicationUrlPart}api/v1/payments/session/${session}`;
             $.ajax({
                 url: endpoint,
                 method: 'GET',
                 success: function (response) {
                     if (response && response.status) {
-                        $('#paymentId').text(response.status);
+                        if (response && response.status === 'PAID') {
+                            $('#status').val(response.status);
+                            changeSpinner('success');
+                        }
                     }
                 },
                 error: function (xhr, status, error) {
                     console.error('Error fetching payment:', error);
-                    $('#paymentId').text('Error fetching payment status');
+                    changeSpinner('error');
                 }
             });
         }
+
+        function changeSpinner(msg) {
+            let spinner = document.getElementById('loadingSpinner');
+            spinner.classList.remove('spinner');
+            spinner.classList.add(msg);
+        }
     }
+
     function getApplicationUrlPart(applicationName) {
         let applicationUrlPart = '';
         if (applicationName && applicationName.trim() !== '') {
@@ -84,5 +97,9 @@ $(document).ready(function () {
         }
         return applicationUrlPart;
     }
-    fetchPaymentStatus();
+
+    if (window.location.href.includes('pay')) {
+        fetchPaymentStatus();
+    }
+
 });

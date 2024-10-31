@@ -2,11 +2,18 @@
 @using OnlinePayment.Logic.Settings
 @using Microsoft.Extensions.Options
 @using OnlinePayment.Web.ViewModel
+@inject LocService SharedLocalizer
 @inject IOptions<ApplicationSettings> settings
 @model PayViewModel
 
-<h2>Payment</h2>
+<h2>@SharedLocalizer.GetLocalizedHtmlString("Payment")</h2>
 
-<span id="paymentId">@Model.Status</span>
-<span id="session">@Model.Session</span>
+<p>@SharedLocalizer.GetLocalizedHtmlString("Open the Swish app on your phone and confirm the payment.")</p>
+
+<p>@SharedLocalizer.GetLocalizedHtmlString("You will be redirected from this page once the payment has been processed.")</p>
+
+<div id="loadingSpinner"></div>
+
+<input id="status" type="hidden" value="@Model.Status" />
+<input id="session" type="hidden" value="@Model.Session" />
 <input id="applicationName" type="hidden" value="@settings.Value.Name" />

@@ -31,10 +31,12 @@ namespace Web.Controllers
                 return View(new InitPayViewModel { Feedback = $"Unable to initialize payment: {e.Message}" });
             }
         }
+
         [HttpPost("pay")]
-        public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, int borrowerNumber)
+        public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, InitPayViewModel viewModel)
         {
-            var payment = await paymentServiceExtended.InitiatePayment(borrowerNumber);
+            var payment = await paymentServiceExtended.InitiatePayment(viewModel.BorrowerNumber);
+
             return View(new PayViewModel { Session = payment.Session, Status = payment.Status });
         }
 
@@ -69,7 +71,7 @@ namespace Web.Controllers
                 logger.LogInformation($"Callback received model: {serializedModel}");
 
                 var callbackModel = JsonConvert.DeserializeObject<CallbackRequestModel>(requestModel.ToString());
-                await callbackService.Insert(mapper.Map<PaymentCallback>(callbackModel), callbackModel.Id);              
+                await callbackService.Insert(mapper.Map<PaymentCallback>(callbackModel), callbackModel.Id);
 
                 return Ok(serializedModel);
             }

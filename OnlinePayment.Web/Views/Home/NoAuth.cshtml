@@ -11,10 +11,6 @@
 <h1>@SharedLocalizer.GetLocalizedHtmlString("AccessDenied")</h1>
 <p>@SharedLocalizer.GetLocalizedHtmlString("AccessDeniedMessage")</p>
 
-<div>
-    <a asp-action="Index">@SharedLocalizer.GetLocalizedHtmlString("Back to List")</a>
-</div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
