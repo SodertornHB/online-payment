@@ -1,140 +1,100 @@
-﻿/* 
-Warning! This is an auto generated file. Changes may be overwritten 
-*/
+﻿/* Generic and mobile-friendly styles for Payment view */
 
-/*
-
-    COLORS:
-
-    Orange: #F18825
-    Light Orange: #FCCB8D
-    Red: #940C3B
-    Light Red: #C56480
-    Blue: #28487D
-    Light Blue: #7090B4
-    Purple: #5F2176
-    Light Purple: #9B7DB6
-    Green: #006A52
-    Light Green: #7F9F92
-
-*/
-
-body ul {
-    list-style-type: none;
-}
-
-h1 {
-    color: #2c2f34d9;
-    font-family: Bodoni,sans-serif;
-    font-size: 44px;
-    font-weight: 400;
-    letter-spacing: -.6px;
-    line-height: 1.02;
-}
-
-p {
-    font-family: roboto,sans-serif;
-    color: #2c2f34;
-    font-size: 21px;
-    line-height: 1.62;
-}
-
-a {
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
     color: #333;
 }
 
-input[type="checkbox"] {
-    width: 40px;
-    transform: scale(2);
+.container {
+    width: 90%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
-a.navbar-brand {
-    font-size: 55px;
-}
-
-.nav-item {
+h2 {
     font-size: 1.5em;
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+label {
     font-weight: bold;
-    border-left: 2px solid #aaa;
-    padding-left: 10px;
-    margin-left: 10px;
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    text-align: left;
 }
 
-button span.bi-plus-circle {
-    margin-right: 10px;
+.feedback {
+    display: block;
+    font-size: 1em;
+    color: #d9534f;
+    margin-bottom: 15px;
 }
 
-a.navbar-brand {
-    white-space: normal;
-    text-align: center;
-    word-break: break-all;
+.patron-details {
+    margin-bottom: 20px;
+    text-align: left;
 }
 
-/* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
+    .patron-details span {
+        display: block;
+        font-size: 1em;
+        margin-bottom: 15px;
+    }
+
+.swish-logo {
+    width:50px;
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-.icon-language {
-    font-size: 25px;
+.languagePanel {
     cursor: pointer;
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-  font-size: 14px;
-}
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.form-group {
 }
 
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+.btn-primary {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-  position: relative;
-  min-height: 100%;
-}
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
 
-.clear {
-    clear: both;
-    margin-bottom: 150px;
-}
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+    }
 
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+    h2 {
+        font-size: 1.3em;
+    }
+
+    .btn-primary {
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
+
+    .swish-logo {
+        margin: 0 10px;
+    }
+
+    .languagePanel {
+        margin: 0 10px;
+    }
 }

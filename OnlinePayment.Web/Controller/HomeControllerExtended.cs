@@ -17,7 +17,21 @@ namespace Web.Controllers
     {
         private const string CALLBACK_NULL_MSG = "Callback hit but model was null";
 
-        [HttpGet("pay")]
+        [HttpGet("init")]
+        public async Task<IActionResult> Init([FromServices] IKohaService kohaService, int borrowerNumber)
+        {
+            try
+            {
+                var patron = await kohaService.GetPatron(borrowerNumber);
+                var account = await kohaService.GetAccount(borrowerNumber);
+                return View(new InitPayViewModel { BorrowerNumber = borrowerNumber, PatronName = patron.GetFullname(), PatronPhoneNumber = patron.GetPhone(), PatronEmail = patron.email, Amount = account.GetBalance() });
+            }
+            catch (ArgumentException e)
+            {
+                return View(new InitPayViewModel { Feedback = $"Unable to initialize payment: {e.Message}" });
+            }
+        }
+        [HttpPost("pay")]
         public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, int borrowerNumber)
         {
             var payment = await paymentServiceExtended.InitiatePayment(borrowerNumber);

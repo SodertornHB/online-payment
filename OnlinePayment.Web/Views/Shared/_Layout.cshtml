@@ -30,22 +30,14 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index"><span class="bi bi-gem"></span></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">@SharedLocalizer.GetLocalizedHtmlString("ApplicationName")</a>
-                       </li>
-                    </ul>
-                </div>                
+                <img src="~/img/swish_small.png" alt="Swish logo" class="swish-logo" />
                 <div>
                     <form id="changeLanguageFormId" asp-controller="Home" asp-action="ToggleCulture" method="post">
-                        <input type="hidden" name="returnUrl" value="@currentUrl">
-                        <span id="iconLanguageId" class="bi bi-globe icon-language" title="@SharedLocalizer.GetLocalizedHtmlString("Toggle language")"  ></span>
+                        <span id="iconLanguageId" class="languagePanel">
+                            <input type="hidden" name="returnUrl" value="@currentUrl">
+                            <span class="bi bi-globe icon-language" title="@SharedLocalizer.GetLocalizedHtmlString("Toggle language")"></span>
+                            <span>@SharedLocalizer.GetLocalizedHtmlString("Toggle language")</span>
+                        </span>
                     </form>
                 </div>
             </div>

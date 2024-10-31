@@ -118,168 +118,171 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ApplicationName" xml:space="preserve">
-    <value>OnlinePayment</value>
+    <value>Pay with swish</value>
   </data>
   <data name="TableLang" xml:space="preserve">
     <value>//cdn.datatables.net/plug-ins/1.12.1/i18n/en-GB.json</value>
   </data>
-    <data name="Create" xml:space="preserve">
+  <data name="Create" xml:space="preserve">
     <value>Create</value>
   </data>
-    <data name="Create New" xml:space="preserve">
+  <data name="Create New" xml:space="preserve">
     <value>Create New</value>
   </data>
-    <data name="Edit" xml:space="preserve">
+  <data name="Edit" xml:space="preserve">
     <value>Edit</value>
   </data>
-    <data name="Delete" xml:space="preserve">
+  <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
-    <data name="Save" xml:space="preserve">
+  <data name="Save" xml:space="preserve">
     <value>Save</value>
   </data>
-    <data name="Home" xml:space="preserve">
+  <data name="Home" xml:space="preserve">
     <value>Home</value>
   </data>
-    <data name="List" xml:space="preserve">
+  <data name="List" xml:space="preserve">
     <value>List</value>
   </data>
-    <data name="Back to List" xml:space="preserve">
+  <data name="Back to List" xml:space="preserve">
     <value>Back to List</value>
   </data>
-    <data name="ErrorHeader" xml:space="preserve">
+  <data name="ErrorHeader" xml:space="preserve">
     <value>ErrorHeader</value>
   </data>
-    <data name="ErrorDescription" xml:space="preserve">
+  <data name="ErrorDescription" xml:space="preserve">
     <value>ErrorDescription</value>
   </data>
-    <data name="Are you sure you want to delete this?" xml:space="preserve">
+  <data name="Are you sure you want to delete this?" xml:space="preserve">
     <value>Are you sure you want to delete this?</value>
   </data>
-    <data name="Audit" xml:space="preserve">
+  <data name="Audit" xml:space="preserve">
     <value>Audit</value>
   </data>
-    <data name="Id" xml:space="preserve">
+  <data name="Id" xml:space="preserve">
     <value>Id</value>
   </data>
-    <data name="Session" xml:space="preserve">
+  <data name="Session" xml:space="preserve">
     <value>Session</value>
   </data>
-    <data name="Message" xml:space="preserve">
+  <data name="Message" xml:space="preserve">
     <value>Message</value>
   </data>
-    <data name="DateTime" xml:space="preserve">
+  <data name="DateTime" xml:space="preserve">
     <value>DateTime</value>
   </data>
-    <data name="Entity" xml:space="preserve">
+  <data name="Entity" xml:space="preserve">
     <value>Entity</value>
   </data>
-    <data name="Log" xml:space="preserve">
+  <data name="Log" xml:space="preserve">
     <value>Log</value>
   </data>
-    <data name="Origin" xml:space="preserve">
+  <data name="Origin" xml:space="preserve">
     <value>Origin</value>
   </data>
-    <data name="LogLevel" xml:space="preserve">
+  <data name="LogLevel" xml:space="preserve">
     <value>LogLevel</value>
   </data>
-    <data name="CreatedOn" xml:space="preserve">
+  <data name="CreatedOn" xml:space="preserve">
     <value>CreatedOn</value>
   </data>
-    <data name="Exception" xml:space="preserve">
+  <data name="Exception" xml:space="preserve">
     <value>Exception</value>
   </data>
-    <data name="Trace" xml:space="preserve">
+  <data name="Trace" xml:space="preserve">
     <value>Trace</value>
   </data>
-    <data name="Migration" xml:space="preserve">
+  <data name="Migration" xml:space="preserve">
     <value>Migration</value>
   </data>
-    <data name="ClientVersion" xml:space="preserve">
+  <data name="ClientVersion" xml:space="preserve">
     <value>ClientVersion</value>
   </data>
-    <data name="DatabaseVersion" xml:space="preserve">
+  <data name="DatabaseVersion" xml:space="preserve">
     <value>DatabaseVersion</value>
   </data>
-    <data name="Payment" xml:space="preserve">
+  <data name="Payment" xml:space="preserve">
     <value>Payment</value>
   </data>
-    <data name="ExternalId" xml:space="preserve">
+  <data name="ExternalId" xml:space="preserve">
     <value>ExternalId</value>
   </data>
-    <data name="BorrowerNumber" xml:space="preserve">
+  <data name="BorrowerNumber" xml:space="preserve">
     <value>BorrowerNumber</value>
   </data>
-    <data name="PatronName" xml:space="preserve">
+  <data name="PatronName" xml:space="preserve">
     <value>PatronName</value>
   </data>
-    <data name="PatronEmail" xml:space="preserve">
+  <data name="PatronEmail" xml:space="preserve">
     <value>PatronEmail</value>
   </data>
-    <data name="PatronPhoneNumber" xml:space="preserve">
+  <data name="PatronPhoneNumber" xml:space="preserve">
     <value>PatronPhoneNumber</value>
   </data>
-    <data name="Amount" xml:space="preserve">
+  <data name="Amount" xml:space="preserve">
     <value>Amount</value>
   </data>
-    <data name="InitiationDateTime" xml:space="preserve">
+  <data name="InitiationDateTime" xml:space="preserve">
     <value>InitiationDateTime</value>
   </data>
-    <data name="Status" xml:space="preserve">
+  <data name="Status" xml:space="preserve">
     <value>Status</value>
   </data>
-    <data name="Description" xml:space="preserve">
+  <data name="Description" xml:space="preserve">
     <value>Description</value>
   </data>
-    <data name="PaymentCallback" xml:space="preserve">
+  <data name="PaymentCallback" xml:space="preserve">
     <value>PaymentCallback</value>
   </data>
-    <data name="PaymentReference" xml:space="preserve">
+  <data name="PaymentReference" xml:space="preserve">
     <value>PaymentReference</value>
   </data>
-    <data name="PayeePaymentReference" xml:space="preserve">
+  <data name="PayeePaymentReference" xml:space="preserve">
     <value>PayeePaymentReference</value>
   </data>
-    <data name="CallbackUrl" xml:space="preserve">
+  <data name="CallbackUrl" xml:space="preserve">
     <value>CallbackUrl</value>
   </data>
-    <data name="CallbackIdentifier" xml:space="preserve">
+  <data name="CallbackIdentifier" xml:space="preserve">
     <value>CallbackIdentifier</value>
   </data>
-    <data name="Currency" xml:space="preserve">
+  <data name="Currency" xml:space="preserve">
     <value>Currency</value>
   </data>
-    <data name="PayerAlias" xml:space="preserve">
+  <data name="PayerAlias" xml:space="preserve">
     <value>PayerAlias</value>
   </data>
-    <data name="PayeeAlias" xml:space="preserve">
+  <data name="PayeeAlias" xml:space="preserve">
     <value>PayeeAlias</value>
   </data>
-    <data name="ErrorMessage" xml:space="preserve">
+  <data name="ErrorMessage" xml:space="preserve">
     <value>ErrorMessage</value>
   </data>
-    <data name="DateCreated" xml:space="preserve">
+  <data name="DateCreated" xml:space="preserve">
     <value>DateCreated</value>
   </data>
-    <data name="DatePaid" xml:space="preserve">
+  <data name="DatePaid" xml:space="preserve">
     <value>DatePaid</value>
   </data>
-    <data name="ErrorCode" xml:space="preserve">
+  <data name="ErrorCode" xml:space="preserve">
     <value>ErrorCode</value>
   </data>
-    <data name="PaymentRequest" xml:space="preserve">
+  <data name="PaymentRequest" xml:space="preserve">
     <value>PaymentRequest</value>
   </data>
-    <data name="PaymentRequestDateTime" xml:space="preserve">
+  <data name="PaymentRequestDateTime" xml:space="preserve">
     <value>PaymentRequestDateTime</value>
   </data>
-    <data name="PaymentResponse" xml:space="preserve">
+  <data name="PaymentResponse" xml:space="preserve">
     <value>PaymentResponse</value>
   </data>
-    <data name="Location" xml:space="preserve">
+  <data name="Location" xml:space="preserve">
     <value>Location</value>
   </data>
-    <data name="PaymentResponseReceivedDateTime" xml:space="preserve">
+  <data name="PaymentResponseReceivedDateTime" xml:space="preserve">
     <value>PaymentResponseReceivedDateTime</value>
   </data>
-  </root>
+  <data name="Toggle language" xml:space="preserve">
+    <value>På svenska</value>
+  </data>
+</root>

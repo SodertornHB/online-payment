@@ -30,6 +30,7 @@ namespace OnlinePayment.Logic.Model
 
             return formattedPhone;
         }
+        public string GetFullname() => $"{firstname} {surname}";
     }
     public class PatronAccount
     {

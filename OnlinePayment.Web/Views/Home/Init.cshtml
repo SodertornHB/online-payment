@@ -1,0 +1,37 @@
+@using Localization
+@using OnlinePayment.Logic.Settings
+@using Microsoft.Extensions.Options
+@using OnlinePayment.Web.ViewModel
+@inject LocService SharedLocalizer
+@inject IOptions<ApplicationSettings> settings
+@model InitPayViewModel
+
+<h2>@SharedLocalizer.GetLocalizedHtmlString("Payment")</h2>
+@if (Model.HasFeedback())
+{
+    <span class="feedback">@Model.Feedback</span>
+}
+else
+{
+    <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Pay">
+        <div class="patron-details">
+            <label for="patronName">@SharedLocalizer.GetLocalizedHtmlString("Your name")</label>
+            <span id="patronName" class="patron-name">@Model.PatronName</span>
+
+            <label for="patronPhoneNumber">@SharedLocalizer.GetLocalizedHtmlString("Your phone number")</label>
+            <span id="patronPhoneNumber" class="patron-phone">@Model.GetPatronPhoneNumber()</span>
+
+            <label for="patronEmail">@SharedLocalizer.GetLocalizedHtmlString("Your e-mail")</label>
+            <span id="patronEmail" class="patron-email">@Model.PatronEmail</span>
+
+            <label for="amount">@SharedLocalizer.GetLocalizedHtmlString("Fee")</label>
+            <span id="amount" class="amount">@Model.GetAmountWithCurrency()</span>
+        </div>
+        <input id="applicationName" type="hidden" value="@settings.Value.Name" />
+        <input id="borrowerNumber" type="hidden" value="@Model.BorrowerNumber" />
+
+        <div class="form-group">
+            <input type="submit" value="@SharedLocalizer.GetLocalizedHtmlString("Pay")" class="btn btn-primary" />
+        </div>
+    </form>
+}

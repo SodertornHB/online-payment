@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ApplicationName" xml:space="preserve">
+    <value>Betala med Swish</value>
+  </data>
   <data name="CancelledDescription" xml:space="preserve">
     <value>Betalningen kunde inte genomföras eftersom den avbröts innan den var klar. </value>
   </data>
@@ -135,6 +138,9 @@
   <data name="ErrorHeader" xml:space="preserve">
     <value>Ett fel inträffade</value>
   </data>
+  <data name="Fee" xml:space="preserve">
+    <value>Avgift att betala</value>
+  </data>
   <data name="MoreInfo" xml:space="preserve">
     <value>Om du har frågor rörande din betalning eller dina avgifter kan du besöka bibliotekets informationsdisk eller mejla till biblioteket@sh.se.</value>
   </data>
@@ -143,5 +149,23 @@
   </data>
   <data name="PaidHeader" xml:space="preserve">
     <value>Betalningen är genomförd</value>
+  </data>
+  <data name="Pay" xml:space="preserve">
+    <value>Betala!</value>
+  </data>
+  <data name="Payment" xml:space="preserve">
+    <value>Betalning</value>
+  </data>
+  <data name="Toggle language" xml:space="preserve">
+    <value>In english</value>
+  </data>
+  <data name="Your e-mail" xml:space="preserve">
+    <value>Din e-post</value>
+  </data>
+  <data name="Your name" xml:space="preserve">
+    <value>Ditt namn</value>
+  </data>
+  <data name="Your phone number" xml:space="preserve">
+    <value>Ditt telefonnummer</value>
   </data>
 </root>

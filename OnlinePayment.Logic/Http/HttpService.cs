@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace OnlinePayment.Logic.Http
@@ -43,12 +44,18 @@ namespace OnlinePayment.Logic.Http
                 logger.LogDebug($"Get data from {uri}: {response.Content}");
                 return JsonConvert.DeserializeObject<T>(response.Content);
             }
+            catch (HttpRequestException e)
+            {
+                LogHttpException(e);
+                throw;
+            }
             catch (Exception e)
             {
                 logger.LogError(e, e.Message);
                 throw;
             }
         }
+
 
         public virtual async Task<IEnumerable<T>> Get(string url)
         {
@@ -58,6 +65,11 @@ namespace OnlinePayment.Logic.Http
                 response.CheckStatus();
                 logger.LogDebug($"Get data from {url}: {response.Content}");
                 return JsonConvert.DeserializeObject<IEnumerable<T>>(response.Content);
+            }
+            catch (HttpRequestException e)
+            {
+                LogHttpException(e);
+                throw;
             }
             catch (Exception e)
             {
@@ -76,6 +88,11 @@ namespace OnlinePayment.Logic.Http
                 logger.LogDebug($"Post data to {url}: {response.Content}");
                 return JsonConvert.DeserializeObject<T>(response.Content);
             }
+            catch (HttpRequestException e)
+            {
+                LogHttpException(e);
+                throw;
+            }
             catch (Exception e)
             {
                 logger.LogError(e, e.Message);
@@ -93,6 +110,11 @@ namespace OnlinePayment.Logic.Http
                 response.CheckStatus();
                 logger.LogDebug($"Put data from {uri}: {response.Content}");
             }
+            catch (HttpRequestException e)
+            {
+                LogHttpException(e);
+                throw;
+            }
             catch (Exception e)
             {
                 logger.LogError(e, e.Message);
@@ -109,6 +131,11 @@ namespace OnlinePayment.Logic.Http
                 response.CheckStatus();
                 logger.LogDebug($"Delete data from {uri}");
             }
+            catch (HttpRequestException e)
+            {
+                LogHttpException(e);
+                throw;
+            }
             catch (Exception e)
             {
                 logger.LogError(e, e.Message);
@@ -121,12 +148,17 @@ namespace OnlinePayment.Logic.Http
             client.SetBearerToken(token);
         }
 
-        #region
+        #region protected
 
         protected static Uri CombineUrls(string url, string id)
         {
             if (!url.EndsWith("/")) url += "/";
             return new Uri(url + id);
+        }
+
+        protected void LogHttpException(HttpRequestException e)
+        {
+            logger.LogError(e, $"{e.Message} Status code: {e.StatusCode}");
         }
 
         #endregion
