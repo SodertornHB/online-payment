@@ -1,56 +1,13 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using OnlinePayment.Logic.Model;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Logic.Settings;
-using OnlinePayment.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Web.Controllers
 {
     public partial class HomeController
     {
-        private const string CALLBACK_NULL_MSG = "Callback hit but model was null";
-
-        [HttpGet("init")]
-        public async Task<IActionResult> Init([FromServices] IKohaService kohaService, int borrowerNumber)
-        {
-            try
-            {
-                var patron = await kohaService.GetPatron(borrowerNumber);
-                var account = await kohaService.GetAccount(borrowerNumber);
-                return View(new InitPayViewModel { BorrowerNumber = borrowerNumber, PatronName = patron.GetFullname(), PatronPhoneNumber = patron.GetPhone(), PatronEmail = patron.email, Amount = account.GetBalance() });
-            }
-            catch (ArgumentException e)
-            {
-                return View(new InitPayViewModel { Feedback = $"Unable to initialize payment: {e.Message}" });
-            }
-        }
-
-        [HttpPost("pay")]
-        public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, InitPayViewModel viewModel)
-        {
-            var payment = await paymentServiceExtended.InitiatePayment(viewModel.BorrowerNumber);
-
-            return View(new PayViewModel { Session = payment.Session, Status = payment.Status });
-        }
-
-        [HttpGet("list")]
-        public async Task<IActionResult> List([FromServices] IPaymentServiceExtended paymentServiceExtended,
-            [FromServices] IMapper mapper)
-        {
-            var payments = await paymentServiceExtended.GetAll();
-            var viewModel = mapper.Map<IEnumerable<PaymentViewModel>>(payments);
-            return View(viewModel);
-        }
-
         /// <remarks>
         /// To fetch this javascript into Koha, add the following in `OPACUserJS` system preference:
         /// var paymentScript = document.createElement("script");
@@ -91,7 +48,6 @@ namespace Web.Controllers
                         }});";
 
             return Ok(js);
-
         }
 
         [HttpGet("paid")]

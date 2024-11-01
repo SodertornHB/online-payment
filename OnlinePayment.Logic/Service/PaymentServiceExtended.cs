@@ -66,10 +66,8 @@ namespace OnlinePayment.Logic.Services
 
         public async Task<Payment> GetBySessionId(string session)
         {
-            if (!Regex.IsMatch(session, @"^[a-fA-F0-9]{32}$"))
-            {
-                throw new ArgumentException("Invalid session ID format. It should be a GUID without dashes.");
-            }
+            if (!Regex.IsMatch(session, @"^[a-fA-F0-9]{32}$"))throw new ArgumentException("Invalid session ID format. It should be a GUID without dashes.");
+            
             var payment = await dataAccess.GetBySessionId(session);
             await UpdateStatusIfChanged(payment);
             return payment;

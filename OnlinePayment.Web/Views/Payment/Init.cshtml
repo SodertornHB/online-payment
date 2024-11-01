@@ -13,7 +13,7 @@
 }
 else
 {
-    <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Pay">
+    <form method="post" enctype="multipart/form-data" asp-controller="Payment" asp-action="Pay">
         <div class="patron-details">
             <label for="patronName">@SharedLocalizer.GetLocalizedHtmlString("Your name")</label>
             <span id="patronName" class="patron-name">@Model.PatronName</span>
