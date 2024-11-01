@@ -51,39 +51,6 @@ namespace Web.Controllers
             return View(viewModel);
         }
 
-
-        [HttpPost("callback")]
-        public async Task<IActionResult> Callback([FromServices] IPaymentCallbackServiceExtended callbackService,
-         [FromServices] ILogger<HomeController> logger,
-         [FromServices] IMapper mapper,
-         [FromBody] dynamic requestModel)
-        {
-            try
-            {
-                string serializedModel = string.Empty;
-
-                if (requestModel is JsonElement jsonElement)
-                {
-                    serializedModel = jsonElement.ToString();
-                }
-                else
-                {
-                    serializedModel = JsonConvert.SerializeObject(requestModel, Formatting.Indented);
-                }
-                logger.LogInformation($"Callback received model: {serializedModel}");
-
-                var callbackModel = JsonConvert.DeserializeObject<CallbackRequestModel>(requestModel.ToString());
-                await callbackService.Insert(mapper.Map<PaymentCallback>(callbackModel), callbackModel.Id);
-
-                return Ok(serializedModel);
-            }
-            catch (Exception e)
-            {
-                logger.LogError(e, $"Error in Callback: {e.Message}");
-                return BadRequest(e.Message);
-            }
-        }
-
         [HttpGet("session/{session}")]
         [HttpGet("home/session/{session}")]
         public async Task<IActionResult> Session([FromServices] IPaymentServiceExtended paymentServiceExtended,
@@ -147,8 +114,6 @@ namespace Web.Controllers
 
         [HttpGet("cancelled")]
         public IActionResult Cancelled() => View();
-
-
 
         private static async Task<IEnumerable<Audit>> GetAudistsBySession(IAuditService auditService, string session)
         {
