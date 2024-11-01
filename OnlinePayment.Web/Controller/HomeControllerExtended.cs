@@ -51,18 +51,6 @@ namespace Web.Controllers
             return View(viewModel);
         }
 
-        [HttpGet("session/{session}")]
-        [HttpGet("home/session/{session}")]
-        public async Task<IActionResult> Session([FromServices] IPaymentServiceExtended paymentServiceExtended,
-            [FromServices] IMapper mapper, [FromServices] IAuditService auditService, string session)
-        {
-            var payment = await paymentServiceExtended.GetBySessionId(session);
-            var viewModel = mapper.Map<SessionViewModel>(payment);
-            var audits = await GetAudistsBySession(auditService, session);
-            viewModel.Audits = mapper.Map<IEnumerable<AuditViewModel>>(audits);
-            return View(viewModel);
-        }
-
         /// <remarks>
         /// To fetch this javascript into Koha, add the following in `OPACUserJS` system preference:
         /// var paymentScript = document.createElement("script");
@@ -114,11 +102,5 @@ namespace Web.Controllers
 
         [HttpGet("cancelled")]
         public IActionResult Cancelled() => View();
-
-        private static async Task<IEnumerable<Audit>> GetAudistsBySession(IAuditService auditService, string session)
-        {
-            var audits = await auditService.GetAll();
-            return audits.Where(x => x.BelongsToSameSession(session));
-        }
     }
 }

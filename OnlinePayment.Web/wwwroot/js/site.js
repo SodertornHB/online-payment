@@ -46,60 +46,58 @@ $(document).ready(function () {
 
         });
     });
-    let applicationName = $('#applicationName').val();
-    let applicationUrlPart = getApplicationUrlPart(applicationName);
-    let intervalId = setInterval(fetchPaymentStatus, 3000);
-    document.getElementById('loadingSpinner').style.display = 'block';
-
-    function fetchPaymentStatus() {
-        let status = $('#status').val();
-        if (status === 'PAID' ||
-            status === 'ERROR' ||
-            status === 'CANCELLED' ||
-            status === 'DECLINED') {
-
-            clearInterval(intervalId);
-            window.location.href = `${window.location.origin}/${applicationUrlPart}${status.toLowerCase()}`;
-
-        } else {
-            let baseUrl = window.location.origin;
-            let session = $('#session').val();
-            let endpoint = `${baseUrl}/${applicationUrlPart}api/v1/payments/session/${session}`;
-            $.ajax({
-                url: endpoint,
-                method: 'GET',
-                success: function (response) {
-                    if (response && response.status) {
-                        if (response && response.status === 'PAID') {
-                            $('#status').val(response.status);
-                            changeSpinner('success');
-                        }
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error fetching payment:', error);
-                    changeSpinner('error');
-                }
-            });
-        }
-
-        function changeSpinner(msg) {
-            let spinner = document.getElementById('loadingSpinner');
-            spinner.classList.remove('spinner');
-            spinner.classList.add(msg);
-        }
-    }
-
-    function getApplicationUrlPart(applicationName) {
-        let applicationUrlPart = '';
-        if (applicationName && applicationName.trim() !== '') {
-            applicationUrlPart = `${applicationName}/`;
-        }
-        return applicationUrlPart;
-    }
-
     if (window.location.href.includes('pay')) {
-        fetchPaymentStatus();
+        let applicationName = $('#applicationName').val();
+        let applicationUrlPart = getApplicationUrlPart(applicationName);
+        let intervalId = setInterval(fetchPaymentStatus, 3000);
+        document.getElementById('loadingSpinner').style.display = 'block';
+
+        function fetchPaymentStatus() {
+            let status = $('#status').val();
+            if (status === 'PAID' ||
+                status === 'ERROR' ||
+                status === 'CANCELLED' ||
+                status === 'DECLINED') {
+
+                clearInterval(intervalId);
+                window.location.href = `${window.location.origin}/${applicationUrlPart}${status.toLowerCase()}`;
+            } else {
+                let baseUrl = window.location.origin;
+                let session = $('#session').val();
+                let endpoint = `${baseUrl}/${applicationUrlPart}api/v1/payments/session/${session}`;
+                $.ajax({
+                    url: endpoint,
+                    method: 'GET',
+                    success: function (response) {
+                        if (response && response.status) {
+                            if (response.status === 'PAID') {
+                                $('#status').val(response.status);
+                                changeSpinner('success');
+                            }
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching payment:', error);
+                        changeSpinner('error');
+                    }
+                });
+            }
+
+            function changeSpinner(msg) {
+                let spinner = document.getElementById('loadingSpinner');
+                spinner.classList.remove('spinner');
+                spinner.classList.add(msg);
+            }
+        }
+
+        function getApplicationUrlPart(applicationName) {
+            let applicationUrlPart = '';
+            if (applicationName && applicationName.trim() !== '') {
+                applicationUrlPart = `${applicationName}/`;
+            }
+            return applicationUrlPart;
+        }
     }
+
 
 });
