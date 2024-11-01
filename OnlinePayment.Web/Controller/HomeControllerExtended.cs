@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using OnlinePayment.Logic.Model;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Logic.Settings;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Web.Controllers
@@ -17,8 +20,8 @@ namespace Web.Controllers
         /// </remarks>
         [HttpGet("js")]
         public async Task<IActionResult> js([FromServices] IOptions<ApplicationSettings> applicationSettinsOptions,
-            [FromServices] IKohaService kohaService,
-            int borrowerNumber, string lang)
+         [FromServices] IKohaService kohaService,
+         int borrowerNumber, string lang)
         {
             if (borrowerNumber == default) return Ok();
 
@@ -36,19 +39,20 @@ namespace Web.Controllers
             var imgUrl = $"{fullHost}/img/swish_small.png";
 
             string js = @$"
-                        $(document).ready(function() {{
-                            $('#useraccount').after(`
-                         <div style=""margin: 20px 0; width: 100px; text-align: center;"">
-                                <a href='{initUrl}'>                          
-                                <span style=""font-size: 0.8em;"">{msg}</span>                            
-                                <img src=""{imgUrl}"" alt=""{altMsg}"" style=""margin:10px"">
-                            </a>
-                        </div>
-                            `);
-                        }});";
+                 $(document).ready(function() {{
+                     $('#finestable').before(`
+                  <div style='margin: 20px 0; width: 100px; text-align: center;float: right;'>
+                         <a href='{initUrl}'>                          
+                         <span style='font-size: 0.8em;'>{msg}</span>                            
+                         <img src='{imgUrl}' alt='{altMsg}' style='margin:10px'>
+                     </a>
+                 </div>
+                     `);
+                 }});";
 
             return Ok(js);
         }
+
 
         [HttpGet("paid")]
         public IActionResult Paid() => View();
@@ -58,5 +62,11 @@ namespace Web.Controllers
 
         [HttpGet("cancelled")]
         public IActionResult Cancelled() => View();
+
+        private static async Task<IEnumerable<Audit>> GetAudistsBySession(IAuditService auditService, string session)
+        {
+            var audits = await auditService.GetAll();
+            return audits.Where(x => x.BelongsToSameSession(session));
+        }
     }
 }
