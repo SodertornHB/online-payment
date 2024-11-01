@@ -10,6 +10,7 @@
     }
   },
   "Application": {
+    "Host": "YOUR_HOST",
     "Name": "YOUR_APPLICATION_NAME",
     "KeepLogsInDays": 30,
     "KeysFolder": "PATH_TO_KEYS_FOLDER"
@@ -21,7 +22,8 @@
     "Endpoint": "https://your-koha-api-endpoint/api/v1",
     "UserName": "YOUR_KOHA_API_USERNAME",
     "Password": "YOUR_KOHA_API_PASSWORD",
-    "LibraryId": "YOUR_LIBRARY_ID"
+    "LibraryId": "YOUR_LIBRARY_ID",
+    "OpacHost": "YOUR_OPAC_HOST"
   },
   "SwishApi": {
     "Endpoint": "https://your-swish-api-endpoint",

@@ -6,5 +6,6 @@ namespace OnlinePayment.Logic.Settings
         public string UserName { get; set; }
         public string Password { get; set; }
         public string LibraryId { get; set; }
+        public string OpacHost { get; set; }
     }
 }

@@ -97,21 +97,24 @@ namespace Web.Controllers
         }
 
         /// <remarks>
-        /// To get the javascript in Koha, add the following in OPACUserJS system preference:
+        /// To fetch this javascript into Koha, add the following in `OPACUserJS` system preference:
         /// var paymentScript = document.createElement("script");
         /// paymentScript.type = "text/javascript";
-        /// paymentScript.src = "https://YOUR_HOST/js?borrowernumber=" + $('.loggedinusername').attr('data-borrowernumber');
+        /// paymentScript.src = "https://YOUR_HOST/js?borrowernumber=" + $('.loggedinusername').attr('data-borrowernumber') + "&lang=" + $('html').attr('lang');
         /// $("head").append(paymentScript);
         /// </remarks>
         [HttpGet("js")]
         public async Task<IActionResult> js([FromServices] IOptions<ApplicationSettings> applicationSettinsOptions,
             [FromServices] IKohaService kohaService,
-            int borrowerNumber)
+            int borrowerNumber, string lang)
         {
             if (borrowerNumber == default) return Ok();
 
             var account = await kohaService.GetAccount(borrowerNumber);
             if (account.balance < 1) return Ok();
+
+            var msg = lang == "sv-SE" ? "Betala avgifter" : "Pay fees";
+            var altMsg = lang == "sv-SE" ? "Betala med Swish" : "Pay with Swish";
 
             var applicationHost = applicationSettinsOptions.Value.Host;
             var applicationName = applicationSettinsOptions.Value.Name;
@@ -123,9 +126,12 @@ namespace Web.Controllers
             string js = @$"
                         $(document).ready(function() {{
                             $('#useraccount').after(`
-                                <a href='{initUrl}'>
-                                    <img src='{imgUrl}' style='margin: 20px 0' alt='Pay with Swish' />
-                                </a>
+                         <div style=""margin: 20px 0; width: 100px; text-align: center;"">
+                                <a href=""https://localhost:5001/init?borrowerNumber=1141448"">                            
+                                <span style=""font-size: 0.8em;"">{msg}</span>                            
+                                <img src=""https://localhost:5001/img/swish_small.png"" alt=""{altMsg}"" style=""margin:10px"">
+                            </a>
+                        </div>
                             `);
                         }});";
 

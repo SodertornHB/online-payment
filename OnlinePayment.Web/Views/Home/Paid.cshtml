@@ -1,4 +1,7 @@
 @using Localization
+@using Microsoft.Extensions.Options
+@using OnlinePayment.Logic.Settings
+@inject IOptions<KohaApiSettings> settings
 @inject LocService SharedLocalizer
 
 @{
@@ -6,7 +9,7 @@
 }
 
 <h1>@SharedLocalizer.GetLocalizedHtmlString("PaidHeader")</h1>
-<p>@Html.Raw(string.Format(SharedLocalizer.GetLocalizedHtmlString("PaidDescription"), "https://foo.bar"))</p>
+<p>@Html.Raw(string.Format(SharedLocalizer.GetLocalizedHtmlString("PaidDescription"), settings.Value.OpacHost))</p>
 <p>@SharedLocalizer.GetLocalizedHtmlString("MoreInfo")</p>
 
 @section Scripts {
