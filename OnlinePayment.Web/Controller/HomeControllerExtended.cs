@@ -127,9 +127,9 @@ namespace Web.Controllers
                         $(document).ready(function() {{
                             $('#useraccount').after(`
                          <div style=""margin: 20px 0; width: 100px; text-align: center;"">
-                                <a href=""https://localhost:5001/init?borrowerNumber=1141448"">                            
+                                <a href='{initUrl}'>                          
                                 <span style=""font-size: 0.8em;"">{msg}</span>                            
-                                <img src=""https://localhost:5001/img/swish_small.png"" alt=""{altMsg}"" style=""margin:10px"">
+                                <img src=""{imgUrl}"" alt=""{altMsg}"" style=""margin:10px"">
                             </a>
                         </div>
                             `);
