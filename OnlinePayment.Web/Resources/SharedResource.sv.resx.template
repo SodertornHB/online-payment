@@ -142,13 +142,13 @@
     <value>Avgift att betala</value>
   </data>
   <data name="MoreInfo" xml:space="preserve">
-    <value>Om du har frågor rörande din betalning eller dina avgifter kan du besöka bibliotekets informationsdisk eller mejla till biblioteket@sh.se.</value>
+    <value>Om du har frågor rörande din betalning eller dina avgifter är du välkommen att kontakta biblioteket.</value>
   </data>
   <data name="Open the Swish app on your phone and confirm the payment." xml:space="preserve">
     <value>Öppna Swish-appen på din telefon och bekräfta betalningen</value>
   </data>
   <data name="PaidDescription" xml:space="preserve">
-    <value>Klicka &lt;a href='{0}'&gt;här&lt;/a&gt; för att komma tillbaka till Mina lån. </value>
+    <value>Klicka &lt;a href='{0}'&gt;här&lt;/a&gt; för att komma tillbaka till Koha opac. </value>
   </data>
   <data name="PaidHeader" xml:space="preserve">
     <value>Betalningen är genomförd</value>
