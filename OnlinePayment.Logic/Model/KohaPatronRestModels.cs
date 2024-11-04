@@ -1,6 +1,7 @@
 using OnlinePayment.Logic.Services;
 using System;
-using System.Security.Principal;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace OnlinePayment.Logic.Model
@@ -12,10 +13,11 @@ namespace OnlinePayment.Logic.Model
         public string surname { get; set; }
         public string email { get; set; }
         public string phone { get; set; }
-        public string GetPhone() {
+        public string GetPhone()
+        {
 
             if (string.IsNullOrWhiteSpace(phone)) throw new ArgumentException("Patron lacking phone number");
-            var formattedPhone = phone.Trim().Replace(" ","");
+            var formattedPhone = phone.Trim().Replace(" ", "");
             if (formattedPhone.StartsWith('0'))
             {
                 formattedPhone = formattedPhone.Substring(1);
@@ -36,14 +38,36 @@ namespace OnlinePayment.Logic.Model
     {
         public decimal balance { get; set; }
 
-        public int GetBalance()
+        public decimal returned_balance => outstanding_debits?.returned_balance ?? 0;
+        public outstanding_debits outstanding_debits { get; set; }
+
+        public int GetBalance() => GetBalanceOrThrow(Utils.ConvertToInt(balance));
+
+        public int GetBalanceForRetrunedItems() => GetBalanceOrThrow(Utils.ConvertToInt(returned_balance));
+
+        #region private
+
+        private int GetBalanceOrThrow(int balance)
         {
-            var b = Utils.ConvertToInt(balance);
-            if (b == 0) throw new ArgumentException("Balance is zero");
-            if (b < 0) throw new ArgumentException("Balance is less than zero");
-            return b;
+            if (balance == 0) throw new ArgumentException("Balance is zero");
+            if (balance < 0) throw new ArgumentException("Balance is less than zero");
+            return balance;
         }
+
+        #endregion
     }
+    public class outstanding_debits
+    {
+        public decimal returned_balance => lines.Where(x => x.status == "RETURNED").Sum(x => x.amount);
+        public IEnumerable<outstanding_debits_lines> lines { get; set; } = new List<outstanding_debits_lines>();
+    }
+
+    public class outstanding_debits_lines
+    {
+        public decimal amount { get; set; }
+        public string status { get; set; }
+    }
+
     public class PatronCredit
     {
         public decimal amount { get; set; }
@@ -51,4 +75,4 @@ namespace OnlinePayment.Logic.Model
         public string credit_type { get; set; } = "swish";
         public string payment_type { get; set; } = "swish";
     }
-} 
+}

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Localization;
 using Localization;
 using System.Reflection;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 
 namespace Web.Controllers
 {
@@ -20,37 +21,54 @@ namespace Web.Controllers
     public partial class ResourcesController : ControllerBase
     {
         private readonly IStringLocalizer localizer;
+        private readonly ILogger<ResourcesController> logger;
 
-        public ResourcesController(IStringLocalizerFactory factory)
+        public ResourcesController(IStringLocalizerFactory factory,
+            ILogger<ResourcesController> logger)
         {
             var type = typeof(SharedResource);
             var assemblyName = new AssemblyName(type.GetTypeInfo().Assembly.FullName);
             localizer = factory.Create("SharedResource", assemblyName.Name);
+            this.logger = logger;
         }
 
         [HttpGet()]
         public IActionResult Get()
         {
-            var locatedStrings = GetLocatedStrings();
-            string json = ConvertToSerializedJson(locatedStrings);
-            return Ok(json);
-
+            try
+            {
+                var locatedStrings = GetLocatedStrings();
+                var json = ConvertToSerializedJson(locatedStrings);
+                return Ok(json);
+            }
+            catch (System.Resources.MissingManifestResourceException e)
+            {
+                logger.LogWarning(e.Message);
+                return NotFound(e.Message);
+            }
         }
 
         [HttpGet("{key}")]
         public IActionResult Get(string key)
         {
-            var locatedString = GetLocatedStrings(key);
-            string json = ConvertToSerializedJson(locatedString);
-            return Ok(json);
-
+            try
+            {
+                var locatedString = GetLocatedStrings(key);
+                var json = ConvertToSerializedJson(locatedString);
+                return Ok(json);
+            }
+            catch (System.Resources.MissingManifestResourceException e)
+            {
+                logger.LogWarning(e.Message);
+                return NotFound(e.Message);
+            }
         }
 
         #region private 
 
         private IEnumerable<KeyValuePair<string, string>> GetLocatedStrings(string key = "")
         {
-            var allLocalizedStrings = localizer.GetAllStrings().Where(x => key == "" || x.Name.Equals(key,System.StringComparison.OrdinalIgnoreCase));
+            var allLocalizedStrings = localizer.GetAllStrings().Where(x => key == "" || x.Name.Equals(key, System.StringComparison.OrdinalIgnoreCase));
             return allLocalizedStrings.Select(x => new KeyValuePair<string, string>(x.Name, x.Value));
         }
 
