@@ -34,8 +34,11 @@ To run this application, you need to configure your `appsettings.json` file with
 
 #### 3. Application Settings
 **Host**: Specify the host URL where your application will be running.
+
 **Name**: Enter a name for your application.
+
 **KeepLogsInDays**: Define the number of days to retain logs.
+
 **KeysFolder**: Specify the folder path where any necessary keys are stored.
 
 #### 4. IP Blocking Options
@@ -43,21 +46,31 @@ To run this application, you need to configure your `appsettings.json` file with
 
 #### 5. Koha API Settings
 **Endpoint**: Enter the endpoint URL for your Koha API.
+
 **UserName and Password**: Enter the credentials for accessing the Koha API.
+
 **LibraryId**: Set the ID of your library within Koha.
+
 **OpacHost**: Specify the OPAC host URL.
 
 #### 6. Swish API Settings
 **Endpoint**: Enter the Swish API endpoint URL.
+
 **PayeeAlias**: Enter your Swish Payee Alias (Swish number).
+
 **CallbackUrl**: Specify the URL that Swish should call upon successful payment.
+
 **Currency**: Define the currency code (e.g., SEK for Swedish kronor).
+
 **Message**: Provide a default message to display on Swish payments.
 
 #### 7. Certification Authentication
 **Certification**: Specify the file name of the Swish certificate used for authentication.
+
 **Passphrase**: Enter the passphrase for the certificate, if applicable.
+
 **Thumbprint**: If using thumbprint-based authentication, enter the certificate thumbprint here.
+
 
 Once configured, the application will use these settings to connect with the necessary services and authenticate as required.
 
