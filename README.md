@@ -24,15 +24,15 @@ Ensure that you have .NET Core installed. Run the following command in the proje
 ## Configuration
 To run this application, you need to configure your `appsettings.json` file with the correct settings for your environment. A template file, `appsettings.json.template`, is provided in the repository to guide you through this process.
 
-#### 1. Create a Configuration File
+### 1. Create a Configuration File
 - Copy the template file and rename it to appsettings.json.
 
 - Open appsettings.json and update the fields with your specific settings as follows:
 
-#### 2. Database Connection
+### 2. Database Connection
 - Under ConnectionStrings, replace SERVER_NAMEwith the name of your database server and DATABASE_NAME with the name of your database.
 
-#### 3. Application Settings
+### 3. Application Settings
 **Host**: Specify the host URL where your application will be running.
 
 **Name**: Enter a name for your application.
@@ -41,10 +41,10 @@ To run this application, you need to configure your `appsettings.json` file with
 
 **KeysFolder**: Specify the folder path where any necessary keys are stored.
 
-#### 4. IP Blocking Options
+### 4. IP Blocking Options
 **BlockedIPs**: If there are any IP addresses you want to block, add them here as a list.
 
-#### 5. Koha API Settings
+### 5. Koha API Settings
 **Endpoint**: Enter the endpoint URL for your Koha API.
 
 **UserName and Password**: Enter the credentials for accessing the Koha API.
@@ -53,7 +53,7 @@ To run this application, you need to configure your `appsettings.json` file with
 
 **OpacHost**: Specify the OPAC host URL.
 
-#### 6. Swish API Settings
+### 6. Swish API Settings
 **Endpoint**: Enter the Swish API endpoint URL.
 
 **PayeeAlias**: Enter your Swish Payee Alias (Swish number).
@@ -64,7 +64,7 @@ To run this application, you need to configure your `appsettings.json` file with
 
 **Message**: Provide a default message to display on Swish payments.
 
-#### 7. Certification Authentication
+### 7. Certification Authentication
 **Certification**: Specify the file name of the Swish certificate used for authentication.
 
 **Passphrase**: Enter the passphrase for the certificate, if applicable.
@@ -167,30 +167,30 @@ This certificate is essential for enabling secure, real-time payments through Sw
 We welcome contributions to this open-source project! By contributing, you help improve the functionality, usability, and reliability of this solution for other users. Follow these steps to get started with your contribution.
 
 ## Contribution Guidelines
-#### 1. Fork the Repository
+### 1. Fork the Repository
 
 Start by forking the repository to your own GitHub account. This creates a copy of the project where you can make your changes.
-#### 2. Clone Your Forked Repository
+### 2. Clone Your Forked Repository
 
 Clone your forked repository to your local machine using the command:
 ```bash
 git clone https://github.com/YOUR_USERNAME/online-payment.git  
 ```
 Replace YOUR_USERNAME with your GitHub username.
-#### 3. Create a New Branch
+### 3. Create a New Branch
 
 To keep your changes organized, create a new branch for each feature or bug fix you want to work on:
 ```bash
 git checkout -b feature/your-feature-name  
 ```
 Use a descriptive name for your branch, like feature/add-payment-option or bugfix/fix-currency-bug.
-#### 4. Make Your Changes
+### 4. Make Your Changes
 
 Implement your changes in the codebase. Ensure your code follows the project's coding standards and is properly documented.
-#### 5. Test Your Changes
+### 5. Test Your Changes
 
 Before submitting your contribution, test your changes thoroughly. If applicable, add or update unit tests to maintain code quality.
-#### 6. Commit and Push Your Changes
+### 6. Commit and Push Your Changes
 
 Stage and commit your changes with a descriptive commit message:
 ```bash
@@ -202,9 +202,9 @@ Push your changes to your forked repository:
 ```bash
 git push origin feature/your-feature-name  
 ```
-#### 7. Submit a Pull Request
+### 7. Submit a Pull Request
 
 Go to the original repository on GitHub and submit a pull request from your forked repository. Include a clear description of your changes, why they are necessary, and any relevant context.
-#### 8. Respond to Feedback
+### 8. Respond to Feedback
 
 Project maintainers may review your pull request and provide feedback or request changes. Please be prepared to make revisions if necessary.
