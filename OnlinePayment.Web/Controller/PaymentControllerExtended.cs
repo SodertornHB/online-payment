@@ -17,8 +17,8 @@ namespace OnlinePayment.Web.Controllers
             {
                 var patron = await kohaService.GetPatron(borrowerNumber);
                 var account = await kohaService.GetAccount(borrowerNumber);
-                var balance = account.GetBalance();
-                return View(new InitPayViewModel { BorrowerNumber = borrowerNumber, PatronName = patron.GetFullname(), PatronPhoneNumber = patron.GetPhone(), PatronEmail = patron.email, Amount = balance });
+                var balance = account.GetBalanceForRetrunedItems();
+                return base.View(new InitPayViewModel { BorrowerNumber = borrowerNumber, PatronName = patron.GetFullname(), PatronPhoneNumber = patron.GetPhone(), PatronEmail = patron.email, Amount = balance });
             }
             catch (ArgumentException e)
             {
