@@ -74,6 +74,12 @@ $(document).ready(function () {
                                 $('#status').val(response.status);
                                 changeSpinner('success');
                             }
+                            if (response.status === 'DECLINED' || 
+                                response.status === 'ERROR' || 
+                                response.status === 'CANCELLED') {
+                                $('#status').val(response.status);
+                                changeSpinner('error');
+                            }
                         }
                     },
                     error: function (xhr, status, error) {
