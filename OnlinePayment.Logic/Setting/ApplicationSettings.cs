@@ -11,5 +11,6 @@ namespace OnlinePayment.Logic.Settings
         public string Host { get; set; }
         public string Name { get; set; }
         public int KeepLogsInDays { get; set; }
+        public string[] StatusesGeneratingPaymentBalance { get; set; }
     }
 }

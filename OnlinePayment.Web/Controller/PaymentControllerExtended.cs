@@ -5,19 +5,23 @@ using System.Threading.Tasks;
 using System;
 using AutoMapper;
 using System.Collections.Generic;
+using Microsoft.Extensions.Options;
+using OnlinePayment.Logic.Settings;
 
 namespace OnlinePayment.Web.Controllers
 {
     public partial class PaymentController 
     {
         [HttpGet("init")]
-        public async Task<IActionResult> Init([FromServices] IKohaService kohaService, int borrowerNumber)
+        public async Task<IActionResult> Init([FromServices] IKohaService kohaService,
+            [FromServices] IOptions<ApplicationSettings> applicationSettinsOptions, int borrowerNumber)
         {
             try
             {
+                var applicationsSettings = applicationSettinsOptions.Value;
                 var patron = await kohaService.GetPatron(borrowerNumber);
                 var account = await kohaService.GetAccount(borrowerNumber);
-                var balance = account.GetBalanceForRetrunedItems();
+                var balance = account.GetBalanceForGivenStatuses(applicationsSettings.StatusesGeneratingPaymentBalance);
                 return base.View(new InitPayViewModel { BorrowerNumber = borrowerNumber, PatronName = patron.GetFullname(), PatronPhoneNumber = patron.GetPhone(), PatronEmail = patron.email, Amount = balance });
             }
             catch (ArgumentException e)

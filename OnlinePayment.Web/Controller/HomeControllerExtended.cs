@@ -23,16 +23,17 @@ namespace Web.Controllers
          [FromServices] IKohaService kohaService,
          int borrowerNumber, string lang)
         {
+            var applicationSettings = applicationSettinsOptions.Value;
             if (borrowerNumber == default) return Ok();
 
             var account = await kohaService.GetAccount(borrowerNumber);
-            if (account.balance < 1) return Ok();
+            if (account.GetBalanceForGivenStatuses(applicationSettings.StatusesGeneratingPaymentBalance) < 1) return Ok();
 
             var msg = lang == "sv-SE" ? "Betala avgifter" : "Pay fees";
             var altMsg = lang == "sv-SE" ? "Betala med Swish" : "Pay with Swish";
 
-            var applicationHost = applicationSettinsOptions.Value.Host;
-            var applicationName = applicationSettinsOptions.Value.Name;
+            var applicationHost = applicationSettings.Host;
+            var applicationName = applicationSettings.Name;
             var fullHost = $"{applicationHost}{applicationName}";
 
             var initUrl = $"{fullHost}/init?borrowerNumber={borrowerNumber}";

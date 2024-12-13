@@ -38,12 +38,21 @@ namespace OnlinePayment.Logic.Model
     {
         public decimal balance { get; set; }
 
-        public decimal returned_balance => outstanding_debits?.returned_balance ?? 0;
         public outstanding_debits outstanding_debits { get; set; }
 
         public int GetBalance() => GetBalanceOrThrow(Utils.ConvertToInt(balance));
 
-        public int GetBalanceForRetrunedItems() => GetBalanceOrThrow(Utils.ConvertToInt(returned_balance));
+        public int GetBalanceForGivenStatuses(string[] statuses)
+        {
+            var sum = default(decimal);
+            if (outstanding_debits == null) return default;
+            foreach (var status in statuses)
+            {
+                    sum += outstanding_debits.lines.Where(x => x.status == null || x.status == status).Sum(x => x.amount);
+             
+            }
+            return GetBalanceOrThrow(Utils.ConvertToInt(sum));
+        }
 
         #region private
 

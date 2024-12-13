@@ -13,7 +13,14 @@
     "Host": "YOUR_HOST",
     "Name": "YOUR_APPLICATION_NAME",
     "KeepLogsInDays": 30,
-    "KeysFolder": "PATH_TO_KEYS_FOLDER"
+    "KeysFolder": "PATH_TO_KEYS_FOLDER",
+    "StatusesGeneratingPaymentBalance": [
+      "RETURNED",
+      "RENEWED",
+      "LOST",
+      null
+      //,"UNRETURNED"
+    ]
   },
   "IPBlockOptions": {
     "BlockedIPs": []
