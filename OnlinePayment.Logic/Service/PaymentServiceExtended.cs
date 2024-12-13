@@ -50,7 +50,9 @@ namespace OnlinePayment.Logic.Services
 
         public async Task<Payment> InitiatePayment(int borrowerNumber)
         {
+            logger.LogInformation($"Initiate payment process for borrower with number {borrowerNumber}");
             var session = GuidGenerator.GenerateGuidWithoutDashesUppercase();
+            logger.LogInformation($"Generated session guid = {session}");
             await auditService.Insert(new Audit("Initiating", session, typeof(Payment)));
             var patron = await kohaService.GetPatron(borrowerNumber, session);
             var account = await kohaService.GetAccount(borrowerNumber, session);
