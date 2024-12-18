@@ -26,6 +26,7 @@ namespace OnlinePayment.Logic.Services
         private readonly ISwishHttpService swishHttpService;
         private readonly IAuditService auditService;
         private readonly IKohaService kohaService;
+        private readonly ApplicationSettings applicationSettings;
         private readonly SwishApiSettings swishApiSettings;
         private new readonly IPaymentDataAccessExtended dataAccess;
 
@@ -36,7 +37,8 @@ namespace OnlinePayment.Logic.Services
            ISwishHttpService swishHttpService,
            IOptions<SwishApiSettings> options, 
            IAuditService auditService,
-           IKohaService kohaService)
+           IKohaService kohaService,
+           IOptions<ApplicationSettings> applicationSettingsOptions)
            : base(logger, dataAccess)
         {
             this.paymentRequestService = paymentRequestService;
@@ -44,6 +46,7 @@ namespace OnlinePayment.Logic.Services
             this.swishHttpService = swishHttpService;
             this.auditService = auditService;
             this.kohaService = kohaService;
+            this.applicationSettings = applicationSettingsOptions.Value;
             this.swishApiSettings = options.Value;
             this.dataAccess = dataAccess;
         }   
@@ -56,7 +59,7 @@ namespace OnlinePayment.Logic.Services
             await auditService.Insert(new Audit("Initiating", session, typeof(Payment)));
             var patron = await kohaService.GetPatron(borrowerNumber, session);
             var account = await kohaService.GetAccount(borrowerNumber, session);
-            return await InitiatePayment(session, borrowerNumber, $"{patron.firstname} {patron.surname}", patron.email, patron.GetPhone(), account.GetBalance());
+            return await InitiatePayment(session, borrowerNumber, $"{patron.firstname} {patron.surname}", patron.email, patron.GetPhone(), account.GetBalanceForGivenStatuses(applicationSettings.StatusesGeneratingPaymentBalance));
         }
 
         public async Task<Payment> GetByExternalId(string externalId)

@@ -40,16 +40,13 @@ namespace OnlinePayment.Logic.Model
 
         public outstanding_debits outstanding_debits { get; set; }
 
-        public int GetBalance() => GetBalanceOrThrow(Utils.ConvertToInt(balance));
-
         public int GetBalanceForGivenStatuses(string[] statuses)
         {
             var sum = default(decimal);
             if (outstanding_debits == null) return default;
             foreach (var status in statuses)
             {
-                    sum += outstanding_debits.lines.Where(x => x.status == null || x.status == status).Sum(x => x.amount);
-             
+                    sum += outstanding_debits.lines.Where(x => x.status == null || x.status == status).Sum(x => x.amount);             
             }
             return GetBalanceOrThrow(Utils.ConvertToInt(sum));
         }
