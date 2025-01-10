@@ -14,7 +14,7 @@ namespace OnlinePayment.Web.Controllers
     {
         [HttpGet("init")]
         public async Task<IActionResult> Init([FromServices] IKohaService kohaService,
-            [FromServices] IOptions<ApplicationSettings> applicationSettinsOptions, int borrowerNumber)
+            [FromServices] IOptions<ApplicationSettings> applicationSettinsOptions, int borrowerNumber, bool @internal)
         {
             try
             {
@@ -22,7 +22,7 @@ namespace OnlinePayment.Web.Controllers
                 var patron = await kohaService.GetPatron(borrowerNumber);
                 var account = await kohaService.GetAccount(borrowerNumber);
                 var balance = account.GetBalanceForGivenStatuses(applicationsSettings.StatusesGeneratingPaymentBalance);
-                return base.View(new InitPayViewModel { BorrowerNumber = borrowerNumber, PatronName = patron.GetFullname(), PatronPhoneNumber = patron.GetPhone(), PatronEmail = patron.email, Amount = balance });
+                return base.View(new InitPayViewModel { BorrowerNumber = borrowerNumber, PatronName = patron.GetFullname(), PatronPhoneNumber = patron.GetPhone(), PatronEmail = patron.email, Amount = balance, ShowPaymentButton = !@internal });
             }
             catch (ArgumentException e)
             {

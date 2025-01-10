@@ -32,7 +32,12 @@ else
 
 
         <div class="form-group">
-            <input type="submit" value="@SharedLocalizer.GetLocalizedHtmlString("Pay")" class="btn btn-primary" />
+            <div class="form-group">
+                <input type="submit"
+                       value="@SharedLocalizer.GetLocalizedHtmlString("Pay")"
+                       class="btn btn-primary"
+                @(Model.ShowPaymentButton ? string.Empty : "hidden") />
+            </div>
         </div>
     </form>
 }

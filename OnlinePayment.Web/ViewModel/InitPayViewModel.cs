@@ -4,6 +4,7 @@ namespace OnlinePayment.Web.ViewModel
 {
     public class InitPayViewModel
     {
+        public bool ShowPaymentButton { get; set; }
         public int BorrowerNumber { get; set; }
         public string PatronName { get; set; } = "";
         public string PatronEmail { get; set; } = "";
