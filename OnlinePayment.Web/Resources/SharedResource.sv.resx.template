@@ -163,7 +163,7 @@
     <value>In english</value>
   </data>
   <data name="You will be redirected from this page once the payment has been processed." xml:space="preserve">
-    <value>Du kommer att omdirigeras från den här sidan när betalningen har behandlats.</value>
+    <value>När betalningen är klar kommer du att omdirigeras tillbaka till Mina lån.</value>
   </data>
   <data name="Your e-mail" xml:space="preserve">
     <value>Din e-post</value>
