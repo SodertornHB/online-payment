@@ -5,6 +5,9 @@
 @using Microsoft.AspNetCore.Localization
 @using Microsoft.AspNetCore.Http.Extensions
 @using Localization
+@using Microsoft.Extensions.Options
+@using OnlinePayment.Logic.Settings
+@inject IOptions<KohaApiSettings> settings
 @inject LocService SharedLocalizer
 
 @{
@@ -46,14 +49,10 @@
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
+            <hr />
+            <a href="@settings.Value.OpacHost">@SharedLocalizer.GetLocalizedHtmlString("Back to Opac")</a>
         </main>
-    </div>    
-    <div class="clear"></div>
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 
-        </div>
-    </footer>
+    </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
      <script src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.min.js"></script>
