@@ -2,7 +2,7 @@
 @inject LocService SharedLocalizer
 
 @{
-    ViewData["Title"] = @$"{SharedLocalizer.GetLocalizedHtmlString("DeclinedHeader")}";
+    ViewData["Title"] = $"{SharedLocalizer.GetLocalizedHtmlString("DeclinedHeader")}";
 }
 
 <h1>@SharedLocalizer.GetLocalizedHtmlString("DeclinedHeader")</h1>
