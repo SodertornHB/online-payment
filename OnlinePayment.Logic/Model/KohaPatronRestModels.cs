@@ -15,23 +15,26 @@ namespace OnlinePayment.Logic.Model
         public string phone { get; set; }
         public string GetPhone()
         {
+            if (string.IsNullOrWhiteSpace(phone))
+                throw new ArgumentException("Patron lacking phone number");
 
-            if (string.IsNullOrWhiteSpace(phone)) throw new ArgumentException("Patron lacking phone number");
             var formattedPhone = phone.Trim().Replace(" ", "");
+
+            if (formattedPhone.StartsWith('+'))
+                formattedPhone = formattedPhone.Substring(1);
+
             if (formattedPhone.StartsWith('0'))
             {
                 formattedPhone = formattedPhone.Substring(1);
                 formattedPhone = $"46{formattedPhone}";
             }
-            if (formattedPhone.StartsWith('+'))
-            {
-                formattedPhone = formattedPhone.Substring(1);
-            }
-            if (!formattedPhone.StartsWith("46")) throw new ArgumentException("Invalid phone number");
-            if (!Regex.IsMatch(formattedPhone, @"^\d+$")) throw new ArgumentException("Phone number contains invalid characters");
+
+            if (!Regex.IsMatch(formattedPhone, @"^46\d{6,13}$"))
+                throw new ArgumentException("Invalid phone number format. The number must contain only digits, be 8 to 15 digits long, and start with the country code '46'.");
 
             return formattedPhone;
         }
+
         public string GetFullname() => $"{firstname} {surname}";
     }
     public class PatronAccount
