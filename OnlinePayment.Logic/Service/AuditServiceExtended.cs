@@ -20,7 +20,7 @@ namespace OnlinePayment.Logic.Services
 
         public async Task AddAudit(string message, string session, Type type)
         {
-            var audit = new Audit("Payment request send", session, type);
+            var audit = new Audit(message, session, type);
             await base.Insert(audit);
         }
     }
