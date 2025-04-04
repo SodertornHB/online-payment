@@ -18,22 +18,26 @@ namespace OnlinePayment.Logic.Model
             if (string.IsNullOrWhiteSpace(phone))
                 throw new ArgumentException("Patron lacking phone number");
 
-            var formattedPhone = phone.Trim().Replace(" ", "");
+            var formattedPhone = phone.Trim().Replace(" ", "").Replace("-", "");
 
             if (formattedPhone.StartsWith('+'))
                 formattedPhone = formattedPhone.Substring(1);
 
-            if (formattedPhone.StartsWith('0'))
-            {
-                formattedPhone = formattedPhone.Substring(1);
-                formattedPhone = $"46{formattedPhone}";
-            }
+            if (formattedPhone.StartsWith("0046"))
+                formattedPhone = "46" + formattedPhone.Substring(4);
 
-            if (!Regex.IsMatch(formattedPhone, @"^46\d{6,13}$"))
+            if (formattedPhone.StartsWith("0"))
+                formattedPhone = "46" + formattedPhone.Substring(1);
+
+            if (formattedPhone.StartsWith("4607"))
+                formattedPhone = "46" + formattedPhone.Substring(3);
+
+            if (!Regex.IsMatch(formattedPhone, @"^46\d{7,12}$"))
                 throw new ArgumentException("Invalid phone number format. The number must contain only digits, be 8 to 15 digits long, and start with the country code '46'.");
 
             return formattedPhone;
         }
+
 
         public string GetFullname() => $"{firstname} {surname}";
     }
@@ -47,8 +51,8 @@ namespace OnlinePayment.Logic.Model
         {
             var sum = default(decimal);
             if (outstanding_debits == null) return default;
-            
-            sum += outstanding_debits.lines.Where(x => x.status == null || statuses.Contains(x.status)).Sum(x => x.amount);             
+
+            sum += outstanding_debits.lines.Where(x => x.status == null || statuses.Contains(x.status)).Sum(x => x.amount);
             return GetBalanceOrThrow(Utils.ConvertToInt(sum));
         }
 
