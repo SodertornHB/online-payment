@@ -12,6 +12,7 @@
 /OnlinePayment.Web/appsettings.json
 /OnlinePayment.Web/wwwroot/css/custom-site.css
 /OnlinePayment.Web/wwwroot/js/custom-site.js
+/organizational-specific
 
 /.gitmodules
 
@@ -362,3 +363,4 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+organizational-specific
