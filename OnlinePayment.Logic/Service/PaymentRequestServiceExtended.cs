@@ -16,12 +16,12 @@ namespace OnlinePayment.Logic.Services
     public partial class PaymentRequestServiceExtended : PaymentRequestService, IPaymentRequestServiceExtended
     {
         private readonly SwishApiSettings swishApiSettings;
-        private readonly IAuditService auditService;
+        private readonly IAuditServiceExtended auditService;
 
         public PaymentRequestServiceExtended(ILogger<PaymentRequestService> logger,
            IPaymentRequestDataAccess dataAccess,
            IOptions<SwishApiSettings> options,
-           IAuditService auditService)
+           IAuditServiceExtended auditService)
            : base(logger, dataAccess)
         {
             swishApiSettings = options.Value;
@@ -38,7 +38,7 @@ namespace OnlinePayment.Logic.Services
 
             var paymentRequest = await base.Insert(model);
 
-            await auditService.Insert(new Audit("Payment request saved", model.Session, typeof(PaymentRequest)));
+            await auditService.AddAudit("Payment request saved", model.Session, typeof(PaymentRequest));
                         
             return paymentRequest;
         }

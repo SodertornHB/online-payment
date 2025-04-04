@@ -24,7 +24,7 @@ namespace OnlinePayment.Logic.Services
         private readonly IPaymentRequestServiceExtended paymentRequestService;
         private readonly IPaymentResponseService paymentResponseService;
         private readonly ISwishHttpService swishHttpService;
-        private readonly IAuditService auditService;
+        private readonly IAuditServiceExtended auditService;
         private readonly IKohaService kohaService;
         private readonly ApplicationSettings applicationSettings;
         private readonly SwishApiSettings swishApiSettings;
@@ -35,8 +35,8 @@ namespace OnlinePayment.Logic.Services
            IPaymentRequestServiceExtended paymentRequestService,
            IPaymentResponseService paymentResponseService,
            ISwishHttpService swishHttpService,
-           IOptions<SwishApiSettings> options, 
-           IAuditService auditService,
+           IOptions<SwishApiSettings> options,
+           IAuditServiceExtended auditService,
            IKohaService kohaService,
            IOptions<ApplicationSettings> applicationSettingsOptions)
            : base(logger, dataAccess)
@@ -56,10 +56,11 @@ namespace OnlinePayment.Logic.Services
             logger.LogInformation($"Initiate payment process for borrower with number {borrowerNumber}");
             var session = GuidGenerator.GenerateGuidWithoutDashesUppercase();
             logger.LogInformation($"Generated session guid = {session}");
-            await auditService.Insert(new Audit("Initiating", session, typeof(Payment)));
+            await auditService.AddAudit("Initiating", session, typeof(Payment));
             var patron = await kohaService.GetPatron(borrowerNumber, session);
             var account = await kohaService.GetAccount(borrowerNumber, session);
-            return await InitiatePayment(session, borrowerNumber, $"{patron.firstname} {patron.surname}", patron.email, patron.GetPhone(), account.GetBalanceForGivenStatuses(applicationSettings.StatusesGeneratingPaymentBalance));
+            Payment payment = await InitiatePayment(session, borrowerNumber, $"{patron.firstname} {patron.surname}", patron.email, patron.GetPhone(), account.GetBalanceForGivenStatuses(applicationSettings.StatusesGeneratingPaymentBalance));
+            return payment;
         }
 
         public async Task<Payment> GetByExternalId(string externalId)
@@ -88,15 +89,19 @@ namespace OnlinePayment.Logic.Services
 
                 var paymentRequest = await paymentRequestService.CreatePaymentRequest(borrowerNumber, patronPhoneNumber, amount, session);
 
-                logger.LogInformation("Preparing to create payment in Swish");
+                await Log($"Preparing to create payment in Swish. Borrowernumber = {borrowerNumber}, Amout = {amount}", paymentRequest);
 
                 var paymentResponse = await swishHttpService.Put(instructionUUID, paymentRequest);
-                
-                logger.LogInformation("Payment created in Swish");
+
+                await Log($"Payment created in Swish. Borrowernumber = {borrowerNumber}, Amout = {amount}", paymentRequest);
 
                 await UpdatePaymentResponseAndInsert(paymentResponse, session);
 
-                return await CreatePayment(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount, session, paymentRequest.PaymentRequestDateTime.Value, paymentResponse.Location, paymentResponse.Status);
+                var payment = await CreatePayment(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount, session, paymentRequest.PaymentRequestDateTime.Value, paymentResponse.Location, paymentResponse.Status);
+
+                await Log($"Payment created. Borrowernumber = {borrowerNumber}, Amout = {amount}, paymentRequest.PaymentRequestDateTime.Value = {paymentRequest.PaymentRequestDateTime.Value}, paymentResponse.Location = {paymentResponse.Location}, paymentResponse.Status = { paymentResponse.Status}", paymentRequest);
+
+                return payment;
             }
             catch (Exception e)
             {
@@ -106,10 +111,17 @@ namespace OnlinePayment.Logic.Services
             }
         }
 
+
+        private async Task Log(string prepareMessage, PaymentRequest paymentRequest)
+        {
+            logger.LogInformation(prepareMessage);
+            await auditService.AddAudit(prepareMessage, paymentRequest.Session, typeof(PaymentRequest));
+        }
+
         private async Task<Payment> CreatePayment(int borrowerNumber, string patronName, string patronEmail, string patronPhoneNumber, int amount, string session, DateTime initDateTime, string location, string status)
         {
             var payment = CreatePaymentEntityWithQrCode(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount, session, initDateTime, location, status);
-            await auditService.Insert(new Audit("Payment saved", session, typeof(Payment)));
+            await auditService.AddAudit("Payment saved", session, typeof(Payment));
             await Insert(payment);
             return payment;
         }
@@ -119,7 +131,7 @@ namespace OnlinePayment.Logic.Services
             var paymentFromSwish = await swishHttpService.Get(paymentResponse.Location, string.Empty);
             paymentResponse.PaymentReference = paymentFromSwish.PaymentReference;
             paymentResponse.Status = paymentFromSwish.Status;
-            await auditService.Insert(new Audit($"Payment response with status {paymentResponse.Status}", session, typeof(PaymentResponse)));
+            await auditService.AddAudit($"Payment response with status {paymentResponse.Status}", session, typeof(PaymentResponse));
             await paymentResponseService.Insert(paymentResponse);
         }
 

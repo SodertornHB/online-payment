@@ -14,13 +14,13 @@ namespace OnlinePayment.Logic.Services
     public partial class PaymentCallbackServiceExtended : PaymentCallbackService, IPaymentCallbackServiceExtended
     {
         private readonly IPaymentServiceExtended paymentService;
-        private readonly IAuditService auditService;
+        private readonly IAuditServiceExtended auditService;
         private readonly IKohaService kohaService;
 
         public PaymentCallbackServiceExtended(ILogger<PaymentCallbackService> logger,
            IPaymentCallbackDataAccess dataAccess,
            IPaymentServiceExtended paymentService,
-           IAuditService auditService,
+           IAuditServiceExtended auditService,
            IKohaService kohaService)
            : base(logger, dataAccess)
         {
@@ -35,7 +35,7 @@ namespace OnlinePayment.Logic.Services
             if (payment == null) throw new Exception($"No payment with external id {externalId}");
             model.Session = payment.Session;
             var newModel = await base.Insert(model);
-            await auditService.Insert(new Audit("Payment callback saved", model.Session, typeof(PaymentCallback)));
+            await auditService.AddAudit("Payment callback saved", model.Session, typeof(PaymentCallback));
             await kohaService.UpdateSum(payment.BorrowerNumber, Utils.ConvertToInt(model.Amount), payment.Session);
             return newModel;
         }

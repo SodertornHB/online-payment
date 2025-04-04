@@ -7,11 +7,11 @@ namespace OnlinePayment.Logic.Services
 {
     public partial class PaymentResponseServiceExtended : PaymentResponseService
     {
-        private readonly IAuditService auditService;
+        private readonly IAuditServiceExtended auditService;
 
         public PaymentResponseServiceExtended(ILogger<PaymentResponseService> logger,
            IPaymentResponseDataAccess dataAccess,
-           IAuditService auditService)
+           IAuditServiceExtended auditService)
            : base(logger, dataAccess)
         {
             this.auditService = auditService;
@@ -21,7 +21,7 @@ namespace OnlinePayment.Logic.Services
         {
             var paymentResponse = await base.Insert(model);
 
-            await auditService.Insert(new Audit("Payment response saved", model.Session, typeof(PaymentResponse)));
+            await auditService.AddAudit("Payment response saved", model.Session, typeof(PaymentResponse));
 
             return paymentResponse;
         }

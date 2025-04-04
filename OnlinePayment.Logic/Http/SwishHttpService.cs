@@ -17,12 +17,12 @@ namespace OnlinePayment.Logic.Http
     public class SwishHttpService : HttpService<PaymentRequest>, ISwishHttpService
     {
         private readonly SwishApiSettings swishApiSettings;
-        private readonly IAuditService auditService;
+        private readonly IAuditServiceExtended auditService;
 
         public SwishHttpService(ISwishHttpClient client,
             ILogger<SwishHttpService> logger,
            IOptions<SwishApiSettings> options,
-           IAuditService auditService)
+           IAuditServiceExtended auditService)
             : base(client, logger)
         {
             swishApiSettings = options.Value;
@@ -38,7 +38,7 @@ namespace OnlinePayment.Logic.Http
                 var uri = CombineUrls($"{swishApiSettings.Endpoint}/api/v2/paymentrequests", instructionUUID);
                 logger.LogInformation($"Put uri{Environment.NewLine}{content}");
                 var response = await client.Put(uri, content);
-                await auditService.Insert(new Audit("Payment request send", model.Session, typeof(PaymentRequest)));
+                await auditService.AddAudit("Payment request send", model.Session, typeof(PaymentRequest));
                 response.CheckStatus();
                 logger.LogDebug($"Put data from {uri}: {response.Content}");
                 var paymentResponse = new PaymentResponse
