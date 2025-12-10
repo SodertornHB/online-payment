@@ -16,7 +16,7 @@ using System;
 namespace OnlinePayment.Logic.Services
 {
     public partial interface IService<TModel>
-    {  
+    {
         Task<TModel> Get(int id);
         Task<IEnumerable<TModel>> Get(Dictionary<string, string> filters);
         Task<bool> Exists(int id);
@@ -36,7 +36,7 @@ namespace OnlinePayment.Logic.Services
         {
             this.logger = logger;
             this.dataAccess = dataAccess;
-        }        
+        }
 
         public virtual async Task<TModel> Get(int id)
         {
@@ -80,16 +80,16 @@ namespace OnlinePayment.Logic.Services
             logger.LogInformation($"Fetching all entities from data source.");
             return await dataAccess.GetAll();
         }
-        
+
         public virtual async Task<TModel> Insert(TModel model)
         {
-            logger.LogInformation($"Saving entity {model} to data source.");
+            logger.LogInformation($"Saving entity with id {model.Id} to data source.");
             return await dataAccess.Insert(model);
         }
 
         public virtual async Task Update(TModel model)
         {
-            logger.LogInformation($"Update entity {model} in data source.");
+            logger.LogInformation($"Update entity with id {model.Id} in data source.");
             await dataAccess.Update(model);
         }
 
