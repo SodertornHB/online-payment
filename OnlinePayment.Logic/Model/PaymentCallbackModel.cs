@@ -25,6 +25,8 @@ namespace OnlinePayment.Logic.Model
         public virtual DateTime? DateCreated {get;set;}
         public virtual DateTime? DatePaid {get;set;}
         public virtual string ErrorCode {get;set;}
-      
+
+        public override string ToString() => $"Payment callback model session = {Session}";
+
     }
 } 

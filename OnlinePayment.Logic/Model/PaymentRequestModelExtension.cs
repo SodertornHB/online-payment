@@ -25,5 +25,7 @@ namespace OnlinePayment.Logic.Model
                 throw new FormatException("Amount must be a valid decimal number.");
             }
         }
+
+        public override string ToString() => $"Session: {Session}";
     }
 }

@@ -1,17 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Web.ViewModel;
+using Sh.Library.Authentication;
 using System.Threading.Tasks;
 using System;
 using AutoMapper;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using OnlinePayment.Logic.Settings;
+using Microsoft.Extensions.Logging;
 
 namespace OnlinePayment.Web.Controllers
 {
-    public partial class PaymentController 
+    public partial class PaymentController
     {
+        [NoLibraryAuth]
         [HttpGet("init")]
         public async Task<IActionResult> Init([FromServices] IKohaService kohaService,
             [FromServices] IOptions<ApplicationSettings> applicationSettinsOptions, int borrowerNumber, bool @internal)
@@ -22,6 +25,7 @@ namespace OnlinePayment.Web.Controllers
                 var patron = await kohaService.GetPatron(borrowerNumber);
                 var account = await kohaService.GetAccount(borrowerNumber);
                 var balance = account.GetBalanceForGivenStatuses(applicationsSettings.StatusesGeneratingPaymentBalance);
+                logger.LogInformation($"Init payment for borrower {patron.patron_id}, amount to pay = {balance}, total balance = {account.balance}");
                 return base.View(new InitPayViewModel { BorrowerNumber = borrowerNumber, PatronName = patron.GetFullname(), PatronPhoneNumber = patron.GetPhone(), PatronEmail = patron.email, Amount = balance, ShowPaymentButton = !@internal });
             }
             catch (ArgumentException e)
@@ -30,6 +34,7 @@ namespace OnlinePayment.Web.Controllers
             }
         }
 
+        [NoLibraryAuth]
         [HttpPost("pay")]
         public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, InitPayViewModel viewModel)
         {

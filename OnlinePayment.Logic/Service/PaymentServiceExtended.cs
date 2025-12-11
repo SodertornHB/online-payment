@@ -87,7 +87,7 @@ namespace OnlinePayment.Logic.Services
             {
                 var instructionUUID = GuidGenerator.GenerateGuidWithoutDashesUppercase();
 
-                var paymentRequest = await paymentRequestService.CreatePaymentRequest(borrowerNumber, patronPhoneNumber, amount, session);
+                PaymentRequest paymentRequest = await paymentRequestService.CreatePaymentRequest(borrowerNumber, patronPhoneNumber, amount, session);
 
                 await Log($"Preparing to create payment in Swish. Borrowernumber = {borrowerNumber}, Amout = {amount}", paymentRequest);
 

@@ -21,6 +21,8 @@ namespace OnlinePayment.Web.ViewModel
         public DateTime? DateCreated {get;set;} 
         [DataType(DataType.Text)]
         public DateTime? DatePaid {get;set;} 
-        public string ErrorCode {get;set;}  = ""; 
+        public string ErrorCode {get;set;}  = "";
+
+        public override string ToString() => $"Callback request id = {Id}";
     }
 } 

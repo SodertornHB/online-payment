@@ -13,6 +13,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Logic.Settings;
+using Sh.Library.Authentication;
+using Sh.Library.MailSender;
 using OnlinePayment.Logic.Http;
 using OnlinePayment.Logic.DataAccess;
 using OnlinePayment.Logic.Model;
@@ -58,6 +60,15 @@ namespace OnlinePayment.Web
             services.Configure<SwishApiSettings>(Configuration.GetSection("SwishApi"));
             services.Configure<CertificationAuthenticationSettings>(Configuration.GetSection("CertificationAuthentication"));
 
+
+            //services.AddLibraryStatistics(statisticsHost: Configuration["Statistics:Host"], bearerToken: Configuration["Statistics:BearerToken"]);
+            services.AddLibraryAuthentication(authenticationHost: Configuration["Authentication:Host"]);
+            //string sharedKeysFolder = Configuration["Application:KeysFolder"];
+            //services.AddDataProtection()
+            //    .PersistKeysToFileSystem(new DirectoryInfo(sharedKeysFolder))
+            //    .SetApplicationName(Configuration["Application:Name"]);
+            services.AddLibraryMailSender(mailSenderHost: Configuration["MailSender:Host"], bearerToken: Configuration["MailSender:BearerToken"]);
+
             services.Configure<RouteOptions>(options =>
             {
                 options.LowercaseUrls = true;
@@ -65,18 +76,20 @@ namespace OnlinePayment.Web
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllOrigins",
-               builder =>
-               {
+                    builder =>
+                    {
                         builder.AllowAnyOrigin()
                                .WithMethods("GET")
                                .AllowAnyHeader();
-               });
+                    });
             });
         }
 
         protected override void CustomConfiguration(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors("AllowAllOrigins");
+            app.UseLibraryApiAuthentication();
+            app.UseLibraryAuthentication();
+            //app.UseLibraryStatistics();
         }
 
         public override IMapper GetMapper()

@@ -6,14 +6,16 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Sh.Library.Authentication;
 using System.Text.Json;
 using System;
 using Web.Controllers;
 
 namespace OnlinePayment.Web.Controllers
 {
-    public partial class PaymentCallbackController 
+    public partial class PaymentCallbackController
     {
+        [NoLibraryAuth]
         [HttpPost("callback")]
         public async Task<IActionResult> Callback([FromServices] IPaymentCallbackServiceExtended callbackService,
          [FromServices] ILogger<HomeController> logger,

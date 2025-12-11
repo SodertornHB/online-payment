@@ -33,10 +33,8 @@ namespace OnlinePayment.Logic.Http
             try
             {
                 logger.LogInformation("Serializing model to send to Swish");
-                var content = JsonConvert.SerializeObject(model, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-                logger.LogInformation($"Put model:{Environment.NewLine}{content}");
+                string content = JsonConvert.SerializeObject(model, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
                 var uri = CombineUrls($"{swishApiSettings.Endpoint}/api/v2/paymentrequests", instructionUUID);
-                logger.LogInformation($"Put uri{Environment.NewLine}{content}");
                 var response = await client.Put(uri, content);
                 await auditService.AddAudit("Payment request send", model.Session, typeof(PaymentRequest));
                 response.CheckStatus();
