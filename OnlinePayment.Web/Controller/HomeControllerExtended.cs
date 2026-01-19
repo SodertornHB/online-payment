@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OnlinePayment.Logic.Model;
 using OnlinePayment.Logic.Services;
@@ -22,38 +23,47 @@ namespace Web.Controllers
         [NoLibraryAuth]
         [HttpGet("js")]
         public async Task<IActionResult> js([FromServices] IOptions<ApplicationSettings> applicationSettinsOptions,
-         [FromServices] IKohaService kohaService,
-         int borrowerNumber, string lang)
+        [FromServices] IKohaService kohaService,
+        [FromServices] ILogger<HomeController> logger,
+        int borrowerNumber, string lang)
         {
-            var applicationSettings = applicationSettinsOptions.Value;
-            if (borrowerNumber == default) return Ok();
+            try
+            {
+                var applicationSettings = applicationSettinsOptions.Value;
+                if (borrowerNumber == default) return Ok();
 
-            var account = await kohaService.GetAccount(borrowerNumber);
-            if (account.GetBalanceForGivenStatuses(applicationSettings.StatusesGeneratingPaymentBalance) < 1) return Ok();
+                var account = await kohaService.GetAccount(borrowerNumber);
+                if (account.GetBalanceForGivenStatuses(applicationSettings.StatusesGeneratingPaymentBalance) < 1) return Ok();
 
-            var msg = lang == "sv-SE" ? "Betala avgifter" : "Pay fees";
-            var altMsg = lang == "sv-SE" ? "Betala med Swish" : "Pay with Swish";
+                var msg = lang == "sv-SE" ? "Betala avgifter" : "Pay fees";
+                var altMsg = lang == "sv-SE" ? "Betala med Swish" : "Pay with Swish";
 
-            var applicationHost = applicationSettings.Host;
-            var applicationName = applicationSettings.Name;
-            var fullHost = $"{applicationHost}{applicationName}";
+                var applicationHost = applicationSettings.Host;
+                var applicationName = applicationSettings.Name;
+                var fullHost = $"{applicationHost}{applicationName}";
 
-            var initUrl = $"{fullHost}/init?borrowerNumber={borrowerNumber}";
-            var imgUrl = $"{fullHost}/img/swish_small.png";
+                var initUrl = $"{fullHost}/init?borrowerNumber={borrowerNumber}";
+                var imgUrl = $"{fullHost}/img/swish_small.png";
 
-            string js = @$"
-                 $(document).ready(function() {{
-                     $('#finestable').before(`
-                  <div style='margin: 20px 0; width: 100px; text-align: center;float: right;'>
-                         <a href='{initUrl}'>                          
-                         <span style='font-size: 0.8em;'>{msg}</span>                            
-                         <img src='{imgUrl}' alt='{altMsg}' style='margin:10px'>
-                     </a>
-                 </div>
-                     `);
-                 }});";
+                string js = @$"
+                $(document).ready(function() {{
+                    $('#finestable').before(`
+                <div style='margin: 20px 0; width: 100px; text-align: center;float: right;'>
+                        <a href='{initUrl}'>                          
+                        <span style='font-size: 0.8em;'>{msg}</span>                            
+                        <img src='{imgUrl}' alt='{altMsg}' style='margin:10px'>
+                    </a>
+                </div>
+                    `);
+                }});";
 
-            return Ok(js);
+                return Ok(js);
+            }
+            catch (System.ArgumentException e)
+            {
+                logger.LogWarning(e, "Could not generate payment JS for borrowerNumber {borrowerNumber}", borrowerNumber);
+                return Ok();
+            }
         }
 
 

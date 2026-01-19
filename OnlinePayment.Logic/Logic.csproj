@@ -1,9 +1,9 @@
-<!-- Warning! This is an auto generated file. Changes may be overwritten -->
+﻿<!-- Warning! This is an auto generated file. Changes may be overwritten -->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Version>0.0.7</Version>
+    <Version>0.0.8</Version>
     <Description>Auto generated project</Description>
   </PropertyGroup>
 
