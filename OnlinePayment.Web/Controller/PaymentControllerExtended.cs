@@ -38,9 +38,17 @@ namespace OnlinePayment.Web.Controllers
         [HttpPost("pay")]
         public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, InitPayViewModel viewModel)
         {
-            var payment = await paymentServiceExtended.InitiatePayment(viewModel.BorrowerNumber);
+            try
+            {
+                var payment = await paymentServiceExtended.InitiatePayment(viewModel.BorrowerNumber);
 
-            return View(new PayViewModel { Session = payment.Session, Status = payment.Status });
+                return View(new PayViewModel { Session = payment.Session, Status = payment.Status });
+            }
+            catch (ArgumentException e)
+            {
+                logger.LogWarning($"ArgumentException: {e.Message}");
+                return RedirectToAction("Cancelled", "Home");
+            }
         }
 
         [HttpGet("list")]

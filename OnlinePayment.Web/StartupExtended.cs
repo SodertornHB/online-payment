@@ -56,6 +56,7 @@ namespace OnlinePayment.Web
             services.AddTransient<IPaymentCallbackServiceExtended, PaymentCallbackServiceExtended>();
             services.AddTransient<IPatronCreditHttpService, PatronCreditHttpService>();
             services.AddTransient<IAuditServiceExtended, AuditServiceExtended>();
+            services.AddTransient<ICleanUpService, CleanUpServiceExtended>();
             services.Configure<KohaApiSettings>(Configuration.GetSection("KohaApi"));
             services.Configure<SwishApiSettings>(Configuration.GetSection("SwishApi"));
             services.Configure<CertificationAuthenticationSettings>(Configuration.GetSection("CertificationAuthentication"));

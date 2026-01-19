@@ -111,7 +111,6 @@ namespace OnlinePayment.Logic.Services
             }
         }
 
-
         private async Task Log(string prepareMessage, PaymentRequest paymentRequest)
         {
             logger.LogInformation(prepareMessage);
