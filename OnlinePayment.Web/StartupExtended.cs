@@ -118,7 +118,7 @@ namespace OnlinePayment.Web
 
     public class CleanUpServiceExtended : CleanUpService
     {
-        private const int WEEDING_TIME_IN_DAYS = -14;
+        private const int WEEDING_TIME_IN_DAYS = -7;
         private readonly ILogService logService;
 
         public CleanUpServiceExtended(IOptions<ApplicationSettings> options,
