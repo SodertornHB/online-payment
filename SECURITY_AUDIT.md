@@ -80,6 +80,7 @@ Applikationen exponerar internetnära, anonyma betalnings-endpoints utan tillrä
 - **Rekommenderad åtgärd:** Använd parametriserad query (Dapper-parameter `@externalId`) och byt `like` mot `=`. Validera `externalId`-formatet (32 hex) innan användning. Kör databaskontot med minsta möjliga rättigheter.
 - **Åtgärdsinsats:** Liten.
 - **Verifiering/test:** Skicka callback med `Id` innehållande `'`-tecken/UNION-payload och verifiera att queryn parametriseras och att inga fel/data läcker.
+- **✅ ÅTGÄRDAT 2026-07-02:** `GetByExternalId` och `GetBySessionId` använder nu Dapper-parameter (`@externalId`/`@sessionId`) istället för stränginterpolation. Logic- och Web-projekt bygger utan fel.
 
 ### 3. Produktionens Swish-merchantcertifikat och lösenfras finns i källträdet
 
@@ -184,6 +185,7 @@ Applikationen exponerar internetnära, anonyma betalnings-endpoints utan tillrä
 - **Rekommenderad åtgärd:** Migrera insert/update till parametriserade queries (Dapper stöder detta redan för select/delete). Använd `CultureInfo.InvariantCulture` för numerisk formatering.
 - **Åtgärdsinsats:** Medel.
 - **Verifiering/test:** Enhetstesta insert/update med värden som innehåller specialtecken och decimaltal.
+- **✅ ÅTGÄRDAT 2026-07-02:** SqlStringBuilder INSERT/UPDATE parameteriserad (@-platshållare, binds av Dapper via modellen); HasIdentityColumn parameteriserad. Logic- och Web-projekt bygger utan fel. Även `PaymentDataAccessExtended.GetByExternalId` (och `GetBySessionId`) parameteriserades med Dapper-parameter (se fynd 2).
 
 ### 11. TrustServerCertificate=True i databasanslutningen
 
