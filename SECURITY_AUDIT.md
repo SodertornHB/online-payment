@@ -100,6 +100,7 @@ Applikationen exponerar internetnära, anonyma betalnings-endpoints utan tillrä
 
 ### 4. Oautentiserad utlämning av personuppgifter (IDOR) via /init och /js
 
+- **✅ ÅTGÄRDAT 2026-07-08 (med känd residual):** Autentisering är inte möjlig här (externa Koha-OPAC-användare), så per rekommendationen används nu en **signerad, kortlivad token** (ASP.NET Core Data Protection, 15 min) i stället för ett gissningsbart heltal. `/js` myntar token och länkar `/init?token=…`; `/init` och `/pay` löser `borrowerNumber` **ur token** och accepterar aldrig ett rått nummer från klienten (härdar även Fynd 5). PII i `/init`-vyn bantad till namn + belopp (e-post/telefon borttagna). **Rate limiting** (30/min per IP) på `/js`, `/init`, `/pay`. Ny bas-tjänst `OnlinePayment.Web/Security/BorrowerTokenService.cs`; ändringen speglas i org-overlayt (behåller `[NoLibraryAuth]`). **Residual:** `/js` myntar token för valfritt `borrowernumber` (OPAC-ingången kan inte autentiseras), så en beslutsam angripare kan nå PII i två steg (`/js`→`/init`) — men nu rate-limitat, och `/js` avslöjar endast om avgifter finns, inte PII. Vidare härdning: minska/ta bort fee-existens-signalen i `/js` och överväg IP-allowlist/WAF om OPAC-ingången kan begränsas.
 - **Allvarlighetsgrad:** Hög
 - **Typ:** Åtkomstkontroll (saknad auktorisering), dataskydd/PII, IDOR/enumerering
 - **Berörda filer eller metoder:** `OnlinePayment.Web/Controller/PaymentControllerExtended.cs` → `Init(...)`; `organizational-specific/Controller/HomeControllerExtended.cs` → `js(...)`

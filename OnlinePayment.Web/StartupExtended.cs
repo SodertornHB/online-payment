@@ -17,6 +17,10 @@ using OnlinePayment.Logic.Http;
 using OnlinePayment.Logic.DataAccess;
 using OnlinePayment.Logic.Model;
 using OnlinePayment.Web.ViewModel;
+using OnlinePayment.Web.Security;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.Http;
+using System.Threading.RateLimiting;
 
 namespace OnlinePayment.Web
 {
@@ -65,6 +69,23 @@ namespace OnlinePayment.Web
             // registers its own authentication provider and mail services here (see
             // the organizational-specific overlay for how this is done at build time).
 
+            // Short-lived token + rate limiting protect the public payment endpoints
+            // (/js, /init, /pay) against borrower-number enumeration (finding 4).
+            services.AddDataProtection();
+            services.AddSingleton<IBorrowerTokenService, BorrowerTokenService>();
+            services.AddRateLimiter(options =>
+            {
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+                options.AddPolicy(PaymentRateLimit.Policy, httpContext =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 30,
+                            Window = TimeSpan.FromMinutes(1)
+                        }));
+            });
+
             services.Configure<RouteOptions>(options =>
             {
                 options.LowercaseUrls = true;
@@ -83,6 +104,8 @@ namespace OnlinePayment.Web
 
         protected override void CustomConfiguration(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseRateLimiter();
+
             // Organization-specific authentication/session middleware is added here by
             // each organization's overlay. The base repository ships without one.
         }

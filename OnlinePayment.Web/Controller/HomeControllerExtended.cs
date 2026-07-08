@@ -3,6 +3,9 @@ using Microsoft.Extensions.Options;
 using OnlinePayment.Logic.Model;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Logic.Settings;
+using OnlinePayment.Web.Security;
+using Microsoft.AspNetCore.RateLimiting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,8 +22,10 @@ namespace Web.Controllers
         /// $("head").append(paymentScript);
         /// </remarks>
         [HttpGet("js")]
+        [EnableRateLimiting(PaymentRateLimit.Policy)]
         public async Task<IActionResult> js([FromServices] IOptions<ApplicationSettings> applicationSettinsOptions,
          [FromServices] IKohaService kohaService,
+         [FromServices] IBorrowerTokenService borrowerTokenService,
          int borrowerNumber, string lang)
         {
             var applicationSettings = applicationSettinsOptions.Value;
@@ -36,7 +41,8 @@ namespace Web.Controllers
             var applicationName = applicationSettings.Name;
             var fullHost = $"{applicationHost}{applicationName}";
 
-            var initUrl = $"{fullHost}/init?borrowerNumber={borrowerNumber}";
+            var token = borrowerTokenService.Protect(borrowerNumber);
+            var initUrl = $"{fullHost}/init?token={Uri.EscapeDataString(token)}";
             var imgUrl = $"{fullHost}/img/swish_small.png";
 
             string js = @$"

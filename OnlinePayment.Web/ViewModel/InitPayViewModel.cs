@@ -5,7 +5,10 @@ namespace OnlinePayment.Web.ViewModel
     public class InitPayViewModel
     {
         public bool ShowPaymentButton { get; set; }
-        public int BorrowerNumber { get; set; }
+        // Short-lived, integrity-protected stand-in for the borrower number. The payment
+        // endpoints never accept a raw borrower number from the client; they resolve it
+        // from this token instead.
+        public string Token { get; set; } = "";
         public string PatronName { get; set; } = "";
         public string PatronEmail { get; set; } = "";
         public string PatronPhoneNumber { get; set; } = "";

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Web.ViewModel;
+using OnlinePayment.Web.Security;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.Tasks;
 using System;
 using AutoMapper;
@@ -14,9 +16,14 @@ namespace OnlinePayment.Web.Controllers
     public partial class PaymentController
     {
         [HttpGet("init")]
+        [EnableRateLimiting(PaymentRateLimit.Policy)]
         public async Task<IActionResult> Init([FromServices] IKohaService kohaService,
-            [FromServices] IOptions<ApplicationSettings> applicationSettinsOptions, int borrowerNumber, bool @internal)
+            [FromServices] IOptions<ApplicationSettings> applicationSettinsOptions,
+            [FromServices] IBorrowerTokenService borrowerTokenService, string token, bool @internal)
         {
+            if (!borrowerTokenService.TryResolve(token, out var borrowerNumber))
+                return View(new InitPayViewModel { Feedback = "Unable to initialize payment: the link is invalid or has expired." });
+
             try
             {
                 var applicationsSettings = applicationSettinsOptions.Value;
@@ -24,7 +31,7 @@ namespace OnlinePayment.Web.Controllers
                 var account = await kohaService.GetAccount(borrowerNumber);
                 var balance = account.GetBalanceForGivenStatuses(applicationsSettings.StatusesGeneratingPaymentBalance);
                 logger.LogInformation($"Init payment for borrower {patron.patron_id}, amount to pay = {balance}, total balance = {account.balance}");
-                return base.View(new InitPayViewModel { BorrowerNumber = borrowerNumber, PatronName = patron.GetFullname(), PatronPhoneNumber = patron.GetPhone(), PatronEmail = patron.email, Amount = balance, ShowPaymentButton = !@internal });
+                return base.View(new InitPayViewModel { Token = token, PatronName = patron.GetFullname(), Amount = balance, ShowPaymentButton = !@internal });
             }
             catch (ArgumentException e)
             {
@@ -33,11 +40,16 @@ namespace OnlinePayment.Web.Controllers
         }
 
         [HttpPost("pay")]
-        public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, InitPayViewModel viewModel)
+        [EnableRateLimiting(PaymentRateLimit.Policy)]
+        public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended,
+            [FromServices] IBorrowerTokenService borrowerTokenService, InitPayViewModel viewModel)
         {
+            if (!borrowerTokenService.TryResolve(viewModel.Token, out var borrowerNumber))
+                return RedirectToAction("Cancelled", "Home");
+
             try
             {
-                var payment = await paymentServiceExtended.InitiatePayment(viewModel.BorrowerNumber);
+                var payment = await paymentServiceExtended.InitiatePayment(borrowerNumber);
 
                 return View(new PayViewModel { Session = payment.Session, Status = payment.Status });
             }

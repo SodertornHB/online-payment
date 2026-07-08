@@ -18,17 +18,11 @@ else
             <label for="patronName">@SharedLocalizer.GetLocalizedHtmlString("Your name")</label>
             <span id="patronName" class="patron-name">@Model.PatronName</span>
 
-            <label for="patronPhoneNumber">@SharedLocalizer.GetLocalizedHtmlString("Your phone number")</label>
-            <span id="patronPhoneNumber" class="patron-phone">@Model.GetPatronPhoneNumber()</span>
-
-            <label for="patronEmail">@SharedLocalizer.GetLocalizedHtmlString("Your e-mail")</label>
-            <span id="patronEmail" class="patron-email">@Model.PatronEmail</span>
-
             <label for="amount">@SharedLocalizer.GetLocalizedHtmlString("Fee")</label>
             <span id="amount" class="amount">@Model.GetAmountWithCurrency()</span>
         </div>
         <input id="applicationName" name="ApplicationName" type="hidden" value="@settings.Value.Name" />
-        <input id="borrowerNumber" name="BorrowerNumber" type="hidden" value="@Model.BorrowerNumber" />
+        <input id="token" name="Token" type="hidden" value="@Model.Token" />
 
 
         <div class="form-group">
