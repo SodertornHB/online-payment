@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
+using System.Net.Security;
 using System.Linq;
 using System.IO;
 
@@ -30,7 +31,7 @@ namespace OnlinePayment.Logic.Http
         protected override async Task<HttpResponseMessage> Send(HttpRequestMessage request)
         {
             logger.LogInformation($"Sending request using Swish http client");
-            HttpClientHandler handler = GetHttpClientHandlerWithCertificate();
+            var handler = GetHttpClientHandlerWithCertificate();
 
             using (var httpClient = new System.Net.Http.HttpClient(handler))
             {
@@ -85,23 +86,29 @@ namespace OnlinePayment.Logic.Http
             }
         }
 
-        private HttpClientHandler GetHttpClientHandlerWithCertificate()
+        private HttpMessageHandler GetHttpClientHandlerWithCertificate()
         {
-            var handler = new HttpClientHandler
+            var (leaf, intermediates) = LoadClientCertificateWithChain();
+
+            // Use SocketsHttpHandler + SslStreamCertificateContext so the FULL client
+            // certificate chain (leaf + issuing CA) is presented during the TLS handshake.
+            // HttpClientHandler.ClientCertificates only sends the leaf, which Swish MSS
+            // rejects with an "sslv3 alert handshake failure" — curl succeeds because it
+            // sends the chain from the PEM. Allow TLS 1.2/1.3 (Swish requires >= 1.2).
+            var handler = new SocketsHttpHandler
             {
-                // TLS 1.2 only. On Linux/OpenSSL, TLS 1.3 client-certificate auth
-                // (post-handshake auth) fails with "decryption failed or bad record mac"
-                // (OpenSSL error 0A000119). Swish CPC requires TLS 1.2, so pin to it.
-                SslProtocols = SslProtocols.Tls12
+                SslOptions = new SslClientAuthenticationOptions
+                {
+                    EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13,
+                    ClientCertificateContext = SslStreamCertificateContext.Create(leaf, intermediates, offline: true)
+                }
             };
 
-            handler.ClientCertificates.Add(LoadClientCertificate());
-
-            logger.LogInformation($"Handler contains {handler.ClientCertificates.Count} client certificate(s)");
+            logger.LogInformation($"Handler configured with client certificate {leaf.Subject} and {intermediates.Count} intermediate cert(s)");
             return handler;
         }
 
-        private X509Certificate2 LoadClientCertificate()
+        private (X509Certificate2 leaf, X509Certificate2Collection intermediates) LoadClientCertificateWithChain()
         {
             // Prefer loading the PKCS#12 file directly. This is cross-platform and works on
             // Linux, where the Windows certificate store (LocalMachine\My) is not available.
@@ -115,9 +122,15 @@ namespace OnlinePayment.Logic.Http
                 if (File.Exists(path))
                 {
                     logger.LogInformation($"Loading Swish client certificate from file: {Path.GetFileName(path)}");
-                    var certFromFile = new X509Certificate2(path, settings.Passphrase);
-                    if (!certFromFile.HasPrivateKey) throw new InvalidOperationException("Certificate file does not contain a private key.");
-                    return certFromFile;
+                    var all = new X509Certificate2Collection();
+                    all.Import(path, settings.Passphrase, X509KeyStorageFlags.Exportable);
+
+                    var leaf = all.OfType<X509Certificate2>().FirstOrDefault(c => c.HasPrivateKey);
+                    if (leaf == null) throw new InvalidOperationException("Certificate file does not contain a private key.");
+
+                    var intermediates = new X509Certificate2Collection(
+                        all.OfType<X509Certificate2>().Where(c => !c.HasPrivateKey).ToArray());
+                    return (leaf, intermediates);
                 }
 
                 logger.LogWarning($"Configured certificate file '{settings.Certification}' not found; falling back to certificate store by thumbprint.");
@@ -142,7 +155,7 @@ namespace OnlinePayment.Logic.Http
                 if (selectedCert == null || !selectedCert.HasPrivateKey) throw new InvalidOperationException($"Certificate does not have a private key.");
 
                 logger.LogInformation($"Certificate found: {selectedCert.Subject}");
-                return selectedCert;
+                return (selectedCert, new X509Certificate2Collection());
             }
         }
 
