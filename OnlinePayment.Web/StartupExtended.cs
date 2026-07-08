@@ -13,8 +13,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Logic.Settings;
-using Sh.Library.Authentication;
-using Sh.Library.MailSender;
 using OnlinePayment.Logic.Http;
 using OnlinePayment.Logic.DataAccess;
 using OnlinePayment.Logic.Model;
@@ -62,13 +60,10 @@ namespace OnlinePayment.Web
             services.Configure<CertificationAuthenticationSettings>(Configuration.GetSection("CertificationAuthentication"));
 
 
-            //services.AddLibraryStatistics(statisticsHost: Configuration["Statistics:Host"], bearerToken: Configuration["Statistics:BearerToken"]);
-            services.AddLibraryAuthentication(authenticationHost: Configuration["Authentication:Host"]);
-            //string sharedKeysFolder = Configuration["Application:KeysFolder"];
-            //services.AddDataProtection()
-            //    .PersistKeysToFileSystem(new DirectoryInfo(sharedKeysFolder))
-            //    .SetApplicationName(Configuration["Application:Name"]);
-            services.AddLibraryMailSender(mailSenderHost: Configuration["MailSender:Host"], bearerToken: Configuration["MailSender:BearerToken"]);
+            // Authentication/session and mail delivery are organization-specific and
+            // intentionally not wired up in this base repository. Each organization
+            // registers its own authentication provider and mail services here (see
+            // the organizational-specific overlay for how this is done at build time).
 
             services.Configure<RouteOptions>(options =>
             {
@@ -88,9 +83,8 @@ namespace OnlinePayment.Web
 
         protected override void CustomConfiguration(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseLibraryApiAuthentication();
-            app.UseLibraryAuthentication();
-            //app.UseLibraryStatistics();
+            // Organization-specific authentication/session middleware is added here by
+            // each organization's overlay. The base repository ships without one.
         }
 
         public override IMapper GetMapper()
