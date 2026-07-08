@@ -25,12 +25,12 @@ namespace OnlinePayment.Logic.DataAccess
         }
         public virtual async Task<Payment> GetByExternalId(string externalId)
         {
-            string sql = $"SELECT * FROM [{Table}] where ExternalId like @externalId";
+            string sql = $"SELECT * FROM [{Table}] where ExternalId = @externalId";
             return await db.LoadSingularData<Payment, dynamic>(sql, new { externalId });
         }
         public virtual async Task<Payment> GetBySessionId(string sessionId)
         {
-            string sql = $"SELECT * FROM [{Table}] where session like @sessionId";
+            string sql = $"SELECT * FROM [{Table}] where session = @sessionId";
             return await db.LoadSingularData<Payment, dynamic>(sql, new { sessionId });
         }
     }

@@ -82,6 +82,7 @@ Applikationen exponerar internetnära, anonyma betalnings-endpoints utan tillrä
 - **Åtgärdsinsats:** Liten.
 - **Verifiering/test:** Skicka callback med `Id` innehållande `'`-tecken/UNION-payload och verifiera att queryn parametriseras och att inga fel/data läcker.
 - **✅ ÅTGÄRDAT 2026-07-02:** `GetByExternalId` och `GetBySessionId` använder nu Dapper-parameter (`@externalId`/`@sessionId`) istället för stränginterpolation. Logic- och Web-projekt bygger utan fel.
+- **✅ HELT ÅTGÄRDAT 2026-07-08:** Kvarvarande rekommendationer stängda: `like` bytt mot `=` i båda metoderna (eliminerar `%`-wildcardmatchning mot godtycklig rad, även en korrekthetsbugg för `%`/`_` i legitima id:n), och `PaymentServiceExtended.GetByExternalId` validerar nu `externalId`-formatet (`^[a-fA-F0-9]{32}$`) före användning, som `GetBySessionId`. Databaskontots rättigheter (least privilege) är en driftsåtgärd utanför koden.
 
 ### 3. Produktionens Swish-merchantcertifikat och lösenfras finns i källträdet
 

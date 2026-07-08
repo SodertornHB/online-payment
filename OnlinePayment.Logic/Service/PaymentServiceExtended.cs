@@ -65,6 +65,9 @@ namespace OnlinePayment.Logic.Services
 
         public async Task<Payment> GetByExternalId(string externalId)
         {
+            if (string.IsNullOrEmpty(externalId) || !Regex.IsMatch(externalId, @"^[a-fA-F0-9]{32}$"))
+                throw new ArgumentException("Invalid external ID format. It should be a GUID without dashes.");
+
             var payment = await dataAccess.GetByExternalId(externalId);
             await UpdateStatusIfChanged(payment);
             return payment;
