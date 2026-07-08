@@ -67,6 +67,7 @@ Applikationen exponerar internetnära, anonyma betalnings-endpoints utan tillrä
 
 ### 2. Oautentiserad SQL-injektion via /callback (GetByExternalId)
 
+- **✅ ÅTGÄRDAT 2026-07-08:** Helt åtgärdat. `GetByExternalId`/`GetBySessionId` använder Dapper-parameter (`@externalId`/`@sessionId`), `like` är bytt mot `=` (ingen wildcardmatchning mot godtycklig rad), och `PaymentServiceExtended.GetByExternalId` validerar formatet (`^[a-fA-F0-9]{32}$`) före användning. Både SQL-injektionen och wildcard-/integritetsproblemet är stängda. (Least-privilege på databaskontot är en driftsåtgärd utanför koden.) Detaljer nedan.
 - **Allvarlighetsgrad:** Kritisk
 - **Typ:** SQL-injektion (oparametriserad query), extern oautentiserad angripare
 - **Berörda filer eller metoder:** `OnlinePayment.Logic/DataAccess/PaymentDataAccessExtended.cs` → `GetByExternalId(string externalId)`; anropas från `PaymentCallbackServiceExtended.Insert` med `callbackModel.Id` från callback-bodyn.
