@@ -40,6 +40,7 @@ Applikationen exponerar internetnära, anonyma betalnings-endpoints utan tillrä
 
 ### 1. Callbacken litas på blint – saknar autenticitet, beloppsintegritet, statuskontroll och idempotens
 
+- **✅ ÅTGÄRDAT (app-lagret) 2026-07-08:** `PaymentCallbackServiceExtended.Insert` (grundfunktionalitet) hårdad: krediterar Koha endast när providern själv rapporterar status `PAID` (hämtas via mTLS-GET i `GetByExternalId`/`UpdateStatusIfChanged`) i stället för på callbackens egna `DatePaid`; krediterar det **lagrade** beloppet `payment.Amount` (aldrig callbackens `Amount`) och loggar avvikelse; avvisar callback med avvikande valuta mot `swishApiSettings.Currency`; och är idempotent (avvisar dubblettcallback per session). Detta bryter den oautentiserade bedrägerikedjan. **Kvarstår:** (1) IP-allowlist för `/callback` — org-specifikt/infrastruktur (reverse proxy eller org-overlay); (2) unik DB-constraint på callback-sessionen för starkare skydd mot genuint samtidiga dubbletter (nuvarande idempotens är check-then-act).
 - **Allvarlighetsgrad:** Kritisk
 - **Typ:** Webhook-/callback-verifiering, beloppsintegritet, förtroendegräns, betalningsbedrägeri
 - **Berörda filer eller metoder:**
