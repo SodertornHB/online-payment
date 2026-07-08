@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Web.ViewModel;
-using Sh.Library.Authentication;
 using System.Threading.Tasks;
 using System;
 using AutoMapper;
@@ -14,7 +13,6 @@ namespace OnlinePayment.Web.Controllers
 {
     public partial class PaymentController
     {
-        [NoLibraryAuth]
         [HttpGet("init")]
         public async Task<IActionResult> Init([FromServices] IKohaService kohaService,
             [FromServices] IOptions<ApplicationSettings> applicationSettinsOptions, int borrowerNumber, bool @internal)
@@ -34,7 +32,6 @@ namespace OnlinePayment.Web.Controllers
             }
         }
 
-        [NoLibraryAuth]
         [HttpPost("pay")]
         public async Task<IActionResult> Pay([FromServices] IPaymentServiceExtended paymentServiceExtended, InitPayViewModel viewModel)
         {

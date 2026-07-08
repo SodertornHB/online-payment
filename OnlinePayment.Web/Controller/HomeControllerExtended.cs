@@ -3,7 +3,6 @@ using Microsoft.Extensions.Options;
 using OnlinePayment.Logic.Model;
 using OnlinePayment.Logic.Services;
 using OnlinePayment.Logic.Settings;
-using Sh.Library.Authentication;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +18,6 @@ namespace Web.Controllers
         /// paymentScript.src = "https://YOUR_HOST/js?borrowernumber=" + $('.loggedinusername').attr('data-borrowernumber') + "&lang=" + $('html').attr('lang');
         /// $("head").append(paymentScript);
         /// </remarks>
-        [NoLibraryAuth]
         [HttpGet("js")]
         public async Task<IActionResult> js([FromServices] IOptions<ApplicationSettings> applicationSettinsOptions,
          [FromServices] IKohaService kohaService,
@@ -58,15 +56,12 @@ namespace Web.Controllers
 
 
         [HttpGet("paid")]
-        [NoLibraryAuth]
         public IActionResult Paid() => View();
 
         [HttpGet("declined")]
-        [NoLibraryAuth]
         public IActionResult Declined() => View();
 
         [HttpGet("cancelled")]
-        [NoLibraryAuth]
         public IActionResult Cancelled() => View();
 
         private static async Task<IEnumerable<Audit>> GetAudistsBySession(IAuditService auditService, string session)
