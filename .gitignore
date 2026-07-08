@@ -364,3 +364,6 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 organizational-specific
+
+# Org-specific staging config copied in at build time (source of truth: organizational-specific/)
+**/appsettings.Staging.json

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
 using System.Linq;
+using System.IO;
 
 namespace OnlinePayment.Logic.Http
 {
@@ -91,38 +92,55 @@ namespace OnlinePayment.Logic.Http
                 SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13
             };
 
+            handler.ClientCertificates.Add(LoadClientCertificate());
+
+            logger.LogInformation($"Handler contains {handler.ClientCertificates.Count} client certificate(s)");
+            return handler;
+        }
+
+        private X509Certificate2 LoadClientCertificate()
+        {
+            // Prefer loading the PKCS#12 file directly. This is cross-platform and works on
+            // Linux, where the Windows certificate store (LocalMachine\My) is not available.
+            // Fall back to the certificate store by thumbprint for Windows/IIS hosting.
+            if (!string.IsNullOrWhiteSpace(settings.Certification))
+            {
+                var path = Path.IsPathRooted(settings.Certification)
+                    ? settings.Certification
+                    : Path.Combine(AppContext.BaseDirectory, settings.Certification);
+
+                if (File.Exists(path))
+                {
+                    logger.LogInformation($"Loading Swish client certificate from file: {Path.GetFileName(path)}");
+                    var certFromFile = new X509Certificate2(path, settings.Passphrase);
+                    if (!certFromFile.HasPrivateKey) throw new InvalidOperationException("Certificate file does not contain a private key.");
+                    return certFromFile;
+                }
+
+                logger.LogWarning($"Configured certificate file '{settings.Certification}' not found; falling back to certificate store by thumbprint.");
+            }
+
             if (string.IsNullOrWhiteSpace(settings.Thumbprint))
             {
-                logger.LogError("Certificate thumbprint is not configured.");
-                throw new InvalidOperationException("Certificate thumbprint is required but not provided.");
+                logger.LogError("No certificate file found and no thumbprint configured.");
+                throw new InvalidOperationException("A certificate file (Certification) or a Thumbprint must be configured.");
             }
 
             using (var store = new X509Store(StoreName.My, StoreLocation.LocalMachine))
             {
-                try
-                {
-                    store.Open(OpenFlags.ReadOnly);
+                store.Open(OpenFlags.ReadOnly);
 
-                    logger.LogInformation($"Searching for certificate with thumbprint ending in: {settings.Thumbprint[^6..]}");
+                logger.LogInformation($"Searching for certificate with thumbprint ending in: {settings.Thumbprint[^6..]}");
 
-                    var certs = store.Certificates.Find(X509FindType.FindByThumbprint, settings.Thumbprint, false);
-                    if (certs.Count == 0) throw new InvalidOperationException($"No certificate found with given thumbprint");
+                var certs = store.Certificates.Find(X509FindType.FindByThumbprint, settings.Thumbprint, false);
+                if (certs.Count == 0) throw new InvalidOperationException($"No certificate found with given thumbprint");
 
-                    var selectedCert = certs.OfType<X509Certificate2>().FirstOrDefault();
-                    if (selectedCert == null || !selectedCert.HasPrivateKey) throw new InvalidOperationException($"Certificate does not have a private key.");
+                var selectedCert = certs.OfType<X509Certificate2>().FirstOrDefault();
+                if (selectedCert == null || !selectedCert.HasPrivateKey) throw new InvalidOperationException($"Certificate does not have a private key.");
 
-                    logger.LogInformation($"Certificate found: {selectedCert.Subject}");
-                    handler.ClientCertificates.Add(selectedCert);
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "Failed to configure HttpClientHandler with client certificate.");
-                    throw; 
-                }
+                logger.LogInformation($"Certificate found: {selectedCert.Subject}");
+                return selectedCert;
             }
-
-            logger.LogInformation($"Handler contains {handler.ClientCertificates.Count} client certificate(s)");
-            return handler;
         }
 
     }
