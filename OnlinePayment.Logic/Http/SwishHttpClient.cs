@@ -89,7 +89,10 @@ namespace OnlinePayment.Logic.Http
         {
             var handler = new HttpClientHandler
             {
-                SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13
+                // TLS 1.2 only. On Linux/OpenSSL, TLS 1.3 client-certificate auth
+                // (post-handshake auth) fails with "decryption failed or bad record mac"
+                // (OpenSSL error 0A000119). Swish CPC requires TLS 1.2, so pin to it.
+                SslProtocols = SslProtocols.Tls12
             };
 
             handler.ClientCertificates.Add(LoadClientCertificate());
