@@ -2,6 +2,8 @@ using OnlinePayment.Logic.DataAccess;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using OnlinePayment.Logic.Model;
+using OnlinePayment.Logic.Settings;
+using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 
@@ -19,17 +21,20 @@ namespace OnlinePayment.Logic.Services
         private readonly IPaymentServiceExtended paymentService;
         private readonly IAuditServiceExtended auditService;
         private readonly IKohaService kohaService;
+        private readonly SwishApiSettings swishApiSettings;
 
         public PaymentCallbackServiceExtended(ILogger<PaymentCallbackService> logger,
            IPaymentCallbackDataAccess dataAccess,
            IPaymentServiceExtended paymentService,
            IAuditServiceExtended auditService,
-           IKohaService kohaService)
+           IKohaService kohaService,
+           IOptions<SwishApiSettings> swishApiOptions)
            : base(logger, dataAccess)
         {
             this.paymentService = paymentService;
             this.auditService = auditService;
             this.kohaService = kohaService;
+            this.swishApiSettings = swishApiOptions.Value;
         }
 
         public async Task<PaymentCallback> Insert(PaymentCallback model, string externalId)
@@ -49,6 +54,20 @@ namespace OnlinePayment.Logic.Services
                 var notPaidMessage = $"Callback for borrower {payment.BorrowerNumber} ignored: provider status is '{payment.Status}', not {PaidStatus}";
                 logger.LogInformation(notPaidMessage);
                 await auditService.AddAudit(notPaidMessage, model.Session, typeof(PaymentCallback));
+                return null;
+            }
+
+            // Verify the callback's currency matches the currency the payment was created
+            // with. Only reject on a definite mismatch (a provided value that differs), so a
+            // callback that omits the field is not falsely rejected.
+            var expectedCurrency = swishApiSettings.Currency;
+            if (!string.IsNullOrEmpty(model.Currency)
+                && !string.IsNullOrEmpty(expectedCurrency)
+                && !string.Equals(model.Currency, expectedCurrency, StringComparison.OrdinalIgnoreCase))
+            {
+                var currencyMismatch = $"Callback for borrower {payment.BorrowerNumber} ignored: currency '{model.Currency}' does not match expected '{expectedCurrency}'";
+                logger.LogWarning(currencyMismatch);
+                await auditService.AddAudit(currencyMismatch, model.Session, typeof(PaymentCallback));
                 return null;
             }
 
