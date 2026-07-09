@@ -14,6 +14,8 @@ Granskningen är **i allt väsentligt komplett** för den kod som finns i repot.
 - **Oautentiserad utlämning av PII och oautentiserad betalningsinitiering för godtyckligt låntagarnummer** (Hög).
 - **Hemligheter i klartext i `appsettings.production.json`** (Hög).
 
+> **Åtgärdsstatus 2026-07-09:** Fynd **1** (app-lagret), **2**, **4**, **5**, **9**, **10** och **13** är åtgärdade (se ✅-markering vid respektive fynd; kända residualer noterade där). **Öppna:** fynd **3** (cert + lösenfras i källträdet — kritiskt, kräver rotering hos Swish), **6** (klartexthemligheter i config), **7** (`/clean-up`//`/version`), **8** (`/session` läcker entitet inkl. `ExternalId`), **11** (`TrustServerCertificate=True`), **12** (CRUD-API med committad bearer-token).
+
 Det som var **positivt** och som avfärdar tidigare farhågor: den utgående TLS-anslutningen till Swish är korrekt (TLS 1.2/1.3, servercertifikat valideras, klientcert laddas per thumbprint från Windows-certifikatlagret), och den vidöppna CORS-policyn `AllowAllOrigins` är definierad men **aktiveras aldrig** (inget `UseCors`/`[EnableCors]` finns).
 
 ## Omfattning och antaganden
@@ -100,7 +102,7 @@ Applikationen exponerar internetnära, anonyma betalnings-endpoints utan tillrä
 
 ### 4. Oautentiserad utlämning av personuppgifter (IDOR) via /init och /js
 
-- **✅ ÅTGÄRDAT 2026-07-08 (med känd residual):** Autentisering är inte möjlig här (externa Koha-OPAC-användare), så per rekommendationen används nu en **signerad, kortlivad token** (ASP.NET Core Data Protection, 15 min) i stället för ett gissningsbart heltal. `/js` myntar token och länkar `/init?token=…`; `/init` och `/pay` löser `borrowerNumber` **ur token** och accepterar aldrig ett rått nummer från klienten (härdar även Fynd 5). PII i `/init`-vyn bantad till namn + belopp (e-post/telefon borttagna). **Rate limiting** (30/min per IP) på `/js`, `/init`, `/pay`. Ny bas-tjänst `OnlinePayment.Web/Security/BorrowerTokenService.cs`; ändringen speglas i org-overlayt (behåller `[NoLibraryAuth]`). **Residual:** `/js` myntar token för valfritt `borrowernumber` (OPAC-ingången kan inte autentiseras), så en beslutsam angripare kan nå PII i två steg (`/js`→`/init`) — men nu rate-limitat, och `/js` avslöjar endast om avgifter finns, inte PII. Vidare härdning: minska/ta bort fee-existens-signalen i `/js` och överväg IP-allowlist/WAF om OPAC-ingången kan begränsas.
+- **✅ ÅTGÄRDAT 2026-07-08 (med känd residual):** Autentisering är inte möjlig här (externa Koha-OPAC-användare), så per rekommendationen används nu en **signerad, kortlivad token** (ASP.NET Core Data Protection, 15 min) i stället för ett gissningsbart heltal. `/js` myntar token och länkar `/init?token=…`; `/init` och `/pay` löser `borrowerNumber` **ur token** och accepterar aldrig ett rått nummer från klienten (härdar även Fynd 5). PII i `/init`-vyn bantad till namn + belopp (e-post/telefon borttagna). **Rate limiting** (30/min per IP) på `/js`, `/init`, `/pay`. Ny bas-tjänst `OnlinePayment.Web/Security/BorrowerTokenService.cs`; ändringen speglas i org-overlayt (behåller `[NoLibraryAuth]`). **Tillägg 2026-07-09:** Data Protection-nyckelringen persisteras nu (`DataProtection:KeyPath` + `SetApplicationName`), så tokens överlever app pool-recycle och fungerar över flera noder. **Residual:** `/js` myntar token för valfritt `borrowernumber` (OPAC-ingången kan inte autentiseras), så en beslutsam angripare kan nå PII i två steg (`/js`→`/init`) — men nu rate-limitat, och `/js` avslöjar endast om avgifter finns, inte PII. Vidare härdning: minska/ta bort fee-existens-signalen i `/js` och överväg IP-allowlist/WAF om OPAC-ingången kan begränsas.
 - **Allvarlighetsgrad:** Hög
 - **Typ:** Åtkomstkontroll (saknad auktorisering), dataskydd/PII, IDOR/enumerering
 - **Berörda filer eller metoder:** `OnlinePayment.Web/Controller/PaymentControllerExtended.cs` → `Init(...)`; `organizational-specific/Controller/HomeControllerExtended.cs` → `js(...)`
@@ -113,6 +115,8 @@ Applikationen exponerar internetnära, anonyma betalnings-endpoints utan tillrä
 - **Verifiering/test:** Anropa `/init` med annat låntagarnummer än det inloggade och verifiera att åtkomst nekas.
 
 ### 5. Oautentiserad betalningsinitiering för godtyckligt låntagarnummer via /pay
+
+- **✅ ÅTGÄRDAT 2026-07-08 (med känd residual, samma som fynd 4):** `POST /pay` accepterar inte längre ett klientstyrt låntagarnummer: `borrowerNumber` löses ur den signerade, kortlivade token som `/js` myntat (`BorrowerTokenService.TryResolve`; ogiltig/utgången token → redirect till Cancelled). Rate limiting 30/min per IP. **Residual:** `/js` myntar token för valfritt borrowernumber (OPAC-ingången kan inte autentiseras), så betalningsinitiering för annans låntagarnummer är fortfarande möjlig i två steg — men nu rate-limitad och spårbar. Se fynd 4 för vidare härdning (IP-allowlist/WAF mot OPAC-ingången).
 
 - **Allvarlighetsgrad:** Hög
 - **Typ:** Åtkomstkontroll, missbruk av betalnings-API
@@ -180,6 +184,8 @@ Applikationen exponerar internetnära, anonyma betalnings-endpoints utan tillrä
 
 ### 10. Hemmagjord SQL-strängbyggare för insert/update (enbart citattecken-dubbling)
 
+**✅ ÅTGÄRDAT 2026-07-02**
+
 - **Allvarlighetsgrad:** Låg (defense-in-depth; potentiell risk)
 - **Typ:** Databasåtkomst, injektionshärdning, kulturberoende
 - **Berörda filer eller metoder:** `OnlinePayment.Logic/DataAccess/SqlStringBuilderDataAccess.cs`, `BaseDataAccess.Insert/Update`
@@ -220,6 +226,8 @@ Applikationen exponerar internetnära, anonyma betalnings-endpoints utan tillrä
 
 ### 13. Bibliotekets sessionscookie är förfalskningsbar (svag krypto) och saknar cookie-flaggor
 
+- **✅ ÅTGÄRDAT 2026-07-08 (i auth-biblioteket + uppgradering här):** Åtgärdat i `Sh.Library.Authentication` 1.3.1 och online-payment uppgraderat dit (verifierat mot källan i `AuthService/AuthenticationLibrary/`): krypteringsnyckeln läses nu från fil via `Encryption__KeyFile` (satt i `web.config`) i stället för hårdkodad nyckel med noll-IV, och sessionscookien sätts med `HttpOnly=true`, `Secure=true`, `SameSite=Lax`. Därmed är cookien inte längre förfalskningsbar med känd nyckel och skyddad mot JavaScript-stöld. Versionsdriften från tidigare granskning (NuGet 1.2.8 vs källa) är också löst i och med uppgraderingen.
+
 - **Allvarlighetsgrad:** Medel
 - **Typ:** Autentisering/identitet, behörighetseskalering, cookie-säkerhet
 - **Berörda filer eller metoder:** `Sh.Library.Authentication` (`AuthenticationMiddleware.cs`, `Encryption.cs`) i `C:\Users\shsnnr19adm\code2\AuthService\AuthenticationLibrary\`; används av online-payment via `UseLibraryAuthentication()` i `StartupExtended.cs`. Berörd online-payment-endpoint: `GET /list` i `PaymentControllerExtended.cs` (enda icke-`[NoLibraryAuth]`, icke-`/api`-endpointen).
@@ -234,20 +242,20 @@ Applikationen exponerar internetnära, anonyma betalnings-endpoints utan tillrä
 ## Misstänkta risker som kräver verifiering
 
 - **Beroendeversioner (kräver verifiering):** `System.Data.SqlClient` 4.8.6 och `Microsoft.AspNetCore.Mvc.Localization` 2.2.0 (körs på net8.0) är gamla. `System.Data.SqlClient` används i `SqlDataAccess` och `nlog.config`-databastarget. `Microsoft.AspNetCore.Mvc.Core` 2.2.5 refereras i Logic. Eventuella sårbarheter i dessa/transitiva paket bör kontrolleras mot aktuell rådgivningsdata. Inga CVE:er påstås här.
-- **`Sh.Library.Authentication` – VERIFIERAD (ej längre osäker):** Källkoden finns i `AuthService/AuthenticationLibrary/` (källversion 1.2.13). `[NoLibraryAuth]` är en tom markörattribut som gör endpointen helt publik (`AuthAttributes.cs`, `AuthenticationMiddlewareBase.ShouldBeAuthorized`), vilket bekräftar att `/callback`, `/init`, `/pay` och `/session` är genuint oautentiserade. Roll/staff-kontroll (`LibraryAuthStaffOnly`/`IsStaff`/`GetRole`) läser rollen från den klientkontrollerade cookien `BiblAppsSession`, krypterad med hårdkodad nyckel + noll-IV (`Encryption.cs`) → förfalskningsbar. Sessionscookien sätts med `HttpOnly=false`/`Secure=false`. Middleware-registreringen är **bekräftad**: `StartupExtended.CustomConfiguration` anropar `UseLibraryApiAuthentication()` och `UseLibraryAuthentication()`, så default-deny gäller för icke-`[NoLibraryAuth]`-endpoints (t.ex. `/list`) och för `/api`-vägar. Enda kvarstående osäkerhet är versionsdriften mellan refererad NuGet 1.2.8 (`Web.csproj`) och källans 1.2.13. Slutsatserna används i fynd 4, 5, 8, 12 och 13.
+- **`Sh.Library.Authentication` – VERIFIERAD (ej längre osäker):** Källkoden finns i `AuthService/AuthenticationLibrary/` (källversion 1.2.13). `[NoLibraryAuth]` är en tom markörattribut som gör endpointen helt publik (`AuthAttributes.cs`, `AuthenticationMiddlewareBase.ShouldBeAuthorized`), vilket bekräftar att `/callback`, `/init`, `/pay` och `/session` är genuint oautentiserade. Roll/staff-kontroll (`LibraryAuthStaffOnly`/`IsStaff`/`GetRole`) läser rollen från den klientkontrollerade cookien `BiblAppsSession`, krypterad med hårdkodad nyckel + noll-IV (`Encryption.cs`) → förfalskningsbar. Sessionscookien sätts med `HttpOnly=false`/`Secure=false`. Middleware-registreringen är **bekräftad**: `StartupExtended.CustomConfiguration` anropar `UseLibraryApiAuthentication()` och `UseLibraryAuthentication()`, så default-deny gäller för icke-`[NoLibraryAuth]`-endpoints (t.ex. `/list`) och för `/api`-vägar. Versionsdriften mellan refererad NuGet 1.2.8 (`Web.csproj`) och källan är löst: online-payment uppgraderat till 1.3.1, som även åtgärdar krypto-/cookieproblemen (se fynd 13). Slutsatserna används i fynd 4, 5, 8, 12 och 13.
 - **Modellbindning `[FromBody] dynamic` i callbacken (kräver verifiering):** Dubbel serialisering/`ToString()` av en okänt stor nyttolast kan ge onödig resursförbrukning. Standardgränser för request-body (Kestrel/MVC) antas gälla men request-size-limit för endpointen är inte explicit satt.
 - **`CustomHtmlHelpers.GetExternalHtmlAsync` (Startup.cs):** Hämtar godtycklig URL och injicerar svaret som rå `HtmlString`. Ingen anropare hittades i granskad kod; om den kopplas till användarstyrd URL uppstår SSRF/XSS. Kräver verifiering av användning i vyer.
 
 ## Generella härdningsrekommendationer
 
-- Inför **rate limiting** på `/pay`, `/init`, `/js`, `/session` och `/callback`.
+- **✅ DELVIS ÅTGÄRDAT 2026-07-08:** Inför **rate limiting** på `/pay`, `/init`, `/js` (klart, 30/min per IP), `/session` och `/callback` (kvarstår).
 - Lägg till **säkerhetsheaders** och **HSTS** (`UseHsts` saknas; endast `UseHttpsRedirection` finns): `X-Content-Type-Options`, `Referrer-Policy`, restriktiv CSP där tillämpligt.
 - Returnera avgränsade DTO:er i stället för interna entiteter (särskilt `/session` och `/list`).
-- Höj loggnivån i produktion (bort från `Trace`), säkerställ dataminimering och retention.
+- **✅ ÅTGÄRDAT 2026-07-09:** Höj loggnivån i produktion (bort från `Trace`), säkerställ dataminimering och retention (fynd 9).
 - Centralisera hemligheter i nyckelvalv; inför hemlighets-/certifikatscanning i CI så att `.p12`/lösenord inte kan committas igen.
-- Ta bort/aktivera medvetet den utkommenterade `AddDataProtection().PersistKeysToFileSystem(...)` om delade nycklar behövs över instanser.
-- Validera indata strikt (belopp, valuta, referenser, `externalId`-format) och mot serverns förväntade värden i stället för att lita på klientdata.
-- `SwishHttpClient` skapar en ny `System.Net.Http.HttpClient(handler)` per request – överväg återanvändning/`SocketsHttpHandler` för att undvika socket-utarmning (hygien, ej säkerhet).
+- **✅ ÅTGÄRDAT 2026-07-09:** Ta bort/aktivera medvetet den utkommenterade `AddDataProtection().PersistKeysToFileSystem(...)` om delade nycklar behövs över instanser — aktiverad via `DataProtection:KeyPath` (AuthService-mönstret).
+- **✅ ÅTGÄRDAT 2026-07-08:** Validera indata strikt (belopp, valuta, referenser, `externalId`-format) och mot serverns förväntade värden i stället för att lita på klientdata (fynd 1/2: statusgrindning mot Swish, lagrat belopp, valutakontroll, `externalId`-regex).
+- **✅ DELVIS ÅTGÄRDAT 2026-07-08:** `SwishHttpClient` använder nu `SocketsHttpHandler` (med fullständig klientcert-kedja); ny klient skapas dock fortfarande per request och certet läses från disk varje gång – överväg att cachea handler/certkontext (hygien, ej säkerhet).
 
 ## Applikationsspecifika observationer
 
@@ -271,7 +279,7 @@ Verifiering av de tidigare `swish-for-koha`-fynden och deras "kräver verifierin
 
 ## Delar som inte kunde granskas
 
-- `Sh.Library.Authentication` – källkoden finns i `AuthService/AuthenticationLibrary/` (1.2.13) och har granskats; `[NoLibraryAuth]` och middleware-beteendet är verifierade. `Sh.Library.MailSender` (1.0.1) är fortfarande ett binärt NuGet-paket och kunde inte granskas. Versionsdriften online-payment→NuGet 1.2.8 vs källa 1.2.13 kvarstår att verifiera.
+- `Sh.Library.Authentication` – källkoden finns i `AuthService/AuthenticationLibrary/` (1.2.13) och har granskats; `[NoLibraryAuth]` och middleware-beteendet är verifierade. `Sh.Library.MailSender` (1.0.1) är fortfarande ett binärt NuGet-paket och kunde inte granskas. Versionsdriften är löst: online-payment refererar nu Sh.Library.Authentication 1.3.1 (samma som källan).
 - Faktiska CVE-status för tredjepartsberoenden (kräver aktuell rådgivningsdata).
 - Binärt innehåll i `.p12`-filerna (endast förekomst och referens bekräftades; innehåll återges ej).
 - Runtime-/driftskonfiguration (reverse proxy, brandvägg, ev. IP-allowlist på infrastrukturnivå) utanför källkoden.
@@ -279,19 +287,19 @@ Verifiering av de tidigare `swish-for-koha`-fynden och deras "kräver verifierin
 ## Prioriterad åtgärdslista
 
 1. **Kritiska (omedelbart):**
-   - Säkra `/callback`: bekräftande statusuppslag mot Swish via mTLS, kreditera med lagrat begärt belopp, verifiera belopp/valuta/referens, inför idempotens/replayskydd och IP-allowlist (fynd 1).
-   - Åtgärda SQL-injektionen i `GetByExternalId` – parametrisera och validera `externalId` (fynd 2).
+   - **✅ ÅTGÄRDAT 2026-07-08 (app-lagret):** Säkra `/callback`: bekräftande statusuppslag mot Swish via mTLS, kreditera med lagrat begärt belopp, verifiera belopp/valuta/referens, inför idempotens/replayskydd (fynd 1). IP-allowlist kvarstår (infrastruktur).
+   - **✅ ÅTGÄRDAT 2026-07-02:** Åtgärda SQL-injektionen i `GetByExternalId` – parametrisera och validera `externalId` (fynd 2).
    - Ta bort `.p12`-filerna och lösenfrasen ur källträdet, **rotera/återkalla** Swish-certifikatet, distribuera via säker pipeline (fynd 3).
 2. **Höga:**
-   - Kräv autentisering och ägarskapskontroll på `/init`, `/js` och `/pay`; stoppa PII-enumerering (fynd 4, 5).
+   - **✅ ÅTGÄRDAT 2026-07-08 (med residual):** Kräv autentisering och ägarskapskontroll på `/init`, `/js` och `/pay`; stoppa PII-enumerering (fynd 4, 5) — löst med signerad kortlivad token + rate limiting; residual i `/js` (se fynd 4).
    - Flytta alla hemligheter ur `appsettings.*.json` till secret manager och rotera dem (fynd 6).
    - Rotera den committade bearer-token och begränsa/stäng av det autogenererade `/api/v1`-CRUD-API:t i produktion (fynd 12).
 3. **Medel:**
    - Skydda/flytta `/clean-up` och `/version` bakom autentisering (fynd 7).
    - Returnera minimal DTO från `/session`, exponera inte `ExternalId`/PII (fynd 8).
-   - Sluta logga fullständig callback-nyttolast/PII, höj loggnivå i produktion (fynd 9).
-   - Åtgärda förfalskningsbar sessionscookie/roll och cookie-flaggor i auth-biblioteket; förlita dig inte på cookieroll för `/list` (fynd 13).
+   - **✅ ÅTGÄRDAT 2026-07-09:** Sluta logga fullständig callback-nyttolast/PII, höj loggnivå i produktion (fynd 9).
+   - **✅ ÅTGÄRDAT 2026-07-08:** Åtgärda förfalskningsbar sessionscookie/roll och cookie-flaggor i auth-biblioteket (fynd 13, Sh.Library.Authentication 1.3.1); server-sidig auktorisering utöver cookien för `/list` kvarstår som härdning.
 4. **Låga + härdning:**
-   - Parametrisera insert/update och använd invariant kultur (fynd 10).
+   - **✅ ÅTGÄRDAT 2026-07-02:** Parametrisera insert/update och använd invariant kultur (fynd 10).
    - `TrustServerCertificate=False` + `Encrypt=True` (fynd 11).
-   - Lägg till HSTS/säkerhetsheaders och rate limiting; ta bort oanvänd CORS-policy och `GetExternalHtmlAsync`; verifiera beroendeversioner.
+   - Lägg till HSTS/säkerhetsheaders och rate limiting (delvis: `/pay`, `/init`, `/js` klara); ta bort oanvänd CORS-policy och `GetExternalHtmlAsync`; verifiera beroendeversioner.
