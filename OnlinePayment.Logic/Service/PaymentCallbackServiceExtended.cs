@@ -51,7 +51,7 @@ namespace OnlinePayment.Logic.Services
             // on the callback's own DatePaid/Status/Amount.
             if (!string.Equals(payment.Status, PaidStatus, StringComparison.OrdinalIgnoreCase))
             {
-                var notPaidMessage = $"Callback for borrower {payment.BorrowerNumber} ignored: provider status is '{payment.Status}', not {PaidStatus}";
+                var notPaidMessage = $"Callback for session {payment.Session} ignored: provider status is '{payment.Status}', not {PaidStatus}";
                 logger.LogInformation(notPaidMessage);
                 await auditService.AddAudit(notPaidMessage, model.Session, typeof(PaymentCallback));
                 return null;
@@ -65,7 +65,7 @@ namespace OnlinePayment.Logic.Services
                 && !string.IsNullOrEmpty(expectedCurrency)
                 && !string.Equals(model.Currency, expectedCurrency, StringComparison.OrdinalIgnoreCase))
             {
-                var currencyMismatch = $"Callback for borrower {payment.BorrowerNumber} ignored: currency '{model.Currency}' does not match expected '{expectedCurrency}'";
+                var currencyMismatch = $"Callback for session {payment.Session} ignored: currency '{model.Currency}' does not match expected '{expectedCurrency}'";
                 logger.LogWarning(currencyMismatch);
                 await auditService.AddAudit(currencyMismatch, model.Session, typeof(PaymentCallback));
                 return null;

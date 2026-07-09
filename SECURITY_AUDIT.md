@@ -166,6 +166,7 @@ Applikationen exponerar internetnära, anonyma betalnings-endpoints utan tillrä
 
 ### 9. Betalnings-/persondata loggas i klartext till fil och databas
 
+- **✅ ÅTGÄRDAT 2026-07-09:** Loggningen sanerad: callback-payloaden (betalaralias/telefonnummer, belopp, referenser) loggas inte längre och ekas inte tillbaka i svaret (`PaymentCallbackControllerExtended`); `/init` loggar inte låntagar-id/belopp/saldo; `PaymentServiceExtended` och `PaymentCallbackServiceExtended` identifierar via slumpat sessions-id i stället för borrowernumber/belopp, och Swish-location-URL:en togs ur meddelandena. `Program.cs` höjde loggolvet Trace→Information (Debug-loggarna med hela request-/responsekroppar når aldrig målen). `nlog.config`: framåtsnedstreck i sökvägar (backslash gav filer med bokstavligt `\` i namnet i approten på Linux) samt 7 dagars retention på diskloggar (`maxArchiveFiles`). Kvarstår (drift): rensa befintliga loggfiler på staging (`logs\2026-07-0*.log` i approten) som skrevs före fixen, samt åtkomstkontroll på logg-katalogen i prod; `Log`-tabellen självsaneras av CleanUpService (7 dagar).
 - **Allvarlighetsgrad:** Medel
 - **Typ:** Loggning av PII/betalningsdata
 - **Berörda filer eller metoder:** `PaymentCallbackControllerExtended.cs` (`logger.LogInformation($"Callback received model: {serializedModel}")`), `PaymentControllerExtended.cs` `Init` (loggar låntagar-id, belopp, saldo), `PaymentServiceExtended` (loggar borrowernumber/belopp), `nlog.config` (skriver `${message}` till både fil och `Log`-tabell).

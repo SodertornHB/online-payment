@@ -53,9 +53,10 @@ namespace OnlinePayment.Logic.Services
 
         public async Task<Payment> InitiatePayment(int borrowerNumber)
         {
-            logger.LogInformation($"Initiate payment process for borrower with number {borrowerNumber}");
+            // Log the random session id, never the borrower number (finding 9); the
+            // session correlates with the Payment/Audit tables for troubleshooting.
             var session = GuidGenerator.GenerateGuidWithoutDashesUppercase();
-            logger.LogInformation($"Generated session guid = {session}");
+            logger.LogInformation($"Initiate payment process, session = {session}");
             await auditService.AddAudit("Initiating", session, typeof(Payment));
             var patron = await kohaService.GetPatron(borrowerNumber, session);
             var account = await kohaService.GetAccount(borrowerNumber, session);
@@ -92,17 +93,20 @@ namespace OnlinePayment.Logic.Services
 
                 PaymentRequest paymentRequest = await paymentRequestService.CreatePaymentRequest(borrowerNumber, patronPhoneNumber, amount, session);
 
-                await Log($"Preparing to create payment in Swish. Borrowernumber = {borrowerNumber}, Amout = {amount}", paymentRequest);
+                // Messages go to both the log and the audit trail: identify by session
+                // only — borrower number, amount and the Swish location URL (which
+                // embeds the payment request token) stay out of them (finding 9).
+                await Log($"Preparing to create payment in Swish. Session = {session}", paymentRequest);
 
                 var paymentResponse = await swishHttpService.Put(instructionUUID, paymentRequest);
 
-                await Log($"Payment created in Swish. Borrowernumber = {borrowerNumber}, Amout = {amount}", paymentRequest);
+                await Log($"Payment created in Swish. Session = {session}", paymentRequest);
 
                 await UpdatePaymentResponseAndInsert(paymentResponse, session);
 
                 var payment = await CreatePayment(borrowerNumber, patronName, patronEmail, patronPhoneNumber, amount, session, paymentRequest.PaymentRequestDateTime.Value, paymentResponse.Location, paymentResponse.Status);
 
-                await Log($"Payment created. Borrowernumber = {borrowerNumber}, Amout = {amount}, paymentRequest.PaymentRequestDateTime.Value = {paymentRequest.PaymentRequestDateTime.Value}, paymentResponse.Location = {paymentResponse.Location}, paymentResponse.Status = { paymentResponse.Status}", paymentRequest);
+                await Log($"Payment created. Session = {session}, paymentRequest.PaymentRequestDateTime.Value = {paymentRequest.PaymentRequestDateTime.Value}, paymentResponse.Status = {paymentResponse.Status}", paymentRequest);
 
                 return payment;
             }

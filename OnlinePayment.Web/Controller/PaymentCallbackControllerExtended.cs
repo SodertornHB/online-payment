@@ -22,27 +22,18 @@ namespace OnlinePayment.Web.Controllers
         {
             try
             {
-                string serializedModel = string.Empty;
-
-                if (requestModel is JsonElement jsonElement)
-                {
-                    serializedModel = jsonElement.ToString();
-                }
-                else
-                {
-                    serializedModel = JsonConvert.SerializeObject(requestModel, Formatting.Indented);
-                }
-                logger.LogInformation($"Callback received model: {serializedModel}");
-
+                // Never log or echo the callback payload: it contains the payer's
+                // alias (phone number), amount and payment references (finding 9).
                 var callbackModel = JsonConvert.DeserializeObject<CallbackRequestModel>(requestModel.ToString());
+                logger.LogInformation($"Callback received for payment id {callbackModel.Id}, status {callbackModel.Status}");
                 await callbackService.Insert(mapper.Map<PaymentCallback>(callbackModel), callbackModel.Id);
 
-                return Ok(serializedModel);
+                return Ok();
             }
             catch (Exception e)
             {
                 logger.LogError(e, $"Error in Callback: {e.Message}");
-                return BadRequest(e.Message);
+                return BadRequest();
             }
         }
     }

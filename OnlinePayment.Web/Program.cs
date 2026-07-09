@@ -27,7 +27,9 @@ namespace OnlinePayment.Web
             })
             .ConfigureLogging(logging =>
             {
-                logging.SetMinimumLevel(LogLevel.Trace);
+                // Info floor: Debug/Trace messages include full request/response
+                // payloads (finding 9) and must not reach the log targets.
+                logging.SetMinimumLevel(LogLevel.Information);
             })
             .UseNLog();
 

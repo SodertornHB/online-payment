@@ -30,7 +30,8 @@ namespace OnlinePayment.Web.Controllers
                 var patron = await kohaService.GetPatron(borrowerNumber);
                 var account = await kohaService.GetAccount(borrowerNumber);
                 var balance = account.GetBalanceForGivenStatuses(applicationsSettings.StatusesGeneratingPaymentBalance);
-                logger.LogInformation($"Init payment for borrower {patron.patron_id}, amount to pay = {balance}, total balance = {account.balance}");
+                // Do not log borrower id, amount or balance (finding 9).
+                logger.LogInformation("Init payment view rendered for borrower resolved from token");
                 return base.View(new InitPayViewModel { Token = token, PatronName = patron.GetFullname(), Amount = balance, ShowPaymentButton = !@internal });
             }
             catch (ArgumentException e)
