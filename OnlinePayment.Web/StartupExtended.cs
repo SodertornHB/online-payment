@@ -18,6 +18,7 @@ using OnlinePayment.Logic.DataAccess;
 using OnlinePayment.Logic.Model;
 using OnlinePayment.Web.ViewModel;
 using OnlinePayment.Web.Security;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Http;
 using System.Threading.RateLimiting;
@@ -71,7 +72,14 @@ namespace OnlinePayment.Web
 
             // Short-lived token + rate limiting protect the public payment endpoints
             // (/js, /init, /pay) against borrower-number enumeration (finding 4).
-            services.AddDataProtection();
+            // Persist the Data Protection key ring so tokens survive app restarts and
+            // work across nodes. Configure DataProtection:KeyPath to a shared, access-
+            // controlled directory when hosting on IIS or multiple instances; when left
+            // empty, the platform default key store is used.
+            var dataProtection = services.AddDataProtection().SetApplicationName("OnlinePayment");
+            var dpKeyPath = Configuration["DataProtection:KeyPath"];
+            if (!string.IsNullOrWhiteSpace(dpKeyPath))
+                dataProtection.PersistKeysToFileSystem(new System.IO.DirectoryInfo(dpKeyPath));
             services.AddSingleton<IBorrowerTokenService, BorrowerTokenService>();
             services.AddRateLimiter(options =>
             {
